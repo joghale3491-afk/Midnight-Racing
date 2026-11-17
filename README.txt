@@ -1,6 +1,10 @@
-MIDNIGHT RUN Story Race + Car Dealership Update
+MIDNIGHT RUN - MAIN STORY EPISODES UPDATE
 
-Replace only index.html in your existing GitHub Pages repository. Keep all other files, including Supabase configuration files.
+Side-story races are now mandatory story episodes:
+- Complete the chapter's main race first.
+- The three crew episode races then become playable.
+- Complete all three episode races (at least 1 star each) to unlock the next chapter.
+- Episode races retain their individual star ratings and rewards.
+- The Story Mode panel shows episode completion progress.
 
-Story Mode: select any unlocked chapter from the chapter list and press START STORY CHAPTER to play its mission as a race/event. Completed chapters can be replayed.
-Garage: static CSS car illustrations replace the unreliable 3D garage render. Car stats are displayed. The Sport car starts owned; other cars must be purchased with credits before selection.
+Install: replace only index.html in your GitHub Pages repository and commit directly to main. Keep all other files, including Supabase-related files.
