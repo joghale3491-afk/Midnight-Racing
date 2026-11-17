@@ -148,6 +148,65 @@
   @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{flex-direction:row;overflow:auto}.navBtn{flex:1;text-align:center;white-space:nowrap;padding:11px 9px}.navNote{display:none}.modeGrid{grid-template-columns:repeat(2,1fr)}#trackGrid{grid-template-columns:repeat(2,1fr)}.storyLayout,.garageGrid{grid-template-columns:1fr}.heroMeta{display:none}}
   @media(max-width:520px){.hubTop{align-items:flex-start}.creditsPill{font-size:9px;padding:9px}.heroStrip{padding:14px}.trackCard{min-height:116px}.trackArt{height:64px}.footerActions{width:100%}.footerActions button{flex:1}}
 
+
+/* MIDNIGHT RUN UI refresh: track cards launch races immediately */
+#modeGrid,.details,#startBtn{display:none!important}
+.menuWrap{width:min(1120px,100%);padding:clamp(14px,2.5vw,28px);border-radius:18px}
+.hubTop{margin-bottom:12px}
+.hubLogo{font-size:clamp(24px,4vw,38px);letter-spacing:.12em}
+.hubTag{font-size:9px;letter-spacing:.18em}
+.hubGrid{gap:16px}
+.sideNav{width:170px;min-width:150px}
+.navBtn{border-radius:10px;min-height:42px;text-align:left;padding:11px 13px}
+.navBtn.active{box-shadow:inset 3px 0 var(--cyan)}
+.heroStrip{padding:16px 18px;margin-bottom:14px;border-radius:14px}
+.heroStrip h2{font-size:clamp(26px,4vw,42px);line-height:1;margin:8px 0}
+.heroStrip p{font-size:12px;max-width:560px}
+.panelTitle{margin:14px 0 9px;font-size:10px}
+#trackGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.trackCard{border-radius:12px;min-height:130px}
+.trackArt{height:82px}
+.trackCard .meta{padding:9px 11px}
+.trackCard b{font-size:12px}
+.trackCard small{font-size:9px}
+.trackCard:focus-visible,.navBtn:focus-visible,.primaryBtn:focus-visible,.goldBtn:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.trackCard:active{transform:scale(.985);filter:brightness(1.2)}
+.lockStamp{display:none!important}
+.menuFooter{margin-top:14px;padding-top:10px;border-top:1px solid #8cecff22}
+.featureList{font-size:9px;line-height:1.6}
+.footerActions{display:flex;gap:8px;align-items:center}
+.goldBtn{border-radius:9px;padding:12px 14px}
+.primaryBtn,.secondaryBtn{border-radius:9px;clip-path:none}
+#mobile button{touch-action:none;user-select:none;-webkit-user-select:none}
+@media(max-width:760px){
+ .overlay{padding:8px;align-items:flex-start}
+ .menuWrap{max-height:98vh;padding:12px;border-radius:14px}
+ .hubGrid{display:block}
+ .sideNav{width:100%;display:flex;gap:7px;overflow-x:auto;margin-bottom:12px}
+ .navBtn{white-space:nowrap;flex:1;font-size:10px;padding:10px 8px}
+ .navNote{display:none}
+ .hubTop{align-items:center}
+ .hubLogo{font-size:24px}
+ .creditsPill{font-size:10px;padding:7px 9px}
+ .heroStrip{padding:13px;margin-bottom:10px}
+ .heroMeta{display:none}
+ #trackGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .trackCard{min-height:116px}
+ .trackArt{height:68px}
+ .trackCard b{font-size:11px}
+ .trackCard small{font-size:8px}
+ .menuFooter{margin-top:10px}
+ .featureList{font-size:8px}
+ .footerActions{width:100%}
+ #twoPlayerBtn{width:100%;padding:12px 8px}
+}
+@media(max-width:380px){
+ #trackGrid{grid-template-columns:1fr 1fr}
+ .trackCard{min-height:104px}
+ .trackArt{height:58px}
+ .hubTag{font-size:7px}
+}
+
 </style>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
@@ -196,15 +255,15 @@
       </aside>
       <main class="hubMain">
         <section id="homePanel" class="viewPanel">
-          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Build a name in the underground scene. Race rivals, tune your ride, unlock new routes and chase the next chapter.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · ADAPTIVE RIVALS</div></div>
-          <div class="panelTitle">CHOOSE YOUR EVENT</div>
+          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Choose any track below to start racing immediately. Build your reputation, tune your car and take on the underground.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · ADAPTIVE RIVALS</div></div>
+          <div class="panelTitle">PICK A TRACK TO RACE</div>
           <div class="modeGrid" id="modeGrid">
             <button class="modeCard active" data-mode="street"><strong>01 / STREET RACE</strong><small>3 laps · rival drivers · podium payout</small></button>
             <button class="modeCard" data-mode="time"><strong>02 / TIME ATTACK</strong><small>1 lap · beat the target clock</small></button>
             <button class="modeCard" data-mode="police"><strong>03 / POLICE PURSUIT</strong><small>Survive the pursuit timer · arcade heat</small></button>
             <button class="modeCard" data-mode="story"><strong>04 / STORY EVENT</strong><small>Continue your campaign chapter</small></button>
           </div>
-          <div class="panelTitle">SELECT A LOCATION</div>
+          
           <div id="trackGrid">
             <button class="trackCard selected" data-track="neon"><div class="trackArt cityArt"></div><span class="trackNo">01 / NIGHT</span><div class="meta"><b>NEON DISTRICT</b><small>URBAN · TECHNICAL</small></div></button>
             <button class="trackCard" data-track="coast"><div class="trackArt coastArt"></div><span class="trackNo">02 / DAY</span><div class="meta"><b>COASTAL RUN</b><small>SEASIDE · FAST</small></div></button>
@@ -533,7 +592,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFr
 
 function loadProfile(){try{const saved=JSON.parse(localStorage.getItem('midnightRunProfile')||'null');return saved?{...defaultProfile,...saved,completed:Array.isArray(saved.completed)?saved.completed:[],garage:{...defaultProfile.garage,...(saved.garage||{})}}:JSON.parse(JSON.stringify(defaultProfile));}catch(e){return JSON.parse(JSON.stringify(defaultProfile));}}
 function saveProfile(){try{localStorage.setItem('midnightRunProfile',JSON.stringify(profile));}catch(e){}}
-function trackUnlocked(id){if(id==='random')return true;const unlock={neon:0,coast:1,alpine:2,desert:3,industrial:4,forest:5,harbor:6,skyline:7};return profile.storyStage>=(unlock[id]??99);}
+function trackUnlocked(id){return true;}
 function comma(n){return Math.round(n).toLocaleString('en-US');}
 function setView(view){document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='garagePanel')refreshGarage();if(view==='storyPanel')refreshStory();}
 function selectMode(mode){gameMode=mode;document.querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));if(mode==='story'){setView('storyPanel');}else{$('raceSpec').innerHTML=mode==='street'?'3 LAPS / 5 RIVALS<br>TRAFFIC · POWER-UPS':mode==='time'?'1 LAP / TARGET CLOCK<br>RACING LINE · CLEAN RUN':'70 SEC SURVIVAL<br>ARCADE POLICE PURSUIT';}}
@@ -649,7 +708,7 @@ function renderFrame(){
 function bindHub(){
  document.querySelectorAll('.navBtn').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
  document.querySelectorAll('.modeCard').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
- document.querySelectorAll('.trackCard').forEach(card=>card.addEventListener('click',()=>{const id=card.dataset.track;if(!trackUnlocked(id)){const needed=({coast:'Complete Chapter 01',alpine:'Complete Chapter 02',desert:'Complete Chapter 03',industrial:'Complete Chapter 04',forest:'Complete Chapter 05',harbor:'Complete Chapter 06',skyline:'Complete Chapter 07'})[id]||'Progress through Story Mode';$('trackDescription').textContent=`LOCKED LOCATION · ${needed} to unlock this circuit.`;return;}currentTrack=id;document.querySelectorAll('.trackCard').forEach(c=>c.classList.toggle('selected',c===card));$('trackDescription').textContent=id==='random'?'An endlessly regenerated circuit with a new corner sequence and biome each run. Weather conditions are randomized too.':TRACKS[id].description+' Weather is randomized for each event.';}));
+ document.querySelectorAll('.trackCard').forEach(card=>card.addEventListener('click',()=>{const id=card.dataset.track;currentTrack=id;gameMode='street';document.querySelectorAll('.trackCard').forEach(c=>c.classList.toggle('selected',c===card));initRace('street',id,false,false);}));
  $('startBtn').addEventListener('click',startQuickRace);$('twoPlayerBtn').addEventListener('click',startLocalRace);$('storyStartBtn').addEventListener('click',startStoryRace);
  $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));$('backFromGarage').addEventListener('click',()=>setView('homePanel'));
  document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.paint=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.accent=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('.styleBtn').forEach(b=>b.addEventListener('click',()=>{profile.garage.style=b.dataset.style;saveProfile();refreshGarage();}));
