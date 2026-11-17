@@ -767,7 +767,7 @@ function updateRivals(dt){
 function positionCar(car,distance,offset,steer=0){const f=frameAt(distance);car.group.position.copy(f.p).addScaledVector(f.side,offset);car.group.position.y=f.p.y+.03;const yaw=Math.atan2(f.tangent.x,f.tangent.z);car.group.rotation.y=yaw;car.group.rotation.z=-steer*.045;return f;}
 function updatePickups(dt){pickups.forEach(p=>{p.group.rotation.y+=dt*.9;p.group.rotation.z=Math.sin(performance.now()*.002+p.id)*.13;p.group.position.y=p.baseY+Math.sin(performance.now()*.0025+p.id)*.17;
   const candidates=[{kind:'player',distance:playerDistance,offset:playerOffset},{kind:'player2',distance:player2Distance,offset:player2Offset},...rivals.map((r,i)=>({kind:'rival',rival:r,distance:r.distance,offset:r.offset}))];
-  for(const c of candidates){if(c.kind==='player2'&&!player2)continue;const lap=Math.max(0,Math.floor(c.distance/trackLength));const key=`${lap}-${p.id}`;if(collected.has(key))continue;const target=lap*trackLength+p.distance;if(Math.abs(c.distance-target)<4.2&&Math.abs(c.offset-p.offset)<2.9){collected.add(key);if(c.kind==='player')applyPickup(p.type);else if(c.kind==='player2'){if(p.type==='nitro')player2Nitro=Math.min(100,player2Nitro+38);else if(p.type==='turbo')player2TurboTime=6;else if(p.type==='shield')player2ShieldTime=8;else player2Damage=Math.max(0,player2Damage-2);}else applyRivalPickup(c.rival,p.type);break;}}
+  for(const c of candidates){if(c.kind==='player2'&&!player2)continue;const lap=Math.max(0,Math.floor(c.distance/trackLength));const key=`${lap}-${p.id}`;if(collected.has(key))continue;const target=lap*trackLength+p.distance;if(Math.abs(c.distance-target)<4.2&&Math.abs(c.offset-p.offset)<2.9){collected.add(key);if(c.kind==='player'){applyPickup(p.type);if(mpOnlineRace)mpSendEvent('pickup-claim',{pickupId:p.id,lap});}else if(c.kind==='player2'){if(p.type==='nitro')player2Nitro=Math.min(100,player2Nitro+38);else if(p.type==='turbo')player2TurboTime=6;else if(p.type==='shield')player2ShieldTime=8;else player2Damage=Math.max(0,player2Damage-2);}else applyRivalPickup(c.rival,p.type);break;}}
   const playerLap=Math.max(0,Math.floor(playerDistance/trackLength));p.group.visible=!collected.has(`${playerLap}-${p.id}`);
  });}
 function updateCollisions(dt){rivals.forEach(r=>{if(r.hitCooldown>0)return;const diff=Math.abs(playerDistance-r.distance);if(diff<3.5&&Math.abs(playerOffset-r.offset)<2.15){r.hitCooldown=1.1;if(shieldTime>0){r.distance-=5;showToast('SHIELD · RIVAL DEFLECTED');}else{playerSpeed*=.68;damage=Math.min(5,damage+1);r.distance+=2;showToast('RIVAL COLLISION');}}});}
@@ -973,8 +973,8 @@ function initRace(mode,track,two=false,story=false){gameMode=mode;currentTrack=t
 function startQuickRace(){if(!trackUnlocked(currentTrack)){showToast('TRACK LOCKED · COMPLETE STORY CHAPTERS');return;}const m=gameMode==='story'?'street':gameMode;initRace(m,currentTrack,false,false);}
 function startStoryRace(){isSideStoryEvent=false;const stage=Math.min(selectedChapterIndex,CHAPTERS.length-1);if(stage>profile.storyStage){showToast('CHAPTER LOCKED · COMPLETE THE PREVIOUS STORY RACE');return;}if(stage>0&&!sideEpisodesComplete(stage-1)){showToast('COMPLETE ALL THREE STORY EPISODE RACES FROM THE PREVIOUS CHAPTER FIRST');return;}const ch=CHAPTERS[stage];storyChapterCurrent=stage;initRace(ch.mode,ch.track,false,true);}
 function startLocalRace(){if(!trackUnlocked(currentTrack)){showToast('TRACK LOCKED · COMPLETE STORY CHAPTERS');return;}initRace('street',currentTrack,true,false);}
-function resetRace(){playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;shieldTime=0;turboTime=0;raceTime=0;countdown=3.5;offroadCooldown=0;boostActive=false;collected=new Set();hitCooldowns=[];player2Distance=0;player2Offset=-4.4;player2Speed=0;player2Nitro=100;player2Damage=0;player2ShieldTime=0;player2TurboTime=0;targetTime=trackLength/44+5;rivals.forEach((r,i)=>{r.distance=[7,-8,15,-16,-23][i];r.speed=0;r.hitCooldown=0;r.nitro=45+Math.random()*40;r.boostTime=0;r.boostCooldown=4+Math.random()*7;r.turboTime=0;r.shieldTime=0;r.damage=0;});if(player?.group)player.group.position.set(0,0,0);if(player2?.group)player2.group.position.set(0,0,0);gameState='countdown';$('countdown').textContent='3';$('countdown').classList.add('show');$('hud').classList.add('live');$('pauseMenu').classList.add('hidden');$('finishMenu').classList.add('hidden');$('player2Hud').style.display=isTwoPlayer?'block':'none';$('splitDivider').style.display=isTwoPlayer?'block':'none';$('splitLabels').style.display=isTwoPlayer?'flex':'none';$('weatherName').textContent=weatherState.name.toUpperCase();updateHud();}
-function backToMenu(){gameState='menu';mpOnlineRace=false;mpRemoteTarget=null;$('hud').classList.remove('live');$('menu').classList.remove('hidden');setView('homePanel');$('pauseMenu').classList.add('hidden');$('finishMenu').classList.add('hidden');$('countdown').classList.remove('show');$('player2Hud').style.display='none';$('splitDivider').style.display='none';$('splitLabels').style.display='none';renderTracks();updateEngineSound();}
+function resetRace(){mpSendAccumulator=0;mpCollisionCooldown=0;playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;shieldTime=0;turboTime=0;raceTime=0;countdown=3.5;offroadCooldown=0;boostActive=false;collected=new Set();hitCooldowns=[];player2Distance=0;player2Offset=-4.4;player2Speed=0;player2Nitro=100;player2Damage=0;player2ShieldTime=0;player2TurboTime=0;targetTime=trackLength/44+5;rivals.forEach((r,i)=>{r.distance=[7,-8,15,-16,-23][i];r.speed=0;r.hitCooldown=0;r.nitro=45+Math.random()*40;r.boostTime=0;r.boostCooldown=4+Math.random()*7;r.turboTime=0;r.shieldTime=0;r.damage=0;});if(player?.group)player.group.position.set(0,0,0);if(player2?.group)player2.group.position.set(0,0,0);gameState='countdown';$('countdown').textContent='3';$('countdown').classList.add('show');$('hud').classList.add('live');$('pauseMenu').classList.add('hidden');$('finishMenu').classList.add('hidden');$('player2Hud').style.display=isTwoPlayer?'block':'none';$('splitDivider').style.display=isTwoPlayer?'block':'none';$('splitLabels').style.display=isTwoPlayer?'flex':'none';$('weatherName').textContent=weatherState.name.toUpperCase();updateHud();}
+function backToMenu(){gameState='menu';mpOnlineRace=false;mpRemoteTarget=null;mpRemoteFinish=null;mpRaceId=null;if(mpRemoteCar?.group&&world)world.remove(mpRemoteCar.group);mpRemoteCar=null;$('hud').classList.remove('live');$('menu').classList.remove('hidden');setView('homePanel');$('pauseMenu').classList.add('hidden');$('finishMenu').classList.add('hidden');$('countdown').classList.remove('show');$('player2Hud').style.display='none';$('splitDivider').style.display='none';$('splitLabels').style.display='none';renderTracks();updateEngineSound();}
 function pauseRace(){if(gameState==='racing'){gameState='paused';$('pauseMenu').classList.remove('hidden');}else if(gameState==='paused'){gameState='racing';$('pauseMenu').classList.add('hidden');}}
 function updateCamera2(dt){if(!player2||!camera2)return;const f=frameAt(player2Distance);const pos=f.p.clone().addScaledVector(f.tangent,-15.5).addScaledVector(f.side,-player2Offset*.12);pos.y+=7.1;camera2.position.lerp(pos,1-Math.pow(.001,dt));const target=f.p.clone().addScaledVector(f.tangent,10);target.y+=1.5;camera2.lookAt(target);camera2.fov=THREE.MathUtils.lerp(camera2.fov,keys.Enter?75:68,dt*2);camera2.updateProjectionMatrix();}
 function updateHud(){const sorted=[{distance:playerDistance},...(mpOnlineRace&&mpRemoteTarget?[{distance:mpRemoteTarget.distance}]:[]),...(player2?[{distance:player2Distance}]:[]),...rivals].sort((a,b)=>b.distance-a.distance);const pos=sorted.findIndex(x=>x.distance===playerDistance)+1;$('position').innerHTML=`${pos}<span style="font-size:.5em">/${sorted.length}</span>`;$('lap').textContent=`${Math.min(raceLaps,Math.floor(playerDistance/trackLength)+1)}/${raceLaps}`;$('timer').textContent=formatTime(raceTime);$('weatherName').textContent=weatherState.name.toUpperCase();$('speed').textContent=String(Math.round(Math.abs(playerSpeed)*2.7)).padStart(3,'0');$('nitroText').textContent=`${Math.round(nitro)}%`;$('nitroFill').style.width=`${nitro}%`;$('damageText').textContent=`${Math.max(0,100-damage*20)}%`;$('damagePips').innerHTML=Array.from({length:5},(_,i)=>`<i class="${i<damage?'off':''}"></i>`).join('');let effect=[];if(shieldTime>0)effect.push(`SHIELD ${shieldTime.toFixed(1)}s`);if(turboTime>0)effect.push(`TURBO ${turboTime.toFixed(1)}s`);$('powerStatus').textContent=effect.length?effect.join(' · '):gameMode==='police'?`PURSUIT ${Math.max(0,pursuitDuration-raceTime).toFixed(0)}s REMAINING`:'POWER-UP SLOT · EMPTY';if(player2)$('player2Speed').textContent=String(Math.round(Math.abs(player2Speed)*2.7)).padStart(3,'0')+' KM/H';}
@@ -989,7 +989,7 @@ function updateRivalLearning(place,fieldSize){
  saveProfile();
 }
 function finishRace(){if(gameState==='finished')return;const wasSideStory=isSideStoryEvent;gameState='finished';
- if(mpOnlineRace&&mpChannel&&!mpRaceFinishSent){mpRaceFinishSent=true;mpChannel.send({type:'broadcast',event:'race-finish',payload:{userId:cloudUser?.id,name:mpName(),distance:playerDistance}});}$('countdown').classList.remove('show');const field=[{name:'YOU',distance:playerDistance},...(mpOnlineRace&&mpRemoteTarget?[{name:'ONLINE RIVAL',distance:mpRemoteTarget.distance}]:[]),...(player2?[{name:'PLAYER 2',distance:player2Distance}]:[]),...rivals].sort((a,b)=>b.distance-a.distance);const place=field.findIndex(x=>x.name==='YOU')+1;const p2Place=player2?field.findIndex(x=>x.name==='PLAYER 2')+1:99;updateRivalLearning(place,field.length);const timeSuccess=raceTime<=targetTime;const policeSuccess=gameMode==='police'&&raceTime>=pursuitDuration&&damage<5;let storySuccess=false;let reward=gameMode==='time'?(timeSuccess?520:250):gameMode==='police'?(policeSuccess?480:180):(place===1?650:place===2?450:place===3?320:180);if(isStoryEvent){const chapter=CHAPTERS[storyChapterCurrent];storySuccess=gameMode==='street'?place<=3:gameMode==='time'?timeSuccess:policeSuccess;const stars=rateStoryPerformance(gameMode,place,timeSuccess,policeSuccess);if(isSideStoryEvent){const key=storyChapterCurrent+'-'+sideStoryCurrent;profile.sideStoryStars=profile.sideStoryStars||{};profile.sideStoryStars[key]=Math.max(profile.sideStoryStars[key]||0,stars);reward=stars?Math.round(100+stars*100):50;isSideStoryEvent=false;}else{profile.chapterStars=profile.chapterStars||{};profile.chapterStars[storyChapterCurrent]=Math.max(profile.chapterStars[storyChapterCurrent]||0,stars);if(storySuccess){reward=chapter.reward;if(!profile.completed.includes(storyChapterCurrent))profile.completed.push(storyChapterCurrent);profile.storyStage=Math.max(profile.storyStage,storyChapterCurrent+1);profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.storyWins=(profile.questStats.storyWins||0)+1;}}}profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.races=(profile.questStats.races||0)+1;if(place<=3)profile.questStats.podiums=(profile.questStats.podiums||0)+1;saveProfile();awardCredits(reward);const p2Won=player2&&p2Place<place;const title=isTwoPlayer?(p2Won?'PLAYER 2 WINS':'PLAYER 1 WINS'):(gameMode==='time'?(timeSuccess?'TIME BEATEN':'TIME EXPIRED'):gameMode==='police'?(policeSuccess?'PURSUIT SURVIVED':'EVENT FAILED'):(place===1?'YOU WON':`${place}${place===2?'ND':place===3?'RD':'TH'} PLACE`));$('finishTitle').textContent=title;let summary=`${TRACKS[currentTrack].name} · ${formatTime(raceTime)} · ${weatherState.name.toUpperCase()} · +${comma(reward)} CREDITS`;if(gameMode==='time')summary+=` · TARGET ${formatTime(targetTime)}`;if(gameMode==='police')summary+=policeSuccess?' · Pursuit event survived.':' · Vehicle condition too low.';if(isStoryEvent){const rating=rateStoryPerformance(gameMode,place,timeSuccess,policeSuccess);summary+=isSideStoryEvent?` · SIDE STORY RESULT ${starText(rating)}`:storySuccess?` · CHAPTER CLEARED ${starText(rating)} · ${storyChapterCurrent===7?'CAMPAIGN COMPLETE':`UNLOCKED: ${CHAPTERS[storyChapterCurrent].unlock}`}`:' · OBJECTIVE NOT COMPLETE — TRY AGAIN';}if(isTwoPlayer)summary+=` · P1 ${place} / P2 ${p2Place}`;$('finishSummary').textContent=summary;$('finishMenu').classList.remove('hidden');renderTracks();refreshStory();renderChapterList();updateEngineSound();}
+ if(mpOnlineRace&&mpChannel&&!mpRaceFinishSent){mpRaceFinishSent=true;mpChannel.send({type:'broadcast',event:'race-finish',payload:{userId:cloudUser?.id,name:mpName(),raceId:mpRaceId,distance:playerDistance,raceTime,lap:Math.floor(playerDistance/trackLength)}});}$('countdown').classList.remove('show');const field=[{name:'YOU',distance:playerDistance},...(mpOnlineRace&&mpRemoteTarget?[{name:'ONLINE RIVAL',distance:mpRemoteTarget.distance}]:[]),...(player2?[{name:'PLAYER 2',distance:player2Distance}]:[]),...rivals].sort((a,b)=>b.distance-a.distance);const place=field.findIndex(x=>x.name==='YOU')+1;const p2Place=player2?field.findIndex(x=>x.name==='PLAYER 2')+1:99;updateRivalLearning(place,field.length);const timeSuccess=raceTime<=targetTime;const policeSuccess=gameMode==='police'&&raceTime>=pursuitDuration&&damage<5;let storySuccess=false;let reward=gameMode==='time'?(timeSuccess?520:250):gameMode==='police'?(policeSuccess?480:180):(place===1?650:place===2?450:place===3?320:180);if(isStoryEvent){const chapter=CHAPTERS[storyChapterCurrent];storySuccess=gameMode==='street'?place<=3:gameMode==='time'?timeSuccess:policeSuccess;const stars=rateStoryPerformance(gameMode,place,timeSuccess,policeSuccess);if(isSideStoryEvent){const key=storyChapterCurrent+'-'+sideStoryCurrent;profile.sideStoryStars=profile.sideStoryStars||{};profile.sideStoryStars[key]=Math.max(profile.sideStoryStars[key]||0,stars);reward=stars?Math.round(100+stars*100):50;isSideStoryEvent=false;}else{profile.chapterStars=profile.chapterStars||{};profile.chapterStars[storyChapterCurrent]=Math.max(profile.chapterStars[storyChapterCurrent]||0,stars);if(storySuccess){reward=chapter.reward;if(!profile.completed.includes(storyChapterCurrent))profile.completed.push(storyChapterCurrent);profile.storyStage=Math.max(profile.storyStage,storyChapterCurrent+1);profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.storyWins=(profile.questStats.storyWins||0)+1;}}}profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.races=(profile.questStats.races||0)+1;if(place<=3)profile.questStats.podiums=(profile.questStats.podiums||0)+1;saveProfile();awardCredits(reward);const p2Won=player2&&p2Place<place;const title=isTwoPlayer?(p2Won?'PLAYER 2 WINS':'PLAYER 1 WINS'):(gameMode==='time'?(timeSuccess?'TIME BEATEN':'TIME EXPIRED'):gameMode==='police'?(policeSuccess?'PURSUIT SURVIVED':'EVENT FAILED'):(place===1?'YOU WON':`${place}${place===2?'ND':place===3?'RD':'TH'} PLACE`));$('finishTitle').textContent=title;let summary=`${TRACKS[currentTrack].name} · ${formatTime(raceTime)} · ${weatherState.name.toUpperCase()} · +${comma(reward)} CREDITS`;if(gameMode==='time')summary+=` · TARGET ${formatTime(targetTime)}`;if(gameMode==='police')summary+=policeSuccess?' · Pursuit event survived.':' · Vehicle condition too low.';if(isStoryEvent){const rating=rateStoryPerformance(gameMode,place,timeSuccess,policeSuccess);summary+=isSideStoryEvent?` · SIDE STORY RESULT ${starText(rating)}`:storySuccess?` · CHAPTER CLEARED ${starText(rating)} · ${storyChapterCurrent===7?'CAMPAIGN COMPLETE':`UNLOCKED: ${CHAPTERS[storyChapterCurrent].unlock}`}`:' · OBJECTIVE NOT COMPLETE — TRY AGAIN';}if(isTwoPlayer)summary+=` · P1 ${place} / P2 ${p2Place}`;$('finishSummary').textContent=summary;$('finishMenu').classList.remove('hidden');if(mpOnlineRace)mpRefreshOnlineResults();renderTracks();refreshStory();renderChapterList();updateEngineSound();}
 function renderFrame(){
  if(!renderer||!scene||!camera)return;
  const w=window.innerWidth,h=window.innerHeight,half=Math.floor(w/2);
@@ -1007,8 +1007,31 @@ function renderFrame(){
 // Online lobby stage 1: Supabase Realtime presence + room-code channels.
 // Racing position synchronization will be layered onto this lobby in the next stage.
 let mpChannel=null, mpRoomCode=null, mpReady=false, mpMode=null;
-let mpOnlineRace=false, mpRemoteCar=null, mpRemoteTarget=null, mpSendAccumulator=0, mpRaceFinishSent=false;
+let mpOnlineRace=false, mpRemoteCar=null, mpRemoteTarget=null, mpSendAccumulator=0, mpRaceFinishSent=false, mpRaceId=null, mpRemoteFinish=null, mpCollisionCooldown=0;
 const mpName=()=>((cloudUser?.email||'DRIVER').split('@')[0].slice(0,18)||'DRIVER');
+function mpEnsureRemoteCar(){
+ if(!mpOnlineRace||!world)return;
+ if(mpRemoteCar?.group)world.remove(mpRemoteCar.group);
+ mpRemoteCar=createCar(0x20c9e8,0x9cf4ff,false,'hyper');
+ mpRemoteCar.group.scale.multiplyScalar(1.02);
+ mpRemoteCar.flames.visible=false;
+ if(mpRemoteTarget)positionCar(mpRemoteCar,mpRemoteTarget.distance,mpRemoteTarget.offset);
+}
+function mpSendEvent(event,payload={}){
+ if(!mpChannel||!mpOnlineRace)return;
+ mpChannel.send({type:'broadcast',event,payload:{...payload,userId:cloudUser?.id,raceId:mpRaceId}});
+}
+function mpRefreshOnlineResults(){
+ if(!mpOnlineRace||!$('finishMenu')||$('finishMenu').classList.contains('hidden'))return;
+ const base=$('finishSummary').textContent.split(' · ONLINE RESULTS:')[0];
+ const result=mpRemoteFinish?`${mpRemoteFinish.name||'OPPONENT'} FINISHED · ${formatTime(Number(mpRemoteFinish.raceTime)||0)} · LAP ${Number(mpRemoteFinish.lap)||0}`:'WAITING FOR OPPONENT TO FINISH';
+ $('finishSummary').textContent=base+` · ONLINE RESULTS: ${result}`;
+}
+function mpApplyRemoteImpact(){
+ if(shieldTime>0){shieldTime=0;playerSpeed*=.94;showToast('SHIELD BLOCKED ONLINE COLLISION');}
+ else{playerSpeed*=.68;damage=Math.min(5,damage+1);showToast('ONLINE COLLISION');}
+}
+
 function mpStatus(msg,room=false){const el=$(room?'mpRoomStatus':'mpStatus');if(el)el.textContent=msg;}
 function mpRenderPlayers(state){
  const host=$('mpPlayers'); if(!host)return;
@@ -1018,7 +1041,7 @@ function mpRenderPlayers(state){
 }
 async function mpDisconnect(){
  if(mpChannel){try{await supabase.removeChannel(mpChannel);}catch(e){}}
- mpChannel=null;mpRoomCode=null;mpReady=false;mpMode=null;
+ mpChannel=null;mpRoomCode=null;mpReady=false;mpMode=null;mpOnlineRace=false;mpRemoteTarget=null;mpRemoteFinish=null;mpRaceId=null;mpCollisionCooldown=0;if(mpRemoteCar?.group&&world)world.remove(mpRemoteCar.group);mpRemoteCar=null;
  $('mpRoomCode').textContent='------';mpStatus('Not connected.');mpStatus('No private room joined.',true);mpRenderPlayers({});
 }
 async function mpConnect(channelName,mode,code=null){
@@ -1030,18 +1053,28 @@ async function mpConnect(channelName,mode,code=null){
  mpChannel.on('broadcast',{event:'ready'},({payload})=>{if(payload?.userId!==cloudUser.id)mpStatus(`${payload.name||'A driver'} is ${payload.ready?'ready':'not ready'}.`,true);});
  mpChannel.on('broadcast',{event:'race-start'},({payload})=>{
    if(!payload||payload.userId===cloudUser.id)return;
-   mpOnlineRace=true;mpRaceFinishSent=false;
+   mpOnlineRace=true;mpRaceFinishSent=false;mpRaceId=payload.raceId||null;mpRemoteTarget=null;mpRemoteFinish=null;
    const track=TRACKS[payload.track]?payload.track:'neon';
-   initRace('street',track,false,false);
+   initRace('street',track,false,false);mpEnsureRemoteCar();
    countdown=Math.max(.2,((payload.startAt||Date.now()+3500)-Date.now())/1000);
    mpStatus('Online race starting. Get ready!',true);
  });
  mpChannel.on('broadcast',{event:'race-state'},({payload})=>{
-   if(!payload||payload.userId===cloudUser.id||!mpOnlineRace)return;
-   mpRemoteTarget={distance:Number(payload.distance)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,stamp:Date.now()};
+   if(!payload||payload.userId===cloudUser.id||!mpOnlineRace||payload.raceId!==mpRaceId)return;
+   mpRemoteTarget={userId:payload.userId,distance:Number(payload.distance)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,lap:Number(payload.lap)||0,nitro:Number(payload.nitro)||0,damage:Number(payload.damage)||0,shieldTime:Number(payload.shieldTime)||0,turboTime:Number(payload.turboTime)||0,boost:!!payload.boost,stamp:Date.now()};
  });
  mpChannel.on('broadcast',{event:'race-finish'},({payload})=>{
-   if(payload?.userId!==cloudUser.id)mpStatus(`${payload?.name||'Your opponent'} finished the race.`,true);
+   if(!payload||payload.userId===cloudUser.id||payload.raceId!==mpRaceId)return;
+   mpRemoteFinish=payload;mpStatus(`${payload.name||'Your opponent'} finished the race.`,true);mpRefreshOnlineResults();
+ });
+ mpChannel.on('broadcast',{event:'pickup-claim'},({payload})=>{
+   if(!payload||payload.userId===cloudUser.id||payload.raceId!==mpRaceId)return;
+   const key=`${Number(payload.lap)||0}-${Number(payload.pickupId)}`;collected.add(key);
+   const item=pickups.find(x=>x.id===Number(payload.pickupId));if(item)item.group.visible=false;
+ });
+ mpChannel.on('broadcast',{event:'player-impact'},({payload})=>{
+   if(!payload||payload.userId===cloudUser.id||payload.targetUserId!==cloudUser.id||payload.raceId!==mpRaceId)return;
+   mpApplyRemoteImpact();
  });
  mpChannel.subscribe(async status=>{
    if(status==='SUBSCRIBED'){
@@ -1064,14 +1097,15 @@ async function mpStartOnlineRace(){
  if(!players.every(p=>p.ready)){mpStatus('Every driver must press I\'M READY first.',true);return;}
  const track=TRACKS[currentTrack]&&currentTrack!=='random'?currentTrack:'neon';
  const startAt=Date.now()+4000;
- mpOnlineRace=true;mpRaceFinishSent=false;
- initRace('street',track,false,false);
+ mpOnlineRace=true;mpRaceFinishSent=false;mpRaceId=`${Date.now()}-${Math.random().toString(36).slice(2,8)}`;mpRemoteTarget=null;mpRemoteFinish=null;mpCollisionCooldown=0;
+ initRace('street',track,false,false);mpEnsureRemoteCar();
  countdown=Math.max(.2,(startAt-Date.now())/1000);
- await mpChannel.send({type:'broadcast',event:'race-start',payload:{userId:cloudUser.id,name:mpName(),track,startAt}});
+ await mpChannel.send({type:'broadcast',event:'race-start',payload:{userId:cloudUser.id,name:mpName(),track,startAt,raceId:mpRaceId}});
  mpStatus('Race starting. Good luck!',true);
 }
 function mpUpdateOnline(dt){
  if(!mpOnlineRace||!mpChannel)return;
+ mpCollisionCooldown=Math.max(0,mpCollisionCooldown-dt);
  if(mpRemoteCar&&mpRemoteTarget){
    const a=1-Math.pow(.001,dt);
    const dd=mpRemoteTarget.displayDistance??mpRemoteTarget.distance;
@@ -1079,16 +1113,26 @@ function mpUpdateOnline(dt){
    mpRemoteTarget.displayDistance=dd+(mpRemoteTarget.distance-dd)*a;
    mpRemoteTarget.displayOffset=oo+(mpRemoteTarget.offset-oo)*a;
    positionCar(mpRemoteCar,mpRemoteTarget.displayDistance,mpRemoteTarget.displayOffset);
+   mpRemoteCar.flames.visible=!!mpRemoteTarget.boost||mpRemoteTarget.turboTime>0;
    mpRemoteCar.wheels?.forEach(w=>{w.rotation.x-=Math.max(0,mpRemoteTarget.speed)*dt/.45;});
+   // Each client applies its own collision once and tells the other driver to apply theirs.
+   const close=Math.abs(playerDistance-mpRemoteTarget.distance)<3.2&&Math.abs(playerOffset-mpRemoteTarget.offset)<2.05;
+   if(gameState==='racing'&&close&&mpCollisionCooldown<=0&&cloudUser?.id&&mpRemoteTarget.userId&&String(cloudUser.id)<String(mpRemoteTarget.userId)){
+     mpCollisionCooldown=1.15;
+     if(shieldTime>0){shieldTime=0;playerSpeed*=.94;showToast('SHIELD · ONLINE IMPACT BLOCKED');}
+     else{playerSpeed*=.68;damage=Math.min(5,damage+1);showToast('ONLINE COLLISION');}
+     mpSendEvent('player-impact',{targetUserId:mpRemoteTarget.userId||null});
+   }
  }
  if(gameState==='racing'){
    mpSendAccumulator+=dt;
    if(mpSendAccumulator>=.08){
      mpSendAccumulator=0;
-     mpChannel.send({type:'broadcast',event:'race-state',payload:{userId:cloudUser.id,name:mpName(),distance:playerDistance,offset:playerOffset,speed:playerSpeed,lap:Math.floor(playerDistance/trackLength)}});
+     mpChannel.send({type:'broadcast',event:'race-state',payload:{userId:cloudUser?.id,name:mpName(),raceId:mpRaceId,distance:playerDistance,offset:playerOffset,speed:playerSpeed,lap:Math.floor(playerDistance/trackLength),nitro,damage,shieldTime,turboTime,boost:boostActive,raceTime}});
    }
  }
 }
+
 function mpCode(){return Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x%32]).join('');}
 async function mpCreateRoom(){if(!cloudUser){mpStatus('Sign in first to create a room.');return;}const code=mpCode();await mpConnect('midnight-run-room-'+code,'private',code);}
 async function mpJoinRoom(){if(!cloudUser){mpStatus('Sign in first to join a room.');return;}const code=$('mpJoinCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code)){mpStatus('Enter a valid six-character room code.',true);return;}await mpConnect('midnight-run-room-'+code,'private',code);}
