@@ -1,19 +1,22 @@
-MIDNIGHT RUN — 3D GARAGE UPDATE
+MIDNIGHT RUN — COMPLETE GAME UPDATE
 
-This update adds an interactive Three.js garage preview using the same car-building system as the race game.
+This package combines the current game build into one index.html file.
 
-WHAT'S NEW
-- A live 3D car preview in the Garage.
-- Drag left/right on the preview to rotate the car. It also rotates slowly on its own.
-- The preview updates immediately when you change body style, paint, accent colour, or buy an upgrade.
-- Visible upgrade parts are shown on the preview before you return to the race hub.
-- Six body styles remain available: Sport, Muscle, Hyper, Rally, Tuner, and Classic.
+Included:
+- Eight-chapter Nightshift story campaign with dialogue, objectives, rewards and track unlocks.
+- Rival AI that uses nitro and adjusts pace based on player performance and race position.
+- Six distinct car body styles: Sport, Muscle, Hyper, Rally, Tuner and Classic.
+- Interactive 3D garage preview that rotates, and updates when the car, paint or upgrades change.
+- Visible engine, handling and nitro upgrade parts.
+- Existing race modes, tracks, local two-player mode and local profile save from the source game.
 
-INSTALL
+Install:
 1. Extract this ZIP.
-2. Open your existing midnight-run GitHub repository.
-3. Upload the included index.html and replace the existing index.html.
-4. Commit directly to main.
-5. Wait for GitHub Pages to publish, then hard-refresh the game (Ctrl + Shift + R).
+2. Upload the included index.html to the root of your existing GitHub repository.
+3. Replace the old index.html and commit directly to main.
+4. Keep all other existing repository files.
+5. Wait for GitHub Pages to publish, then hard-refresh the game.
 
-Keep your other repository files and settings. This is still a browser game and needs an internet connection to load Three.js from its CDN.
+Notes:
+- The game loads Three.js from a CDN, so an internet connection is needed.
+- This package does not add online multiplayer, account authentication or cloud saves.
