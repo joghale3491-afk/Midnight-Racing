@@ -232,6 +232,21 @@
 
   .garageCarArt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;--carpaint:#176de0;z-index:1}.garageCarArt:before{content:"";position:absolute;width:78%;height:1px;bottom:24%;background:#5beeff55;box-shadow:0 0 28px 12px #24cfff22}.carShadow{position:absolute;width:68%;height:16px;bottom:25%;border-radius:50%;background:#0009;filter:blur(9px)}.carBody{position:relative;width:min(76%,470px);height:100px;margin-top:45px;background:linear-gradient(180deg,color-mix(in srgb,var(--carpaint),white 24%),var(--carpaint) 48%,color-mix(in srgb,var(--carpaint),black 35%));border-radius:48% 25% 18% 18% / 45% 42% 25% 25%;border:2px solid #d8f8ff99;box-shadow:0 12px 30px #0009,inset 0 3px 8px #fff6;transform:perspective(500px) rotateX(8deg)}.carWindow{position:absolute;left:29%;top:-38px;width:42%;height:48px;background:linear-gradient(140deg,#b7efff,#152b42 65%);clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);border:2px solid #b9efff}.carStripe{position:absolute;left:5%;right:5%;top:49%;height:5px;background:var(--caraccent,#48eaff);box-shadow:0 0 10px var(--caraccent,#48eaff)}.carWheel{position:absolute;bottom:-17px;width:48px;height:48px;border:8px solid #10151d;border-radius:50%;background:radial-gradient(circle,#b9d5e2 0 18%,#384b59 20% 42%,#10151d 45%);box-shadow:0 0 0 2px #8ba3b4}.wheelA{left:15%}.wheelB{right:15%}.carSpoiler{position:absolute;right:3%;top:-19px;width:36px;height:8px;background:#18232e;border-top:4px solid var(--caraccent,#48eaff);display:none}.garageCarArt.muscle .carBody{height:116px;border-radius:28% 25% 14% 14%}.garageCarArt.muscle .carWindow{height:36px;top:-27px}.garageCarArt.hyper .carBody{height:76px;border-radius:55% 20% 25% 25%}.garageCarArt.rally .carBody{height:112px;border-radius:28% 30% 20% 20%}.garageCarArt.rally .carSpoiler,.garageCarArt.tuner .carSpoiler{display:block}.garageCarArt.classic .carBody{height:106px;border-radius:35% 35% 20% 20%}.carStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}.carStat{padding:8px 5px;background:#071522;border:1px solid #72dfff2b;border-radius:7px;text-align:center}.carStat b{display:block;color:#fff;font-size:12px}.carStat small{font-size:8px;color:#8faabd}.styleBtn.locked:after{content:' · LOCKED';color:#ffb45e}.styleBtn.owned{border-color:#53dca3}.styleBtn.selectedCar{background:#174b48;border-color:#53e2a9;color:#fff}.carBuyLine{font-size:10px;color:#a9c4d5;margin:6px 0 12px}
 
+
+/* ONLINE MULTIPLAYER LOBBY */
+.mpWrap{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:16px}
+.mpCard{background:linear-gradient(145deg,#102438,#081321);border:1px solid #55dff044;border-radius:13px;padding:17px}
+.mpCard h3{margin:0 0 8px;font-size:18px}
+.mpMuted{color:#9eb4c5;font-size:12px;line-height:1.5}
+.mpActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.mpActions button{flex:1;min-width:130px}
+.mpInput{width:100%;padding:12px;margin-top:8px;background:#050d18;border:1px solid #35546b;border-radius:8px;color:white;text-transform:uppercase}
+.mpRoomCode{font-size:30px;font-weight:900;letter-spacing:.2em;color:#ffe08a;margin:8px 0}
+.mpPlayer{display:flex;justify-content:space-between;align-items:center;padding:10px;margin-top:7px;background:#071522;border:1px solid #29465b;border-radius:8px;font-size:12px}
+.mpStatus{margin-top:10px;min-height:22px;color:#8feaff;font-size:12px}
+.mpPill{font-size:10px;border:1px solid #62e8aa66;color:#83ffc0;padding:4px 7px;border-radius:20px}
+@media(max-width:760px){.mpWrap{grid-template-columns:1fr}}
+
 </style>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
@@ -276,6 +291,7 @@
         <button class="navBtn active" data-view="homePanel">▣ &nbsp; RACE HUB</button>
         <button class="navBtn" data-view="storyPanel">✦ &nbsp; STORY MODE</button>
         <button class="navBtn" data-view="garagePanel">◈ &nbsp; GARAGE</button>
+        <button class="navBtn" data-view="multiplayerPanel">◎ &nbsp; MULTIPLAYER</button>
         <div class="navNote">BUILD YOUR REP.<br>WIN THE NIGHT.<br>OWN THE STREETS.<br><br>Progress saves on this device. Sign in to enable cloud backups.</div>
       </aside>
       <main class="hubMain">
@@ -307,7 +323,29 @@
           <div class="heroStrip"><div><div class="eyebrow">A CAMPAIGN OF SPEED, LOYALTY & SECOND CHANCES</div><h2>THE NIGHT<br><span style="color:var(--pink)">SHIFT</span></h2><p>You're a new driver trying to earn a place in the city's underground crew. Each win opens a new district and reveals who is really running the scene.</p></div><div class="heroMeta">8 CHAPTERS<br>24 SIDE STORIES<br>RACE · TIME · PURSUIT</div></div>
           <div class="storyLayout"><div class="storyFeature"><span class="questTag" id="storyChapterTag">CHAPTER 01 / THE INVITATION</span><h3 id="storyChapterTitle">First Night</h3><p id="storyChapterDesc">Your first run is a chance to prove you belong. The crew is watching.</p><div class="storyQuote" id="storyDialogue">“Nobody gets a second first impression out here. Show me what you can do.” — VEX</div><div class="storyThreads"><div class="panelTitle">MAIN STORY EPISODES · CREW MISSIONS</div><p class="tinyNote">These races are required story episodes. Complete all three to unlock the next chapter. Earn up to three stars in each race.</p><div id="storyThreadList" class="storyThreadList"></div></div><div class="storyThreads"><div class="panelTitle">CREW QUESTS · REWARD BOARD</div><p class="tinyNote">Complete objectives to earn bonus credits. Each quest can be claimed once.</p><div id="questBoard" class="questList"></div></div><div class="storyMetaBox" style="margin-top:12px"><small>CHAPTER PERFORMANCE</small><b id="chapterStarRating">☆☆☆ · NOT COMPLETED</b></div><div class="storyMetaGrid"><div class="storyMetaBox"><small>MISSION OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div><div class="storyMetaBox"><small>MISSION CONTACT</small><b id="storyContact">VEX · CREW SCOUT</b></div></div><div class="tinyNote" id="storyReward">REWARD: 500 CREDITS · NEW DISTRICT UNLOCK</div><button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START STORY CHAPTER ↗</button></div><div class="storyList"><div class="panelTitle" style="margin-top:0">CAMPAIGN CASE FILES</div><p class="tinyNote" style="margin:0 0 12px">Every race changes your standing in the underground. Clear chapters to uncover the truth behind the city’s new racing syndicate.</p><div class="questList" id="chapterList"></div></div></div>
         </section>
-        <section id="garagePanel" class="viewPanel hidden">
+        <section id="multiplayerPanel" class="viewPanel hidden">
+  <div class="heroStrip"><div><div class="eyebrow">RACE TOGETHER · ONLINE</div><h2>THE <span style="color:var(--pink)">GRID</span></h2><p>Meet other drivers, create a private room, or join a friend's race using a room code.</p></div><div class="heroMeta">SUPABASE REALTIME<br>ACCOUNT REQUIRED<br>PUBLIC & PRIVATE LOBBIES</div></div>
+  <div class="mpWrap">
+    <div class="mpCard">
+      <h3>PUBLIC MATCHMAKING</h3>
+      <p class="mpMuted">Join the public waiting room and see other signed-in drivers. This first multiplayer stage establishes the live lobby; synchronized racing is the next stage.</p>
+      <div class="mpActions"><button class="primaryBtn" id="mpPublicBtn">FIND PUBLIC LOBBY</button><button class="secondaryBtn" id="mpLeaveBtn">LEAVE LOBBY</button></div>
+      <div class="mpStatus" id="mpStatus">Sign in to access online multiplayer.</div>
+      <div class="panelTitle" style="margin-top:16px">DRIVERS IN THIS LOBBY</div>
+      <div id="mpPlayers"><div class="mpPlayer">No lobby connected</div></div>
+    </div>
+    <div class="mpCard">
+      <h3>PRIVATE RACE ROOM</h3>
+      <p class="mpMuted">Create a room and share its six-character code with a friend. Your friend can enter the code to join.</p>
+      <div class="mpActions"><button class="goldBtn" id="mpCreateBtn">CREATE PRIVATE ROOM</button></div>
+      <div class="mpRoomCode" id="mpRoomCode">------</div>
+      <input class="mpInput" id="mpJoinCode" maxlength="6" placeholder="ENTER ROOM CODE" aria-label="Room code">
+      <div class="mpActions"><button class="primaryBtn" id="mpJoinBtn">JOIN ROOM</button><button class="secondaryBtn" id="mpReadyBtn">I'M READY</button></div>
+      <div class="mpStatus" id="mpRoomStatus">No private room joined.</div>
+    </div>
+  </div>
+</section>
+<section id="garagePanel" class="viewPanel hidden">
           <div class="heroStrip"><div><div class="eyebrow">YOUR RIDE. YOUR SIGNATURE.</div><h2>THE <span style="color:var(--pink)">GARAGE</span></h2><p>Browse six cars, compare their stats, and purchase vehicles with race credits. Only owned cars can be selected.</p></div><div class="heroMeta">BUILD / TUNE / SAVE<br>UPGRADES CHANGE YOUR BUILD<br>AND RACE PERFORMANCE</div></div>
           <div class="garageGrid"><div>
             <div class="garagePreview" id="garagePreview"><div id="garageCarArt" class="garageCarArt sport" aria-label="Selected car preview"><div class="carShadow"></div><div class="carBody"><div class="carWindow"></div><div class="carStripe"></div><div class="carWheel wheelA"></div><div class="carWheel wheelB"></div><div class="carSpoiler"></div></div></div><div class="garagePreviewName" id="garagePreviewName">SPORT COUPE</div><div class="garagePreviewHint">GARAGE DISPLAY · SELECT A CAR BELOW</div></div>
@@ -963,11 +1001,60 @@ function renderFrame(){
  }
 }
 
+
+// Online lobby stage 1: Supabase Realtime presence + room-code channels.
+// Racing position synchronization will be layered onto this lobby in the next stage.
+let mpChannel=null, mpRoomCode=null, mpReady=false, mpMode=null;
+const mpName=()=>((cloudUser?.email||'DRIVER').split('@')[0].slice(0,18)||'DRIVER');
+function mpStatus(msg,room=false){const el=$(room?'mpRoomStatus':'mpStatus');if(el)el.textContent=msg;}
+function mpRenderPlayers(state){
+ const host=$('mpPlayers'); if(!host)return;
+ const players=[];
+ Object.entries(state||{}).forEach(([key,entries])=>(entries||[]).forEach(entry=>players.push(entry)));
+ host.innerHTML=players.length?players.map(p=>`<div class="mpPlayer"><span>${String(p.name||'DRIVER').replace(/[<>&"]/g,'')}</span><span class="mpPill">${p.ready?'READY':'WAITING'}</span></div>`).join(''):'<div class="mpPlayer">Waiting for drivers…</div>';
+}
+async function mpDisconnect(){
+ if(mpChannel){try{await supabase.removeChannel(mpChannel);}catch(e){}}
+ mpChannel=null;mpRoomCode=null;mpReady=false;mpMode=null;
+ $('mpRoomCode').textContent='------';mpStatus('Not connected.');mpStatus('No private room joined.',true);mpRenderPlayers({});
+}
+async function mpConnect(channelName,mode,code=null){
+ if(!cloudUser){mpStatus('Please sign in before joining multiplayer.');return;}
+ await mpDisconnect();
+ mpMode=mode;mpRoomCode=code;
+ mpChannel=supabase.channel(channelName,{config:{presence:{key:cloudUser.id},broadcast:{self:false}}});
+ mpChannel.on('presence',{event:'sync'},()=>mpRenderPlayers(mpChannel.presenceState()));
+ mpChannel.on('broadcast',{event:'ready'},({payload})=>{if(payload?.userId!==cloudUser.id)mpStatus(`${payload.name||'A driver'} is ${payload.ready?'ready':'not ready'}.`,true);});
+ mpChannel.subscribe(async status=>{
+   if(status==='SUBSCRIBED'){
+     await mpChannel.track({userId:cloudUser.id,name:mpName(),ready:mpReady,joinedAt:new Date().toISOString()});
+     mpStatus(mode==='public'?'Connected to public lobby.':'Connected to private room.',mode!=='public');
+     if(code)$('mpRoomCode').textContent=code;
+   }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){
+     mpStatus('Could not connect. Check Supabase Realtime is enabled and try again.',mode!=='public');
+   }
+ });
+}
+function mpCode(){return Array.from(crypto.getRandomValues(new Uint8Array(6)),x=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x%32]).join('');}
+async function mpCreateRoom(){if(!cloudUser){mpStatus('Sign in first to create a room.');return;}const code=mpCode();await mpConnect('midnight-run-room-'+code,'private',code);}
+async function mpJoinRoom(){if(!cloudUser){mpStatus('Sign in first to join a room.');return;}const code=$('mpJoinCode').value.trim().toUpperCase();if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code)){mpStatus('Enter a valid six-character room code.',true);return;}await mpConnect('midnight-run-room-'+code,'private',code);}
+async function mpReadyToggle(){
+ if(!mpChannel){mpStatus('Join a lobby or private room first.',true);return;}
+ mpReady=!mpReady;
+ await mpChannel.track({userId:cloudUser.id,name:mpName(),ready:mpReady,joinedAt:new Date().toISOString()});
+ await mpChannel.send({type:'broadcast',event:'ready',payload:{userId:cloudUser.id,name:mpName(),ready:mpReady}});
+ $('mpReadyBtn').textContent=mpReady?'CANCEL READY':'I\'M READY';
+ mpStatus(mpReady?'You are ready.':'You are not ready.',true);
+}
+
 // Hub navigation and controls
 function bindHub(){
  document.querySelectorAll('.navBtn').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
  document.querySelectorAll('.modeCard').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
  document.querySelectorAll('.trackCard').forEach(card=>card.addEventListener('click',()=>{const id=card.dataset.track;if(!trackUnlocked(id)){const needed=({coast:'Complete Chapter 01',alpine:'Complete Chapter 02',desert:'Complete Chapter 03',industrial:'Complete Chapter 04',forest:'Complete Chapter 05',harbor:'Complete Chapter 06',skyline:'Complete Chapter 07'})[id]||'Progress through Story Mode';$('trackDescription').textContent=`LOCKED LOCATION · ${needed} to unlock this circuit.`;return;}currentTrack=id;document.querySelectorAll('.trackCard').forEach(c=>c.classList.toggle('selected',c===card));$('trackDescription').textContent=id==='random'?'An endlessly regenerated circuit with a new corner sequence and biome each run. Weather conditions are randomized too.':TRACKS[id].description+' Weather is randomized for each event.';}));
+ $('mpPublicBtn').addEventListener('click',()=>mpConnect('midnight-run-public-lobby','public'));
+ $('mpCreateBtn').addEventListener('click',mpCreateRoom);$('mpJoinBtn').addEventListener('click',mpJoinRoom);
+ $('mpLeaveBtn').addEventListener('click',mpDisconnect);$('mpReadyBtn').addEventListener('click',mpReadyToggle);
  $('startBtn').addEventListener('click',startQuickRace);$('twoPlayerBtn').addEventListener('click',startLocalRace);$('storyStartBtn').addEventListener('click',startStoryRace);
  $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));$('backFromGarage').addEventListener('click',()=>setView('homePanel'));
  document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.paint=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.accent=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('.styleBtn').forEach(b=>b.addEventListener('click',()=>buyCar(b.dataset.style)));
@@ -979,7 +1066,7 @@ $('accountSignInBtn').addEventListener('click',accountSignIn);
 $('accountSignUpBtn').addEventListener('click',accountSignUp);
 $('accountSignOutBtn').addEventListener('click',accountSignOut);
 supabase.auth.getSession().then(async({data,error})=>{if(error){setAccountMessage(error.message);return;}if(data.session){cloudUser=data.session.user;updateAccountButton();await loadCloudSave(cloudUser);}else updateAccountButton();});
-supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user){cloudUser=session.user;updateAccountButton();}else{cloudUser=null;updateAccountButton();}});
+supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user){cloudUser=session.user;updateAccountButton();}else{cloudUser=null;updateAccountButton();if(mpChannel)mpDisconnect();}});
 selectedChapterIndex=Math.min(profile.storyStage,CHAPTERS.length-1);selectedChapterIndex=Math.min(profile.storyStage,CHAPTERS.length-1);bindHub();renderTracks();refreshStory();renderChapterList();refreshGarage();
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','Enter'].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==='KeyP'&&!e.repeat)pauseRace();if(e.code==='Escape'&&!e.repeat)pauseRace();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{Object.keys(keys).forEach(k=>keys[k]=false);if(gameState==='racing')pauseRace();});
 document.querySelectorAll('#mobile button').forEach(btn=>{const code=btn.dataset.key;btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;btn.classList.add('pressed');btn.setPointerCapture(e.pointerId);});const release=()=>{keys[code]=false;btn.classList.remove('pressed');};btn.addEventListener('pointerup',release);btn.addEventListener('pointercancel',release);btn.addEventListener('lostpointercapture',release);});

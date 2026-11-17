@@ -1,10 +1,22 @@
-MIDNIGHT RUN - MAIN STORY EPISODES UPDATE
+MIDNIGHT RUN - MULTIPLAYER LOBBY UPDATE
 
-Side-story races are now mandatory story episodes:
-- Complete the chapter's main race first.
-- The three crew episode races then become playable.
-- Complete all three episode races (at least 1 star each) to unlock the next chapter.
-- Episode races retain their individual star ratings and rewards.
-- The Story Mode panel shows episode completion progress.
+This update adds the first online multiplayer stage:
+- Public lobby using Supabase Realtime Presence
+- Private rooms with six-character codes
+- Driver presence and ready status
 
-Install: replace only index.html in your GitHub Pages repository and commit directly to main. Keep all other files, including Supabase-related files.
+IMPORTANT:
+This is the lobby stage only. It does NOT yet synchronize cars or run a live online race.
+The next stage will add race-state synchronization after the lobby is tested.
+
+INSTALL:
+1. Back up your current index.html.
+2. Replace only index.html in your GitHub Pages repository with this file.
+3. Commit directly to main and wait for Pages to publish.
+4. Hard refresh the live game (Ctrl+Shift+R).
+5. Sign in, open MULTIPLAYER, and test public lobby or private room.
+
+SUPABASE:
+This uses Supabase Realtime channels and Presence with your existing project URL and publishable key.
+No additional SQL table is needed for this lobby stage. In Supabase Dashboard, ensure Realtime is available/enabled for the project.
+Never expose a service_role or secret key in the browser.
