@@ -201,6 +201,19 @@
   @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{padding:0}.navBtn{border-radius:8px}.storyLayout{grid-template-columns:1fr}}
   @media(max-width:520px){.menuWrap{width:98vw;max-height:96vh;padding:13px;border-radius:12px}.hubTop{padding-bottom:12px;margin-bottom:12px}.hubLogo{font-size:27px}.hubTag{font-size:7px}.hubGrid{gap:12px}.navBtn{font-size:8px;padding:10px 7px}.heroStrip{border-radius:10px}.storyMetaGrid{grid-template-columns:1fr 1fr}.storyFeature,.storyList{padding:13px}}
 
+
+  .accountBtn{border:1px solid #65eaff66;background:#0d2233;color:#dffaff;border-radius:9px;padding:9px 12px;font-size:10px;font-weight:800;letter-spacing:.08em;cursor:pointer}
+  .accountBtn:hover{background:#15364c}
+  .accountModal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#020711dd;padding:18px}
+  .accountCard{width:min(430px,96vw);background:linear-gradient(145deg,#10263a,#07111e);border:1px solid #6cecff55;border-radius:16px;padding:22px;box-shadow:0 25px 90px #000b}
+  .accountCard h2{font-size:25px;margin:7px 0}
+  .accountCard p{font-size:12px;line-height:1.6;color:#a9bfce}
+  .accountCard input{width:100%;padding:12px;margin:6px 0;background:#050d18;border:1px solid #35546b;border-radius:8px;color:white;outline:none}
+  .accountActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .accountActions button{flex:1;min-width:115px}
+  #accountMessage{min-height:20px;color:#8feaff;font-size:11px;margin-top:10px}
+  .accountClose{float:right;background:transparent;border:0;color:#b7c9d8;font-size:20px;cursor:pointer}
+
 </style>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
@@ -239,13 +252,13 @@
 </div>
 <div class="overlay" id="menu">
   <div class="menuWrap">
-    <div class="hubTop"><div><div class="hubLogo">MIDNIGHT <span>RUN</span></div><div class="hubTag">THE UNDERGROUND IS YOURS TO TAKE</div></div><div class="creditsPill">✦ <span id="creditsValue">1,200</span> CREDITS</div></div>
+    <div class="hubTop"><div><div class="hubLogo">MIDNIGHT <span>RUN</span></div><div class="hubTag">THE UNDERGROUND IS YOURS TO TAKE</div></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><button class="accountBtn" id="accountOpenBtn">SIGN IN / CREATE ACCOUNT</button><div class="creditsPill">✦ <span id="creditsValue">1,200</span> CREDITS</div></div></div>
     <div class="hubGrid">
       <aside class="sideNav">
         <button class="navBtn active" data-view="homePanel">▣ &nbsp; RACE HUB</button>
         <button class="navBtn" data-view="storyPanel">✦ &nbsp; STORY MODE</button>
         <button class="navBtn" data-view="garagePanel">◈ &nbsp; GARAGE</button>
-        <div class="navNote">BUILD YOUR REP.<br>WIN THE NIGHT.<br>OWN THE STREETS.<br><br>Progress and car upgrades save on this device.</div>
+        <div class="navNote">BUILD YOUR REP.<br>WIN THE NIGHT.<br>OWN THE STREETS.<br><br>Progress saves on this device. Sign in to enable cloud backups.</div>
       </aside>
       <main class="hubMain">
         <section id="homePanel" class="viewPanel">
@@ -294,12 +307,35 @@
     </div>
   </div>
 </div>
+<div class="accountModal hidden" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+  <div class="accountCard">
+    <button class="accountClose" id="accountCloseBtn" aria-label="Close">×</button>
+    <div class="eyebrow">NIGHTSHIFT NETWORK</div>
+    <h2 id="accountTitle">PLAYER ACCOUNT</h2>
+    <p id="accountIntro">Create an account or sign in to sync your MIDNIGHT RUN progress across devices.</p>
+    <input id="accountEmail" type="email" autocomplete="email" placeholder="Email address" maxlength="254">
+    <input id="accountPassword" type="password" autocomplete="current-password" placeholder="Password (at least 8 characters)" minlength="8">
+    <div class="accountActions">
+      <button class="primaryBtn" id="accountSignInBtn">SIGN IN</button>
+      <button class="goldBtn" id="accountSignUpBtn">CREATE ACCOUNT</button>
+    </div>
+    <button class="secondaryBtn" id="accountSignOutBtn" style="width:100%;margin-top:8px;display:none">SIGN OUT</button>
+    <div id="accountMessage" role="status">Your game still saves locally when signed out.</div>
+  </div>
+</div>
 <div class="overlay hidden" id="pauseMenu"><div class="overlayCard"><div class="eyebrow">RACE INTERRUPTED</div><h2>PAUSED</h2><p>Catch your breath. Your position and lap progress are saved while the race is paused.</p><div class="overlayButtons"><button class="primaryBtn" id="resumeBtn">RESUME</button><button class="secondaryBtn" id="restartBtn">RESTART RACE</button><button class="secondaryBtn" id="quitBtn">QUIT TO MENU</button></div></div></div>
 <div class="overlay hidden" id="finishMenu"><div class="overlayCard"><div class="eyebrow">CHECKERED FLAG</div><h2 id="finishTitle">RACE COMPLETE</h2><p id="finishSummary">You crossed the finish line.</p><div class="overlayButtons"><button class="primaryBtn" id="againBtn">RACE AGAIN</button><button class="secondaryBtn" id="menuBtn">TRACK SELECT</button></div></div></div>
 <div id="player2Hud">PLAYER 2 · ARROWS / ENTER NITRO<b id="player2Speed">000 KM/H</b></div><div id="splitDivider"></div><div id="splitLabels"><span>PLAYER 1 · WASD</span><span>PLAYER 2 · ARROWS</span></div>
 <div id="engineError" class="overlay hidden"><div class="overlayCard"><div class="eyebrow">3D ENGINE UNAVAILABLE</div><h2>CAN'T LOAD</h2><p id="errorText">The 3D library could not be loaded. Check your internet connection and reload this page.</p></div></div>
 <script type="module">
 import * as THREE from 'three';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const SUPABASE_URL = 'https://xicyhdlwvtcjzkzxbsfa.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_IvuykpNtUEuvKZIjWPxq3A_n9lveKY9';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let cloudUser = null;
+let cloudSaveTimer = null;
+let cloudLoadInProgress = false;
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('game');
@@ -683,7 +719,67 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFr
 }
 
 function loadProfile(){try{const saved=JSON.parse(localStorage.getItem('midnightRunProfile')||'null');return saved?{...defaultProfile,...saved,completed:Array.isArray(saved.completed)?saved.completed:[],garage:{...defaultProfile.garage,...(saved.garage||{})}}:JSON.parse(JSON.stringify(defaultProfile));}catch(e){return JSON.parse(JSON.stringify(defaultProfile));}}
-function saveProfile(){try{localStorage.setItem('midnightRunProfile',JSON.stringify(profile));}catch(e){}}
+function saveProfile(){
+  try{localStorage.setItem('midnightRunProfile',JSON.stringify(profile));}catch(e){}
+  if(cloudUser && !cloudLoadInProgress){
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer=setTimeout(()=>syncCloudSave(),900);
+  }
+}
+async function syncCloudSave(){
+  if(!cloudUser || cloudLoadInProgress)return;
+  const snapshot=JSON.parse(JSON.stringify(profile));
+  const {error}=await supabase.from('game_saves').upsert({user_id:cloudUser.id,progress:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(error) setAccountMessage('Cloud save issue: '+error.message);
+  else setAccountMessage('Signed in · cloud save synced');
+}
+function setAccountMessage(message){const el=document.getElementById('accountMessage');if(el)el.textContent=message;}
+function updateAccountButton(){
+  const b=document.getElementById('accountOpenBtn');
+  const out=document.getElementById('accountSignOutBtn');
+  if(b)b.textContent=cloudUser ? 'ACCOUNT · '+(cloudUser.email||'SIGNED IN').split('@')[0].slice(0,16) : 'SIGN IN / CREATE ACCOUNT';
+  if(out)out.style.display=cloudUser?'block':'none';
+}
+async function loadCloudSave(user){
+  cloudLoadInProgress=true;
+  try{
+    const {data,error}=await supabase.from('game_saves').select('progress').eq('user_id',user.id).maybeSingle();
+    if(error) throw error;
+    if(data && data.progress && typeof data.progress==='object'){
+      const saved=data.progress;
+      profile={...defaultProfile,...saved,completed:Array.isArray(saved.completed)?saved.completed:[],garage:{...defaultProfile.garage,...(saved.garage||{})}};
+      try{localStorage.setItem('midnightRunProfile',JSON.stringify(profile));}catch(e){}
+      renderTracks();refreshStory();renderChapterList();refreshGarage();
+      setAccountMessage('Cloud progress loaded successfully.');
+    }else{
+      await supabase.from('game_saves').upsert({user_id:user.id,progress:profile,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+      setAccountMessage('Account connected. Your local progress is now backed up.');
+    }
+  }catch(err){setAccountMessage('Could not load cloud save: '+err.message);}
+  finally{cloudLoadInProgress=false;}
+}
+async function accountSignIn(){
+  const email=$('accountEmail').value.trim(),password=$('accountPassword').value;
+  if(!email||!password){setAccountMessage('Enter your email and password.');return;}
+  setAccountMessage('Signing in…');
+  const {data,error}=await supabase.auth.signInWithPassword({email,password});
+  if(error){setAccountMessage(error.message);return;}
+  cloudUser=data.user;updateAccountButton();await loadCloudSave(cloudUser);
+}
+async function accountSignUp(){
+  const email=$('accountEmail').value.trim(),password=$('accountPassword').value;
+  if(!email||password.length<8){setAccountMessage('Enter an email and a password with at least 8 characters.');return;}
+  setAccountMessage('Creating account…');
+  const {data,error}=await supabase.auth.signUp({email,password});
+  if(error){setAccountMessage(error.message);return;}
+  if(data.session){cloudUser=data.user;updateAccountButton();await loadCloudSave(cloudUser);}
+  else setAccountMessage('Account created. Check your email to verify it, then sign in.');
+}
+async function accountSignOut(){
+  const {error}=await supabase.auth.signOut();
+  if(error){setAccountMessage(error.message);return;}
+  cloudUser=null;updateAccountButton();setAccountMessage('Signed out. Progress continues saving on this device.');
+}
 function trackUnlocked(id){if(id==='random')return true;const unlock={neon:0,coast:1,alpine:2,desert:3,industrial:4,forest:5,harbor:6,skyline:7};return profile.storyStage>=(unlock[id]??99);}
 function comma(n){return Math.round(n).toLocaleString('en-US');}
 function setView(view){document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='garagePanel')refreshGarage();if(view==='storyPanel')refreshStory();}
@@ -807,6 +903,13 @@ function bindHub(){
  document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.paint=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.accent=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('.styleBtn').forEach(b=>b.addEventListener('click',()=>{profile.garage.style=b.dataset.style;saveProfile();refreshGarage();}));
  $('resumeBtn').addEventListener('click',pauseRace);$('restartBtn').addEventListener('click',()=>initRace(gameMode,currentTrack,isTwoPlayer,isStoryEvent));$('quitBtn').addEventListener('click',backToMenu);$('againBtn').addEventListener('click',()=>initRace(gameMode,currentTrack,isTwoPlayer,isStoryEvent));$('menuBtn').addEventListener('click',backToMenu);
 }
+$('accountOpenBtn').addEventListener('click',()=>{$('accountModal').classList.remove('hidden');setAccountMessage(cloudUser?'Signed in · cloud save enabled':'Your game still saves locally when signed out.');});
+$('accountCloseBtn').addEventListener('click',()=>$('accountModal').classList.add('hidden'));
+$('accountSignInBtn').addEventListener('click',accountSignIn);
+$('accountSignUpBtn').addEventListener('click',accountSignUp);
+$('accountSignOutBtn').addEventListener('click',accountSignOut);
+supabase.auth.getSession().then(async({data,error})=>{if(error){setAccountMessage(error.message);return;}if(data.session){cloudUser=data.session.user;updateAccountButton();await loadCloudSave(cloudUser);}else updateAccountButton();});
+supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user){cloudUser=session.user;updateAccountButton();}else{cloudUser=null;updateAccountButton();}});
 bindHub();renderTracks();refreshStory();renderChapterList();refreshGarage();
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','Enter'].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==='KeyP'&&!e.repeat)pauseRace();if(e.code==='Escape'&&!e.repeat)pauseRace();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{Object.keys(keys).forEach(k=>keys[k]=false);if(gameState==='racing')pauseRace();});
 document.querySelectorAll('#mobile button').forEach(btn=>{const code=btn.dataset.key;btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;btn.classList.add('pressed');btn.setPointerCapture(e.pointerId);});const release=()=>{keys[code]=false;btn.classList.remove('pressed');};btn.addEventListener('pointerup',release);btn.addEventListener('pointercancel',release);btn.addEventListener('lostpointercapture',release);});

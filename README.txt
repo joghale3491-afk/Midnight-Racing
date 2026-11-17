@@ -1,22 +1,24 @@
-MIDNIGHT RUN — COMPLETE GAME UPDATE
+MIDNIGHT RUN — SUPABASE ACCOUNTS + CLOUD SAVE
 
-This package combines the current game build into one index.html file.
+This update adds email registration, sign-in, sign-out, and cloud saving/loading.
+It uses the Supabase project URL and publishable key configured by the project owner.
 
-Included:
-- Eight-chapter Nightshift story campaign with dialogue, objectives, rewards and track unlocks.
-- Rival AI that uses nitro and adjusts pace based on player performance and race position.
-- Six distinct car body styles: Sport, Muscle, Hyper, Rally, Tuner and Classic.
-- Interactive 3D garage preview that rotates, and updates when the car, paint or upgrades change.
-- Visible engine, handling and nitro upgrade parts.
-- Existing race modes, tracks, local two-player mode and local profile save from the source game.
+Database requirements:
+- public.game_saves with user_id (uuid primary key referencing auth.users), progress (jsonb), updated_at (timestamptz)
+- Row Level Security enabled on game_saves
+- Authenticated SELECT/INSERT/UPDATE policies restricting user_id to auth.uid()
+
+The profiles table from the previous setup is not required by this first integration.
+The game continues to save locally when signed out. Cloud saves sync after changes when signed in.
 
 Install:
 1. Extract this ZIP.
-2. Upload the included index.html to the root of your existing GitHub repository.
-3. Replace the old index.html and commit directly to main.
-4. Keep all other existing repository files.
-5. Wait for GitHub Pages to publish, then hard-refresh the game.
+2. Replace the index.html in the root of your existing GitHub repository.
+3. Keep all other repository files.
+4. Commit directly to main and wait for GitHub Pages to publish.
+5. Hard refresh the game.
 
-Notes:
-- The game loads Three.js from a CDN, so an internet connection is needed.
-- This package does not add online multiplayer, account authentication or cloud saves.
+Supabase auth:
+- Email provider must be enabled.
+- If email confirmation is enabled, verify the email before signing in.
+- Never put a Supabase secret/service-role key in this file. Only a publishable key belongs in browser code.
