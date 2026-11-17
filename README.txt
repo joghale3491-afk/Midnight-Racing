@@ -1,8 +1,11 @@
-MIDNIGHT RUN Supabase fix
+MIDNIGHT RUN — STORY, GARAGE & AI UPDATE
 
-1. Replace the index.html in your GitHub repository with this index.html.
-2. Keep the other existing repository files.
-3. Commit directly to main and wait for GitHub Pages to publish.
-4. Open the live Pages site and hard refresh with Ctrl+Shift+R.
+Replace the index.html in your existing GitHub Pages repository with this index.html.
+Keep every other existing repository file, including manifest.webmanifest, sw.js, online.js, and supabase_setup.sql.
+Commit directly to main. Wait for GitHub Pages to publish, then hard-refresh with Ctrl+Shift+R.
 
-This fixes the browser module import for Three.js and keeps the Supabase account/cloud-save integration.
+Includes:
+- 24 optional side-story scenes (3 per campaign chapter), with expandable dialogue and story details.
+- Improved garage preview camera framing and preview rendering that continues independently of the main renderer initialization check.
+- Faster AI rivals, stronger nitro boosts, less corner-speed loss, and a higher adaptive difficulty range.
+- Existing Supabase account/cloud-save code and existing game content retained.

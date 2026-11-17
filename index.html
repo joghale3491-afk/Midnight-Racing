@@ -194,6 +194,18 @@
   .storyMetaBox small{display:block;color:#7997ad;font-size:8px;letter-spacing:.13em;margin-bottom:5px}
   .storyMetaBox b{font-size:10px;color:#e6f7ff}
   .storyFeature .questTag{border-radius:5px}
+  .storyThreads{margin:15px 0 4px;padding:13px;border:1px solid #75eaff24;border-radius:10px;background:#06111d88}
+  .storyThreadList{display:grid;gap:8px;margin-top:10px}
+  .storyThread{border:1px solid #79dfff2b;border-radius:8px;background:#0b1b2b;overflow:hidden}
+  .storyThread summary{cursor:pointer;list-style:none;padding:10px 12px;color:#e9f8ff;font-size:11px;font-weight:900;display:flex;justify-content:space-between;gap:10px}
+  .storyThread summary::-webkit-details-marker{display:none}
+  .storyThread summary:after{content:'+';color:#5be8ff;font-size:15px}
+  .storyThread[open] summary:after{content:'−'}
+  .storyThread p{padding:0 12px 10px;margin:0;color:#b5c9d8;font-size:11px;line-height:1.7}
+  .storyThread .threadDialogue{margin:0 12px 12px;padding:9px 10px;border-left:2px solid #ff5b91;background:#ff5b910c;color:#ffe0eb;font-size:10px;line-height:1.6}
+  .garagePreview{background:radial-gradient(ellipse at 50% 78%,#28627b,#0b1a2a 67%);}
+  .garagePreview canvas{position:relative;z-index:1;min-height:250px}
+  .garagePreviewName,.garagePreviewHint{z-index:3}
   .questRow{padding:11px 9px;border:1px solid transparent;border-radius:8px;background:#07121f;align-items:center}
   .questRow.current{border-color:#5beeff66;background:#10283a}
   .questRow b{font-size:10px}.questRow small{font-size:8px;line-height:1.5}
@@ -262,7 +274,7 @@
       </aside>
       <main class="hubMain">
         <section id="homePanel" class="viewPanel">
-          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Build a name in the underground scene. Race rivals, tune your ride, unlock new routes and chase the next chapter.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · ADAPTIVE RIVALS</div></div>
+          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Build a name in the underground scene. Race rivals, tune your ride, unlock new routes and chase the next chapter.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · FASTER ADAPTIVE RIVALS</div></div>
           <div class="panelTitle">CHOOSE YOUR EVENT</div>
           <div class="modeGrid" id="modeGrid">
             <button class="modeCard active" data-mode="street"><strong>01 / STREET RACE</strong><small>3 laps · rival drivers · podium payout</small></button>
@@ -286,8 +298,8 @@
           <div class="menuFooter"><div class="featureList"><b>RACE CONTROLS</b><br>WASD / ARROWS DRIVE · SPACE / ENTER NITRO · SHIFT DRIFT<br>Collect floating power-ups. Earn Credits to tune your car.</div><div class="footerActions"><button class="goldBtn" id="twoPlayerBtn">LOCAL 2 PLAYER</button><button class="primaryBtn" id="startBtn">START EVENT ↗</button></div></div>
         </section>
         <section id="storyPanel" class="viewPanel hidden">
-          <div class="heroStrip"><div><div class="eyebrow">A CAMPAIGN OF SPEED, LOYALTY & SECOND CHANCES</div><h2>THE NIGHT<br><span style="color:var(--pink)">SHIFT</span></h2><p>You're a new driver trying to earn a place in the city's underground crew. Each win opens a new district and reveals who is really running the scene.</p></div><div class="heroMeta">8 CHAPTERS<br>RACE · TIME · PURSUIT<br>REWARDS & TRACK UNLOCKS</div></div>
-          <div class="storyLayout"><div class="storyFeature"><span class="questTag" id="storyChapterTag">CHAPTER 01 / THE INVITATION</span><h3 id="storyChapterTitle">First Night</h3><p id="storyChapterDesc">Your first run is a chance to prove you belong. The crew is watching.</p><div class="storyQuote" id="storyDialogue">“Nobody gets a second first impression out here. Show me what you can do.” — VEX</div><div class="storyMetaGrid"><div class="storyMetaBox"><small>MISSION OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div><div class="storyMetaBox"><small>MISSION CONTACT</small><b id="storyContact">VEX · CREW SCOUT</b></div></div><div class="tinyNote" id="storyReward">REWARD: 500 CREDITS · NEW DISTRICT UNLOCK</div><button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START STORY CHAPTER ↗</button></div><div class="storyList"><div class="panelTitle" style="margin-top:0">CAMPAIGN CASE FILES</div><p class="tinyNote" style="margin:0 0 12px">Every race changes your standing in the underground. Clear chapters to uncover the truth behind the city’s new racing syndicate.</p><div class="questList" id="chapterList"></div></div></div>
+          <div class="heroStrip"><div><div class="eyebrow">A CAMPAIGN OF SPEED, LOYALTY & SECOND CHANCES</div><h2>THE NIGHT<br><span style="color:var(--pink)">SHIFT</span></h2><p>You're a new driver trying to earn a place in the city's underground crew. Each win opens a new district and reveals who is really running the scene.</p></div><div class="heroMeta">8 CHAPTERS<br>24 SIDE STORIES<br>RACE · TIME · PURSUIT</div></div>
+          <div class="storyLayout"><div class="storyFeature"><span class="questTag" id="storyChapterTag">CHAPTER 01 / THE INVITATION</span><h3 id="storyChapterTitle">First Night</h3><p id="storyChapterDesc">Your first run is a chance to prove you belong. The crew is watching.</p><div class="storyQuote" id="storyDialogue">“Nobody gets a second first impression out here. Show me what you can do.” — VEX</div><div class="storyThreads"><div class="panelTitle">SIDE STORIES · CREW FILES</div><p class="tinyNote">Explore the moments between races. These optional scenes add context to the crew, their history, and the choices behind the main campaign.</p><div id="storyThreadList" class="storyThreadList"></div></div><div class="storyMetaGrid"><div class="storyMetaBox"><small>MISSION OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div><div class="storyMetaBox"><small>MISSION CONTACT</small><b id="storyContact">VEX · CREW SCOUT</b></div></div><div class="tinyNote" id="storyReward">REWARD: 500 CREDITS · NEW DISTRICT UNLOCK</div><button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START STORY CHAPTER ↗</button></div><div class="storyList"><div class="panelTitle" style="margin-top:0">CAMPAIGN CASE FILES</div><p class="tinyNote" style="margin:0 0 12px">Every race changes your standing in the underground. Clear chapters to uncover the truth behind the city’s new racing syndicate.</p><div class="questList" id="chapterList"></div></div></div>
         </section>
         <section id="garagePanel" class="viewPanel hidden">
           <div class="heroStrip"><div><div class="eyebrow">YOUR RIDE. YOUR SIGNATURE.</div><h2>THE <span style="color:var(--pink)">GARAGE</span></h2><p>Choose six distinct car bodies, customize paint and aero, and install visible performance parts.</p></div><div class="heroMeta">BUILD / TUNE / SAVE<br>UPGRADES CHANGE YOUR BUILD<br>AND RACE PERFORMANCE</div></div>
@@ -375,6 +387,50 @@ const CHAPTERS=[
  {title:'Blackpine Run',tag:'NIGHT VISION',track:'forest',mode:'time',objective:'Beat the target clock through the forest esses.',reward:950,unlock:'Harbor Sprint',contact:'Juno · Data analyst',dialogue:'“The signal stops here. Whoever planted it knows our habits — and knows us personally.”',story:'The transmitter trail ends outside Blackpine. Juno uncovers a set of messages showing that the leak began after Nightshift refused to join a citywide racing syndicate. The messages are signed with Vex’s old crew code. You need one last data run through the forest to recover the missing file before the syndicate wipes it.'},
  {title:'Harbor Showdown',tag:'THE OLD GUARD',track:'harbor',mode:'street',objective:'Take first place in the harbor street race.',reward:1100,unlock:'Skyline GP',contact:'Vex · Crew scout',dialogue:'“I should have told you. I left the syndicate, but I never told the crew why. Tonight, I’ll explain everything.”',story:'The recovered file reveals the truth: Vex once helped build the syndicate before walking away when it began fixing races and threatening independent crews. He kept the secret to protect Nightshift, but his silence made everyone vulnerable. At the harbor, the syndicate challenges Nightshift to a public showdown. Vex finally agrees to face his past — with you beside him.'},
  {title:'Skyline Finale',tag:'THE LAST SHIFT',track:'skyline',mode:'street',objective:'Win the championship finale to own the night.',reward:1800,unlock:'Campaign complete',contact:'Nightshift · All crew members',dialogue:'“Whatever happens after tonight, we decide our own future. Let’s finish this together.”',story:'The syndicate offers one final deal: win its championship and Nightshift can race freely, or lose and surrender its routes and garage. The crew refuses to be bought. You enter the Skyline GP as Nightshift’s lead driver, with Mara, Juno, Rook, and Vex backing you. This is not just a title race. It is the night the underground decides who controls its own future.'}
+];
+
+
+const STORY_THREADS=[
+ [
+  {title:'Vex’s First Test',body:'Before the qualifier, Vex quietly checks the old car you brought to the meet. He notices the mismatched panels and worn steering wheel, but does not make a joke. He tells you that the best drivers learn to feel every weakness in a machine. The crew has seen expensive cars lose because their drivers panic. Your first test is not about money; it is about keeping your head when the whole street is watching.',dialogue:'“A fast car gets attention. A steady driver earns respect.” — VEX'},
+  {title:'Mara’s Workshop',body:'Mara lets you wait in the workshop while she replaces a damaged belt. She explains that the garage used to be a community space where drivers helped one another repair cars after long shifts. Lately, people have started treating it like a place to show off. She hopes your arrival reminds the crew that Nightshift was built on helping people, not just winning.',dialogue:'“Bring the car back in one piece. I can fix parts. Trust takes longer.” — MARA'},
+  {title:'A Name on the Board',body:'Juno adds your name to the crew’s old results board. Beside it are faded notes from drivers who left the city or gave up racing. One name has been scratched out: ROOK. Vex changes the subject when you ask about it. Juno notices, but says she wants proof before she starts another argument.',dialogue:'“Every name on this board has a story. Some are still unfinished.” — JUNO'}
+ ],
+ [
+  {title:'The Empty Meet',body:'After the coastal pursuit, you return to find the usual meet almost empty. Mara has moved the tools away from the windows and covered the crew’s route map. She says the patrols arrived too quickly to be random. Nobody accuses anyone, but every conversation stops when a phone lights up. The crew is beginning to doubt its own circle.',dialogue:'“A leak only works when people stop trusting each other.” — MARA'},
+  {title:'Juno’s Timeline',body:'Juno spreads printed race times across a workbench. The patrol cars appeared at three separate locations within minutes of the crew changing routes. She has ruled out coincidence, but the data does not reveal who sent the information. She asks you to remember who knew about the coastal run and when they found out.',dialogue:'“Patterns tell us what happened. People tell us why.” — JUNO'},
+  {title:'Vex Keeps Watch',body:'Vex stays behind after everyone leaves. He admits that he recognizes the patrol response because he has seen the same tactics before. He refuses to explain more, worried that old enemies will target the crew. For the first time, his confidence looks more like fear than certainty.',dialogue:'“I wanted to keep the past away from you. Maybe that was a mistake.” — VEX'}
+ ],
+ [
+  {title:'The Ghost Account',body:'Juno shows you the recovered login record. The account belonged to Rook, but the access pattern is unusual: it was active while Rook was reportedly out of the country. Someone may have copied his credentials or deliberately used his name. Juno asks you not to jump to conclusions until she can compare the timestamps with the Alpine data run.',dialogue:'“An account is evidence. It is not a confession.” — JUNO'},
+  {title:'Mara’s Old Photograph',body:'While looking for a spare sensor, you find an old photograph tucked behind a cabinet. Mara, Vex, and Rook stand together beside a half-built car. Mara says the three of them once planned to open a legal tuning shop. The plan fell apart after a fixed race cost them their savings and their trust.',dialogue:'“We used to build things together. That’s what I miss.” — MARA'},
+  {title:'The Alpine Promise',body:'At the foot of the pass, Vex tells you the crew needs a driver who can follow a plan without blindly following orders. The Alpine run will test your precision, but he also wants you to decide what to do with any evidence you find. He says loyalty should never mean ignoring the truth.',dialogue:'“Bring back the facts, even if they make things harder.” — VEX'}
+ ],
+ [
+  {title:'Rook’s Message',body:'Rook sends a short voice note before the canyon event. He says he never wanted Nightshift to fall apart, but he also refuses to let Vex decide which parts of the past everyone is allowed to know. He claims he has proof that a crew member has been selling route data. He will only reveal it after the race, when he knows you can handle yourself.',dialogue:'“I’m not asking you to trust me. I’m asking you to check.” — ROOK'},
+  {title:'A Split Workshop',body:'Mara argues that meeting Rook could expose the garage to another setup. Juno counters that refusing to hear him leaves the crew blind. Vex ends the argument by admitting he has been hiding information. Nobody is satisfied, but the conversation finally becomes honest.',dialogue:'“We can disagree and still stand in the same room.” — MARA'},
+  {title:'The Canyon Mechanic',body:'At the canyon staging area, a local mechanic recognizes the transmitter model from a shipment delivered to the syndicate. He remembers that the order was paid through a shell business connected to the Iron District. It is the first lead that does not depend on anyone’s memory or loyalty.',dialogue:'“Follow the parts. People can change their stories; serial numbers don’t.” — JUNO'}
+ ],
+ [
+  {title:'The Signal in the Walls',body:'Mara removes the transmitter casing and finds a second component hidden beneath the first. It has been relaying location data even when the main unit was switched off. The discovery explains how the syndicate kept finding the crew after routes changed. Mara is angry that the garage itself was used against them.',dialogue:'“This place was supposed to keep us safe.” — MARA'},
+  {title:'Rook’s Proof',body:'Rook arrives with a ledger showing payments made to a courier who had access to the garage. The name is not one of the core drivers, but the courier was trusted by everyone. Vex wants to confront the person immediately. Juno insists they should first find out who hired them and where the money came from.',dialogue:'“If we rush this, the person behind it walks away.” — ROOK'},
+  {title:'The Decoy Run',body:'The crew plans a decoy route through the Iron District. You volunteer to draw attention while Juno traces the signal. Mara reinforces the car and checks every connection twice. The mission is the first time all four crew members work together since the leak began.',dialogue:'“This time, nobody is carrying the whole risk alone.” — MARA'}
+ ],
+ [
+  {title:'The Missing File',body:'At Blackpine, Juno finds the storage device but discovers that its final folder is damaged. The recovered messages show the syndicate tried to recruit Nightshift, then began threatening independent crews when Vex refused. The missing file may identify the person who ordered the surveillance. Juno needs a clean data capture before the device fails.',dialogue:'“We are close. Don’t let impatience erase the last piece.” — JUNO'},
+  {title:'Rook’s Apology',body:'Rook admits he disappeared because he was ashamed that his old account had been used to target the crew. He should have returned sooner and explained what happened. Mara accepts that he was not the person behind the leak, but says trust will have to be rebuilt through actions rather than apologies.',dialogue:'“I can’t undo leaving. I can choose not to leave again.” — ROOK'},
+  {title:'Vex’s Old Code',body:'Vex explains that the code on the messages was once used by the original founders of the syndicate. He helped design it, then walked away when races began to be fixed. He feared the crew would see him as part of the problem. The others tell him that hiding the truth only gave the syndicate more power.',dialogue:'“I thought silence was protection. It only made us easier to divide.” — VEX'}
+ ],
+ [
+  {title:'The Harbor Invitation',body:'The syndicate sends a formal challenge for the harbor meet. The message promises that Nightshift can race freely if Vex returns and accepts responsibility for the syndicate’s past. Vex refuses to go alone. He asks the crew to stand beside him, not because he deserves a free pass, but because the future should be decided together.',dialogue:'“I’ll answer for what I did. I won’t let them choose what we become.” — VEX'},
+  {title:'Mara’s New Build',body:'Mara spends the night preparing a fresh setup for the harbor race. She explains each change and lets you choose between a stable configuration and a more aggressive one. Either way, she reminds you that a build only works when the driver understands it. The garage feels like a team again.',dialogue:'“The best upgrade is knowing exactly what your car can do.” — MARA'},
+  {title:'Juno’s Broadcast',body:'Juno prepares to release the recovered records to the underground racing community. She checks every source twice to protect innocent people and avoid spreading false claims. The syndicate has power because people believe it controls the story. Juno intends to let the evidence speak for itself.',dialogue:'“Truth should be checked before it is shared.” — JUNO'}
+ ],
+ [
+  {title:'The Last Garage Meeting',body:'Before the finale, the crew gathers around the original workshop table. Rook offers to take responsibility for the old account, Mara promises to keep the garage open to new drivers, and Juno prepares the evidence archive. Vex asks you what Nightshift should become after the championship. For once, nobody has a ready answer.',dialogue:'“We built this crew by choosing each other. We can choose what comes next.” — VEX'},
+  {title:'A Different Kind of Victory',body:'The syndicate offers a private deal: take the title and accept its sponsorship, and Nightshift will receive money and access to every major event. Mara points out that the offer comes with control over the crew’s routes and decisions. Rook says the choice is yours, but reminds you why they started racing together.',dialogue:'“A trophy is temporary. What you stand for follows you home.” — ROOK'},
+  {title:'After the Checkered Flag',body:'Whatever the result, the crew has already changed. The garage is no longer built around one leader, and the route board has space for new names. Juno suggests a community event where experienced drivers teach newcomers. Mara begins planning the first open workshop night. The city still has rivals, but Nightshift finally has a direction.',dialogue:'“The next chapter belongs to everyone who shows up.” — NIGHTSHIFT'}
+ ]
 ];
 
 function rnd(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
@@ -580,10 +636,10 @@ function createRacers(){
  if(isTwoPlayer){player2=createCar(0xe9a52f,0xffdf86,true,'muscle');player2.group.scale.multiplyScalar(1.0);}
  const police=gameMode==='police';
  const specs=police?[
-  {name:'UNIT 07',color:0xf0f4fa,accent:0x3d8cff,speed:82,offset:2.7},{name:'UNIT 12',color:0x202b43,accent:0xff4058,speed:85,offset:-2.5},{name:'UNIT 21',color:0xf0f4fa,accent:0x3d8cff,speed:83,offset:5.2},{name:'UNIT 04',color:0x202b43,accent:0xff4058,speed:87,offset:-5.1},{name:'UNIT 18',color:0xf0f4fa,accent:0x3d8cff,speed:81,offset:.1}
- ]:[{name:'VEX',color:0xf23c58,accent:0xffb0bd,speed:76,offset:2.7},{name:'NOVA',color:0xf3b72f,accent:0xffed99,speed:80,offset:-2.5},{name:'GHOST',color:0xb6c9dc,accent:0xeffbff,speed:78,offset:5.2},{name:'RAZE',color:0x802ee7,accent:0xcaa5ff,speed:82,offset:-5.1},{name:'KAI',color:0x32a66c,accent:0x8dffbf,speed:74,offset:.1}];
+  {name:'UNIT 07',color:0xf0f4fa,accent:0x3d8cff,speed:94,offset:2.7},{name:'UNIT 12',color:0x202b43,accent:0xff4058,speed:97,offset:-2.5},{name:'UNIT 21',color:0xf0f4fa,accent:0x3d8cff,speed:95,offset:5.2},{name:'UNIT 04',color:0x202b43,accent:0xff4058,speed:99,offset:-5.1},{name:'UNIT 18',color:0xf0f4fa,accent:0x3d8cff,speed:93,offset:.1}
+ ]:[{name:'VEX',color:0xf23c58,accent:0xffb0bd,speed:88,offset:2.7},{name:'NOVA',color:0xf3b72f,accent:0xffed99,speed:92,offset:-2.5},{name:'GHOST',color:0xb6c9dc,accent:0xeffbff,speed:90,offset:5.2},{name:'RAZE',color:0x802ee7,accent:0xcaa5ff,speed:94,offset:-5.1},{name:'KAI',color:0x32a66c,accent:0x8dffbf,speed:86,offset:.1}];
  const starts=[7,-8,15,-16,-23];
- specs.forEach((spec,i)=>{const skill=clamp(profile.aiSkill||1,.82,1.22);rivals.push({name:spec.name,car:createCar(spec.color,spec.accent),distance:starts[i],speed:0,target:spec.speed*skill,baseTarget:spec.speed,skill,offset:spec.offset,hitCooldown:0,nitro:58+Math.random()*30,boostTime:0,boostCooldown:1.5+i*.8,turboTime:0,shieldTime:0,damage:0,personality:i%3});});
+ specs.forEach((spec,i)=>{const skill=clamp(profile.aiSkill||1,.96,1.32);rivals.push({name:spec.name,car:createCar(spec.color,spec.accent),distance:starts[i],speed:0,target:spec.speed*skill,baseTarget:spec.speed,skill,offset:spec.offset,hitCooldown:0,nitro:58+Math.random()*30,boostTime:0,boostCooldown:1.5+i*.8,turboTime:0,shieldTime:0,damage:0,personality:i%3});});
 }
 function createPickup(type,id,distance,offset){
  const colors={nitro:0x28bfff,turbo:0xffc247,shield:0x8e73ff,repair:0x55ef9b};const color=colors[type];const mat=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.65,metalness:.3,roughness:.22});const g=new THREE.Group();
@@ -631,14 +687,14 @@ function updateRivals(dt){
  rivals.forEach((r)=>{
   const catchup=playerDistance-r.distance;
   // Rivals adapt to the player's long-term pace rating, while retaining small driver personalities.
-  const skill=clamp(profile.aiSkill||1,.82,1.22);
+  const skill=clamp(profile.aiSkill||1,.96,1.32);
   r.skill=skill;
   let target=r.baseTarget*skill*weatherState.grip;
   if(catchup>80)target+=8+skill*2;
   if(catchup< -80)target-=3.5;
   const roadFrame=frameAt(r.distance);
   const bend=Math.abs(roadFrame.curve||0);
-  target-=bend*(r.personality===1?5.5:3.8)*(1.15-skill*.35);
+  target-=bend*(r.personality===1?4.1:2.9)*(1.12-skill*.28);
   target+=Math.sin(r.distance*.018+r.personality)*1.2;
   r.boostCooldown=Math.max(0,r.boostCooldown-dt);
   r.boostTime=Math.max(0,r.boostTime-dt);
@@ -649,12 +705,12 @@ function updateRivals(dt){
   const needsPace=catchup>5 || catchup< -45 || r.speed<target*.84;
   const opportunistic=Math.random()<dt*(.055+skill*.035);
   if(r.boostTime<=0 && r.boostCooldown<=0 && r.nitro>=18 && (needsPace || opportunistic)){
-   r.boostTime=2.0+Math.random()*(1.1+skill*.5);
-   r.boostCooldown=Math.max(3.2,6.8/skill)+Math.random()*2.5;
+   r.boostTime=2.6+Math.random()*(1.3+skill*.5);
+   r.boostCooldown=Math.max(2.7,5.6/skill)+Math.random()*1.8;
   }
   const boost=r.boostTime>0 && r.nitro>0;
   if(boost)r.nitro=Math.max(0,r.nitro-dt*24);
-  const powerBonus=boost?27:r.turboTime>0?16:0;
+  const powerBonus=boost?34:r.turboTime>0?21:0;
   target+=powerBonus;
   r.speed+=clamp(target-r.speed,-(24+skill*8)*dt,(24+skill*8)*dt);
   r.distance+=r.speed*dt;
@@ -678,7 +734,7 @@ function initGaragePreview(){
   garageRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));
   garageRenderer.outputColorSpace=THREE.SRGBColorSpace;garageRenderer.toneMapping=THREE.ACESFilmicToneMapping;garageRenderer.toneMappingExposure=1.18;
   garageScene=new THREE.Scene();garageScene.background=new THREE.Color(0x081522);
-  garageCamera=new THREE.PerspectiveCamera(37,1,.1,100);garageCamera.position.set(6.5,4.2,7.8);garageCamera.lookAt(0,.72,0);
+  garageCamera=new THREE.PerspectiveCamera(34,1,.1,150);garageCamera.position.set(8.2,5.7,10.5);garageCamera.lookAt(0,.78,0);
   garageScene.add(new THREE.HemisphereLight(0xc9edff,0x17202c,2.1));
   const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,8,6);garageScene.add(key);
   const rim=new THREE.DirectionalLight(0x36dfff,2.2);rim.position.set(5,4,-6);garageScene.add(rim);
@@ -698,13 +754,13 @@ function refreshGaragePreview(){
  if(garageCar){garageStage.remove(garageCar);garageCar=null;}
  const previousWorld=world;world=garageStage;
  const g=profile.garage;const built=createCar(parseInt(g.paint,16),parseInt(g.accent,16),true,g.style,g);
- garageCar=built.group;garageCar.position.y=0;garageCar.rotation.y=garagePreviewAngle;garageStage.add(garageCar);world=previousWorld;
+ garageCar=built.group;garageCar.position.y=.12;garageCar.scale.multiplyScalar(1.12);garageCar.rotation.y=garagePreviewAngle;garageStage.add(garageCar);world=previousWorld;garageCamera.position.set(8.2,5.7,10.5);garageCamera.lookAt(0,.82,0);
  const names={sport:'SPORT COUPE',muscle:'MUSCLE GT',hyper:'HYPER CAR',rally:'RALLY SPEC',tuner:'TUNER BUILD',classic:'CLASSIC GT'};
  $('garagePreviewName').textContent=names[g.style]||'CUSTOM BUILD';
 }
 function renderGaragePreview(now){if(!garageRenderer||!garageScene||$('garagePanel').classList.contains('hidden'))return;if(!garageDragging&&garageCar){garagePreviewAngle+=.0022;garageCar.rotation.y=garagePreviewAngle;}garageRenderer.render(garageScene,garageCamera);}
 
-function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFrame)/1000||0);lastFrame=now;if(!renderer)return;
+function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFrame)/1000||0);lastFrame=now;renderGaragePreview(now);if(!renderer)return;
  if(gameState==='countdown'){countdown-=dt;if(countdown>.5){$('countdown').textContent=String(Math.ceil(countdown-.5));$('countdown').classList.add('show');}else if(countdown>0){$('countdown').textContent='GO';$('countdown').classList.add('show');}else{gameState='racing';$('countdown').classList.remove('show');}}
  if(gameState==='racing'){
   raceTime+=dt;offroadCooldown=Math.max(0,offroadCooldown-dt);shieldTime=Math.max(0,shieldTime-dt);turboTime=Math.max(0,turboTime-dt);
@@ -715,7 +771,7 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFr
  }else if(gameState==='countdown'){updateWeatherParticles(dt);positionCar(player,playerDistance,playerOffset);if(player2)positionCar(player2,player2Distance,player2Offset);rivals.forEach(r=>positionCar(r.car,r.distance,r.offset));trafficCars.forEach(t=>positionCar(t.car,t.distance,t.offset));updateCamera(dt);if(player2)updateCamera2(dt);}
  if(gameState==='racing'||gameState==='countdown'){updateCamera(dt);if(player2)updateCamera2(dt);}
  if(weatherGroup)weatherGroup.visible=gameState==='racing'||gameState==='countdown';if(gameState==='menu'&&frameCount%2===0){const t=now*.000025;camera.position.set(Math.sin(t)*230,125,Math.cos(t)*230);camera.lookAt(0,0,0);}
- renderFrame();renderGaragePreview(now);frameCount++;
+ renderFrame();frameCount++;
 }
 
 function loadProfile(){try{const saved=JSON.parse(localStorage.getItem('midnightRunProfile')||'null');return saved?{...defaultProfile,...saved,completed:Array.isArray(saved.completed)?saved.completed:[],garage:{...defaultProfile.garage,...(saved.garage||{})}}:JSON.parse(JSON.stringify(defaultProfile));}catch(e){return JSON.parse(JSON.stringify(defaultProfile));}}
@@ -785,7 +841,8 @@ function comma(n){return Math.round(n).toLocaleString('en-US');}
 function setView(view){document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='garagePanel')refreshGarage();if(view==='storyPanel')refreshStory();}
 function selectMode(mode){gameMode=mode;document.querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));if(mode==='story'){setView('storyPanel');}else{$('raceSpec').innerHTML=mode==='street'?'3 LAPS / 5 RIVALS<br>TRAFFIC · POWER-UPS':mode==='time'?'1 LAP / TARGET CLOCK<br>RACING LINE · CLEAN RUN':'70 SEC SURVIVAL<br>ARCADE POLICE PURSUIT';}}
 function renderTracks(){document.querySelectorAll('.trackCard').forEach(card=>{const id=card.dataset.track,unlocked=trackUnlocked(id);card.classList.toggle('locked',!unlocked);let stamp=card.querySelector('.lockStamp');if(!unlocked){if(!stamp){stamp=document.createElement('span');stamp.className='lockStamp';card.appendChild(stamp);}const req=({coast:'CHAPTER 01',alpine:'CHAPTER 02',desert:'CHAPTER 03',industrial:'CHAPTER 04',forest:'CHAPTER 05',harbor:'CHAPTER 06',skyline:'CHAPTER 07'})[id]||'LOCKED';stamp.textContent='🔒 '+req;}else if(stamp)stamp.remove();card.classList.toggle('selected',id===currentTrack);});$('creditsValue').textContent=comma(profile.credits);}
-function refreshStory(){const stage=Math.min(profile.storyStage,CHAPTERS.length-1),ch=CHAPTERS[stage];if(profile.storyStage>=CHAPTERS.length){$('storyChapterTag').textContent='CAMPAIGN COMPLETE · NIGHTSHIFT';$('storyChapterTitle').textContent='The city is yours.';$('storyChapterDesc').textContent='The syndicate is finished. Nightshift is independent, the crew is together, and every district is open. Your next chapter is whatever you choose to race.';$('storyDialogue').textContent='“We started as strangers chasing a place to belong. Now we own our name. This is only the beginning.” — NIGHTSHIFT';$('storyObjective').textContent='All eight chapters completed.';$('storyContact').textContent='NIGHTSHIFT · UNITED';$('storyReward').textContent='CHAMPION STATUS · ALL DISTRICTS UNLOCKED';$('storyStartBtn').textContent='REPLAY FINAL CHAPTER ↗';}else{$('storyChapterTag').textContent=`CHAPTER ${String(stage+1).padStart(2,'0')} / ${ch.tag}`;$('storyChapterTitle').textContent=ch.title;$('storyChapterDesc').textContent=ch.story;$('storyDialogue').textContent=ch.dialogue;$('storyObjective').textContent=ch.objective;$('storyContact').textContent=ch.contact;$('storyReward').textContent=`REWARD: ${comma(ch.reward)} CREDITS · UNLOCK: ${ch.unlock}`;$('storyStartBtn').textContent='START CHAPTER '+String(stage+1).padStart(2,'0')+' ↗';}renderChapterList();}
+function renderStoryThreads(stage){const host=$('storyThreadList');if(!host)return;host.innerHTML='';const items=STORY_THREADS[stage]||[];items.forEach((item,i)=>{const card=document.createElement('details');card.className='storyThread';if(i===0)card.open=true;const summary=document.createElement('summary');summary.textContent=`SIDE STORY ${i+1} · ${item.title}`;const body=document.createElement('p');body.textContent=item.body;const quote=document.createElement('div');quote.className='threadDialogue';quote.textContent=item.dialogue;card.append(summary,body,quote);host.appendChild(card);});}
+function refreshStory(){const stage=Math.min(profile.storyStage,CHAPTERS.length-1),ch=CHAPTERS[stage];renderStoryThreads(stage);if(profile.storyStage>=CHAPTERS.length){$('storyChapterTag').textContent='CAMPAIGN COMPLETE · NIGHTSHIFT';$('storyChapterTitle').textContent='The city is yours.';$('storyChapterDesc').textContent='The syndicate is finished. Nightshift is independent, the crew is together, and every district is open. Your next chapter is whatever you choose to race.';$('storyDialogue').textContent='“We started as strangers chasing a place to belong. Now we own our name. This is only the beginning.” — NIGHTSHIFT';$('storyObjective').textContent='All eight chapters completed.';$('storyContact').textContent='NIGHTSHIFT · UNITED';$('storyReward').textContent='CHAMPION STATUS · ALL DISTRICTS UNLOCKED';$('storyStartBtn').textContent='REPLAY FINAL CHAPTER ↗';}else{$('storyChapterTag').textContent=`CHAPTER ${String(stage+1).padStart(2,'0')} / ${ch.tag}`;$('storyChapterTitle').textContent=ch.title;$('storyChapterDesc').textContent=ch.story;$('storyDialogue').textContent=ch.dialogue;$('storyObjective').textContent=ch.objective;$('storyContact').textContent=ch.contact;$('storyReward').textContent=`REWARD: ${comma(ch.reward)} CREDITS · UNLOCK: ${ch.unlock}`;$('storyStartBtn').textContent='START CHAPTER '+String(stage+1).padStart(2,'0')+' ↗';}renderChapterList();}
 function renderChapterList(){const host=$('chapterList');host.innerHTML='';CHAPTERS.forEach((ch,i)=>{const done=profile.completed.includes(i),current=i===profile.storyStage;const row=document.createElement('div');row.className='questRow'+(current?' current':'');row.innerHTML=`<div><b>${String(i+1).padStart(2,'0')} · ${ch.title}</b><small>${ch.contact} · ${TRACKS[ch.track].name}</small></div><span class="questState">${done?'✓ CLEARED':current?'▶ ACTIVE':'LOCKED'}</span>`;host.appendChild(row);});}
 
 function refreshGarage(){const g=profile.garage;document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.paint));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.accent));document.querySelectorAll('.styleBtn').forEach(b=>b.classList.toggle('active',b.dataset.style===g.style));$('engineLevel').textContent=`LEVEL ${g.engine} / 3 · +${g.engine*5} KM/H`;$('handlingLevel').textContent=`LEVEL ${g.handling} / 3 · ${g.handling?'FASTER RESPONSE':'STANDARD'}`;$('nitroLevel').textContent=`LEVEL ${g.nitro} / 3 · ${g.nitro?g.nitro*10+'% LESS DRAIN':'STANDARD'}`;[['engine',450],['handling',400],['nitro',350]].forEach(([key,cost])=>{const btn=$(key+'Buy');btn.textContent=g[key]>=3?'MAX LEVEL':`BUY · ${cost+g[key]*200} CR`;btn.disabled=g[key]>=3||profile.credits<cost+g[key]*200;});$('creditsValue').textContent=comma(profile.credits);refreshGaragePreview();}
@@ -871,11 +928,11 @@ function updateCamera2(dt){if(!player2||!camera2)return;const f=frameAt(player2D
 function updateHud(){const sorted=[{distance:playerDistance},...(player2?[{distance:player2Distance}]:[]),...rivals].sort((a,b)=>b.distance-a.distance);const pos=sorted.findIndex(x=>x.distance===playerDistance)+1;$('position').innerHTML=`${pos}<span style="font-size:.5em">/${sorted.length}</span>`;$('lap').textContent=`${Math.min(raceLaps,Math.floor(playerDistance/trackLength)+1)}/${raceLaps}`;$('timer').textContent=formatTime(raceTime);$('weatherName').textContent=weatherState.name.toUpperCase();$('speed').textContent=String(Math.round(Math.abs(playerSpeed)*2.7)).padStart(3,'0');$('nitroText').textContent=`${Math.round(nitro)}%`;$('nitroFill').style.width=`${nitro}%`;$('damageText').textContent=`${Math.max(0,100-damage*20)}%`;$('damagePips').innerHTML=Array.from({length:5},(_,i)=>`<i class="${i<damage?'off':''}"></i>`).join('');let effect=[];if(shieldTime>0)effect.push(`SHIELD ${shieldTime.toFixed(1)}s`);if(turboTime>0)effect.push(`TURBO ${turboTime.toFixed(1)}s`);$('powerStatus').textContent=effect.length?effect.join(' · '):gameMode==='police'?`PURSUIT ${Math.max(0,pursuitDuration-raceTime).toFixed(0)}s REMAINING`:'POWER-UP SLOT · EMPTY';if(player2)$('player2Speed').textContent=String(Math.round(Math.abs(player2Speed)*2.7)).padStart(3,'0')+' KM/H';}
 function updateRivalLearning(place,fieldSize){
  // Small, persistent adjustments make the field respond to the player's results without sudden difficulty spikes.
- const old=clamp(profile.aiSkill||1,.82,1.22);
+ const old=clamp(profile.aiSkill||1,.96,1.32);
  const normalized=(place-1)/Math.max(1,fieldSize-1); // 0 = player won, 1 = last
- const target=normalized<.22?.88:normalized>.72?1.12:1.0;
+ const target=normalized<.22?1.02:normalized>.72?1.28:1.12;
  const step=normalized<.22?.018:normalized>.72?-.014:0;
- profile.aiSkill=clamp(old+(target-old)*.08+step,.82,1.22);
+ profile.aiSkill=clamp(old+(target-old)*.08+step,.96,1.32);
  profile.aiRaces=(profile.aiRaces||0)+1;
  saveProfile();
 }
