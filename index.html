@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>MIDNIGHT RUN — 3D Street Racing</title>
-<link rel="manifest" href="./manifest.webmanifest"><meta name="theme-color" content="#07111f"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   :root{--cyan:#63f3ff;--pink:#ff4b91;--gold:#ffd36a;--panel:#07111feF;--muted:#a9bfd0}
   *{box-sizing:border-box}
@@ -124,11 +123,21 @@
   .questTag{display:inline-block;color:#ffe39b;background:#2d230f;border:1px solid #ffd36a55;padding:5px 8px;font-size:8px;letter-spacing:.16em;font-weight:1000}
   .questList{display:flex;flex-direction:column;gap:8px;max-height:330px;overflow:auto}.questRow{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #8cecff18;padding:8px 0;font-size:10px;color:#cfe0eb}.questRow small{display:block;color:#7f9aaf;font-size:8px;margin-top:4px}.questState{font-size:8px;color:#ffd36a;white-space:nowrap;letter-spacing:.1em}
   .garageGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:12px}
-  .garagePreview{min-height:195px;background:radial-gradient(ellipse at 50% 90%,#16465a,#081321 65%);border:1px solid #8cecff2b;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .garagePreview{height:clamp(250px,34vw,390px);min-height:250px;background:radial-gradient(ellipse at 50% 88%,#16465a,#081321 65%);border:1px solid #8cecff55;position:relative;overflow:hidden;touch-action:pan-y;cursor:grab}
+  .garagePreview:active{cursor:grabbing}.garagePreview canvas{width:100%;height:100%;display:block}.garagePreviewHint{position:absolute;left:12px;bottom:10px;z-index:2;color:#b9d8e8;background:#06111dbb;border:1px solid #8cecff33;padding:7px 10px;border-radius:6px;font-size:9px;letter-spacing:.12em;pointer-events:none}.garagePreviewName{position:absolute;right:12px;top:10px;z-index:2;color:#fff;background:#06111dbb;border:1px solid #8cecff33;padding:7px 10px;border-radius:6px;font-size:10px;letter-spacing:.14em;font-weight:900;pointer-events:none}
   .garagePreview:before{content:'';position:absolute;left:-10%;right:-10%;bottom:26px;height:46px;background:repeating-linear-gradient(90deg,#d8edff44 0 25px,transparent 25px 48px);transform:perspective(160px) rotateX(48deg);opacity:.35}
   .carSilhouette{width:220px;height:76px;position:relative;filter:drop-shadow(0 15px 14px #000b);z-index:1}
   .carSilhouette:before{content:'';position:absolute;left:9px;right:9px;bottom:13px;height:40px;background:var(--paint,#176de0);border-radius:28px 38px 10px 10px;clip-path:polygon(0 62%,8% 20%,26% 12%,38% 0,67% 0,82% 25%,100% 54%,96% 100%,4% 100%);border-top:3px solid var(--accent,#48eaff)}
   .carSilhouette:after{content:'';position:absolute;left:67px;top:7px;width:95px;height:34px;background:#9ee8ff99;clip-path:polygon(12% 100%,30% 0,72% 0,100% 100%);border:1px solid #fff8}
+  .carSilhouette[data-style="muscle"]:before{height:45px;bottom:10px;border-radius:18px 22px 8px 8px;clip-path:polygon(0 58%,5% 20%,28% 12%,36% 0,68% 0,78% 16%,100% 52%,96% 100%,4% 100%)}
+  .carSilhouette[data-style="hyper"]:before{height:34px;bottom:15px;border-radius:30px 35px 8px 8px;clip-path:polygon(0 62%,12% 30%,34% 10%,65% 4%,88% 26%,100% 54%,96% 100%,4% 100%)}
+  .carSilhouette[data-style="rally"]:before{height:43px;bottom:12px;border-radius:18px 20px 8px 8px;clip-path:polygon(0 55%,8% 16%,28% 8%,35% 0,68% 0,80% 15%,100% 55%,96% 100%,4% 100%)}
+  .carSilhouette[data-style="tuner"]:before{height:38px;bottom:13px;clip-path:polygon(0 62%,7% 28%,27% 14%,39% 0,68% 0,83% 28%,100% 56%,96% 100%,4% 100%)}
+  .carSilhouette[data-style="classic"]:before{height:43px;bottom:12px;border-radius:22px 22px 7px 7px;clip-path:polygon(0 58%,7% 24%,26% 18%,34% 0,69% 0,78% 18%,100% 52%,96% 100%,4% 100%)}
+  .carSilhouette[data-style="muscle"]:after{top:4px;height:30px}
+  .carSilhouette[data-style="hyper"]:after{top:12px;height:23px;width:105px;left:58px}
+  .carSilhouette[data-style="rally"]:after{top:4px;height:34px}
+  .carSilhouette[data-style="classic"]:after{top:6px;height:29px}
   .wheelDot{position:absolute;bottom:1px;width:31px;height:31px;border-radius:50%;background:#080d14;border:7px solid #8798a5;z-index:2}.wheelDot.one{left:31px}.wheelDot.two{right:31px}
   .swatches{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0 15px}.swatch{width:27px;height:27px;border-radius:50%;border:2px solid #e4f6ff55;cursor:pointer;box-shadow:0 2px 6px #0008}.swatch.active{outline:2px solid #fff;outline-offset:3px}
   .styleGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.styleBtn{padding:10px 6px;border:1px solid #8cecff2b;background:#101d2b;color:#cfe1ec;font-size:9px;letter-spacing:.1em;cursor:pointer}.styleBtn.active{border-color:#5beeff;color:#fff;background:#123249}
@@ -149,63 +158,48 @@
   @media(max-width:520px){.hubTop{align-items:flex-start}.creditsPill{font-size:9px;padding:9px}.heroStrip{padding:14px}.trackCard{min-height:116px}.trackArt{height:64px}.footerActions{width:100%}.footerActions button{flex:1}}
 
 
-/* MIDNIGHT RUN UI refresh: track cards launch races immediately */
-#modeGrid,.details,#startBtn{display:none!important}
-.menuWrap{width:min(1120px,100%);padding:clamp(14px,2.5vw,28px);border-radius:18px}
-.hubTop{margin-bottom:12px}
-.hubLogo{font-size:clamp(24px,4vw,38px);letter-spacing:.12em}
-.hubTag{font-size:9px;letter-spacing:.18em}
-.hubGrid{gap:16px}
-.sideNav{width:170px;min-width:150px}
-.navBtn{border-radius:10px;min-height:42px;text-align:left;padding:11px 13px}
-.navBtn.active{box-shadow:inset 3px 0 var(--cyan)}
-.heroStrip{padding:16px 18px;margin-bottom:14px;border-radius:14px}
-.heroStrip h2{font-size:clamp(26px,4vw,42px);line-height:1;margin:8px 0}
-.heroStrip p{font-size:12px;max-width:560px}
-.panelTitle{margin:14px 0 9px;font-size:10px}
-#trackGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.trackCard{border-radius:12px;min-height:130px}
-.trackArt{height:82px}
-.trackCard .meta{padding:9px 11px}
-.trackCard b{font-size:12px}
-.trackCard small{font-size:9px}
-.trackCard:focus-visible,.navBtn:focus-visible,.primaryBtn:focus-visible,.goldBtn:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
-.trackCard:active{transform:scale(.985);filter:brightness(1.2)}
-.lockStamp{display:none!important}
-.menuFooter{margin-top:14px;padding-top:10px;border-top:1px solid #8cecff22}
-.featureList{font-size:9px;line-height:1.6}
-.footerActions{display:flex;gap:8px;align-items:center}
-.goldBtn{border-radius:9px;padding:12px 14px}
-.primaryBtn,.secondaryBtn{border-radius:9px;clip-path:none}
-#mobile button{touch-action:none;user-select:none;-webkit-user-select:none}
-@media(max-width:760px){
- .overlay{padding:8px;align-items:flex-start}
- .menuWrap{max-height:98vh;padding:12px;border-radius:14px}
- .hubGrid{display:block}
- .sideNav{width:100%;display:flex;gap:7px;overflow-x:auto;margin-bottom:12px}
- .navBtn{white-space:nowrap;flex:1;font-size:10px;padding:10px 8px}
- .navNote{display:none}
- .hubTop{align-items:center}
- .hubLogo{font-size:24px}
- .creditsPill{font-size:10px;padding:7px 9px}
- .heroStrip{padding:13px;margin-bottom:10px}
- .heroMeta{display:none}
- #trackGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
- .trackCard{min-height:116px}
- .trackArt{height:68px}
- .trackCard b{font-size:11px}
- .trackCard small{font-size:8px}
- .menuFooter{margin-top:10px}
- .featureList{font-size:8px}
- .footerActions{width:100%}
- #twoPlayerBtn{width:100%;padding:12px 8px}
-}
-@media(max-width:380px){
- #trackGrid{grid-template-columns:1fr 1fr}
- .trackCard{min-height:104px}
- .trackArt{height:58px}
- .hubTag{font-size:7px}
-}
+  /* MIDNIGHT RUN v2: cleaner campaign interface */
+  .menuWrap{width:min(1120px,96vw);max-height:94vh;padding:clamp(16px,2.2vw,28px);border-radius:18px;background:linear-gradient(145deg,#081522f7,#050a13f7 72%);border:1px solid #6cecff55;box-shadow:0 28px 100px #000d,inset 0 1px #ffffff12}
+  .hubTop{align-items:center;padding:4px 2px 18px;margin-bottom:18px}
+  .hubLogo{font-size:clamp(28px,4vw,44px);letter-spacing:-.065em}
+  .hubTag{font-size:9px;letter-spacing:.22em;color:#8da9bd}
+  .creditsPill{border-radius:999px;padding:10px 16px;font-size:10px;background:#1a1b24;border-color:#f5c96b55}
+  .hubGrid{grid-template-columns:166px minmax(0,1fr);gap:18px}
+  .sideNav{gap:7px;padding-right:4px}
+  .navBtn{border-radius:10px;padding:14px 12px;font-size:9px;letter-spacing:.12em;transition:background .18s,border-color .18s,transform .18s}
+  .navBtn:hover{transform:translateX(2px)}
+  .navBtn.active{box-shadow:inset 3px 0 #5beeff,0 8px 24px #0005}
+  .heroStrip{border-radius:14px;padding:clamp(18px,3vw,28px);background:radial-gradient(ellipse at 85% 10%,#1d6b8050,transparent 42%),linear-gradient(120deg,#11263a,#0b1422 72%);border:1px solid #70eaff25;min-height:160px}
+  .heroStrip h2{font-size:clamp(25px,4vw,42px);line-height:.98;letter-spacing:-.055em}
+  .heroStrip p{max-width:560px;font-size:12px;line-height:1.65;color:#b4c7d5}
+  .panelTitle{display:flex;align-items:center;gap:10px;margin:19px 0 10px;font-size:9px;letter-spacing:.18em;color:#9eb6c8}
+  .panelTitle:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,#6cecff44,transparent)}
+  .modeGrid{gap:9px}
+  .modeCard{border-radius:10px;padding:13px;min-height:82px;background:linear-gradient(145deg,#122235,#0b1522);transition:.18s}
+  .modeCard:hover,.trackCard:hover{transform:translateY(-2px);border-color:#6cecff88}
+  .trackCard{border-radius:11px;overflow:hidden;background:#0c1927;transition:.18s}
+  .trackCard.selected{border-color:#61eaff;box-shadow:0 0 0 1px #61eaff55,0 10px 26px #0006}
+  .trackArt{border-radius:8px 8px 0 0}
+  .details{padding:12px 2px 4px;color:#a9bfce;font-size:10px;line-height:1.55}
+  .menuFooter{border-top:1px solid #8cecff20;padding-top:14px}
+  .primaryBtn,.goldBtn{border-radius:9px;transition:filter .15s,transform .15s}
+  .primaryBtn:hover,.goldBtn:hover{filter:brightness(1.16);transform:translateY(-1px)}
+  .storyLayout{grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);align-items:stretch}
+  .storyFeature,.storyList,.garageCard{border-radius:13px;background:linear-gradient(150deg,#102236,#091321);border-color:#75eaff2b;padding:clamp(15px,2vw,22px)}
+  .storyFeature h3{font-size:clamp(25px,3.4vw,38px);margin:12px 0 8px}
+  .storyFeature p{font-size:12px;line-height:1.75;color:#b5c9d8}
+  .storyQuote{margin:15px 0;padding:12px 14px;border-left:2px solid #ff5b91;background:#ff5b910c;color:#ffe0eb;font-size:11px;line-height:1.65;font-style:italic}
+  .storyMetaGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+  .storyMetaBox{padding:10px;border:1px solid #77eaff20;border-radius:9px;background:#07111d}
+  .storyMetaBox small{display:block;color:#7997ad;font-size:8px;letter-spacing:.13em;margin-bottom:5px}
+  .storyMetaBox b{font-size:10px;color:#e6f7ff}
+  .storyFeature .questTag{border-radius:5px}
+  .questRow{padding:11px 9px;border:1px solid transparent;border-radius:8px;background:#07121f;align-items:center}
+  .questRow.current{border-color:#5beeff66;background:#10283a}
+  .questRow b{font-size:10px}.questRow small{font-size:8px;line-height:1.5}
+  .questState{font-size:8px}
+  @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{padding:0}.navBtn{border-radius:8px}.storyLayout{grid-template-columns:1fr}}
+  @media(max-width:520px){.menuWrap{width:98vw;max-height:96vh;padding:13px;border-radius:12px}.hubTop{padding-bottom:12px;margin-bottom:12px}.hubLogo{font-size:27px}.hubTag{font-size:7px}.hubGrid{gap:12px}.navBtn{font-size:8px;padding:10px 7px}.heroStrip{border-radius:10px}.storyMetaGrid{grid-template-columns:1fr 1fr}.storyFeature,.storyList{padding:13px}}
 
 </style>
 <script type="importmap">
@@ -255,15 +249,15 @@
       </aside>
       <main class="hubMain">
         <section id="homePanel" class="viewPanel">
-          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Choose any track below to start racing immediately. Build your reputation, tune your car and take on the underground.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · ADAPTIVE RIVALS</div></div>
-          <div class="panelTitle">PICK A TRACK TO RACE</div>
+          <div class="heroStrip"><div><div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h2>NO RULES. JUST<br><span style="color:var(--pink)">THE RACING LINE.</span></h2><p>Build a name in the underground scene. Race rivals, tune your ride, unlock new routes and chase the next chapter.</p></div><div class="heroMeta">3D STREET RACING<br>CAMPAIGN · GARAGE · CO-OP<br>LOCAL SAVE · ADAPTIVE RIVALS</div></div>
+          <div class="panelTitle">CHOOSE YOUR EVENT</div>
           <div class="modeGrid" id="modeGrid">
             <button class="modeCard active" data-mode="street"><strong>01 / STREET RACE</strong><small>3 laps · rival drivers · podium payout</small></button>
             <button class="modeCard" data-mode="time"><strong>02 / TIME ATTACK</strong><small>1 lap · beat the target clock</small></button>
             <button class="modeCard" data-mode="police"><strong>03 / POLICE PURSUIT</strong><small>Survive the pursuit timer · arcade heat</small></button>
             <button class="modeCard" data-mode="story"><strong>04 / STORY EVENT</strong><small>Continue your campaign chapter</small></button>
           </div>
-          
+          <div class="panelTitle">SELECT A LOCATION</div>
           <div id="trackGrid">
             <button class="trackCard selected" data-track="neon"><div class="trackArt cityArt"></div><span class="trackNo">01 / NIGHT</span><div class="meta"><b>NEON DISTRICT</b><small>URBAN · TECHNICAL</small></div></button>
             <button class="trackCard" data-track="coast"><div class="trackArt coastArt"></div><span class="trackNo">02 / DAY</span><div class="meta"><b>COASTAL RUN</b><small>SEASIDE · FAST</small></div></button>
@@ -280,13 +274,13 @@
         </section>
         <section id="storyPanel" class="viewPanel hidden">
           <div class="heroStrip"><div><div class="eyebrow">A CAMPAIGN OF SPEED, LOYALTY & SECOND CHANCES</div><h2>THE NIGHT<br><span style="color:var(--pink)">SHIFT</span></h2><p>You're a new driver trying to earn a place in the city's underground crew. Each win opens a new district and reveals who is really running the scene.</p></div><div class="heroMeta">8 CHAPTERS<br>RACE · TIME · PURSUIT<br>REWARDS & TRACK UNLOCKS</div></div>
-          <div class="storyLayout"><div class="storyFeature"><span class="questTag" id="storyChapterTag">CHAPTER 01 / THE INVITATION</span><h3 id="storyChapterTitle">First Night</h3><p id="storyChapterDesc">Your first run is a chance to prove you belong. The crew is watching.</p><div class="panelTitle">CURRENT OBJECTIVE</div><p id="storyObjective">Finish in the top three.</p><div class="tinyNote" id="storyReward">REWARD: 500 CREDITS · NEW DISTRICT UNLOCK</div><button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START STORY CHAPTER ↗</button></div><div class="storyList"><div class="panelTitle" style="margin-top:0">CAMPAIGN PROGRESS</div><div class="questList" id="chapterList"></div></div></div>
+          <div class="storyLayout"><div class="storyFeature"><span class="questTag" id="storyChapterTag">CHAPTER 01 / THE INVITATION</span><h3 id="storyChapterTitle">First Night</h3><p id="storyChapterDesc">Your first run is a chance to prove you belong. The crew is watching.</p><div class="storyQuote" id="storyDialogue">“Nobody gets a second first impression out here. Show me what you can do.” — VEX</div><div class="storyMetaGrid"><div class="storyMetaBox"><small>MISSION OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div><div class="storyMetaBox"><small>MISSION CONTACT</small><b id="storyContact">VEX · CREW SCOUT</b></div></div><div class="tinyNote" id="storyReward">REWARD: 500 CREDITS · NEW DISTRICT UNLOCK</div><button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START STORY CHAPTER ↗</button></div><div class="storyList"><div class="panelTitle" style="margin-top:0">CAMPAIGN CASE FILES</div><p class="tinyNote" style="margin:0 0 12px">Every race changes your standing in the underground. Clear chapters to uncover the truth behind the city’s new racing syndicate.</p><div class="questList" id="chapterList"></div></div></div>
         </section>
         <section id="garagePanel" class="viewPanel hidden">
-          <div class="heroStrip"><div><div class="eyebrow">YOUR RIDE. YOUR SIGNATURE.</div><h2>THE <span style="color:var(--pink)">GARAGE</span></h2><p>Customize your paint, choose a body style and spend Credits on performance upgrades.</p></div><div class="heroMeta">BUILD / TUNE / SAVE<br>UPGRADES CHANGE HANDLING<br>AND TOP SPEED</div></div>
+          <div class="heroStrip"><div><div class="eyebrow">YOUR RIDE. YOUR SIGNATURE.</div><h2>THE <span style="color:var(--pink)">GARAGE</span></h2><p>Choose six distinct car bodies, customize paint and aero, and install visible performance parts.</p></div><div class="heroMeta">BUILD / TUNE / SAVE<br>UPGRADES CHANGE YOUR BUILD<br>AND RACE PERFORMANCE</div></div>
           <div class="garageGrid"><div>
-            <div class="garagePreview"><div class="carSilhouette" id="garageCar"><i class="wheelDot one"></i><i class="wheelDot two"></i></div></div>
-            <div class="panelTitle">BODY STYLE</div><div class="styleGrid"><button class="styleBtn active" data-style="sport">SPORT</button><button class="styleBtn" data-style="muscle">MUSCLE</button><button class="styleBtn" data-style="hyper">HYPER</button></div>
+            <div class="garagePreview" id="garagePreview"><canvas id="garagePreviewCanvas" aria-label="Interactive 3D car preview"></canvas><div class="garagePreviewName" id="garagePreviewName">SPORT COUPE</div><div class="garagePreviewHint">DRAG TO ROTATE · LIVE BUILD PREVIEW</div></div>
+            <div class="panelTitle">BODY STYLE</div><div class="styleGrid"><button class="styleBtn active" data-style="sport">SPORT</button><button class="styleBtn" data-style="muscle">MUSCLE</button><button class="styleBtn" data-style="hyper">HYPER</button><button class="styleBtn" data-style="rally">RALLY</button><button class="styleBtn" data-style="tuner">TUNER</button><button class="styleBtn" data-style="classic">CLASSIC</button></div>
             <div class="panelTitle">PAINT FINISH</div><div class="swatches" id="paintSwatches"><button class="swatch active" data-color="176de0" style="background:#176de0" aria-label="Blue"></button><button class="swatch" data-color="e83e63" style="background:#e83e63" aria-label="Red"></button><button class="swatch" data-color="f0b52d" style="background:#f0b52d" aria-label="Gold"></button><button class="swatch" data-color="8a55e8" style="background:#8a55e8" aria-label="Purple"></button><button class="swatch" data-color="e7edf2" style="background:#e7edf2" aria-label="White"></button><button class="swatch" data-color="202b35" style="background:#202b35" aria-label="Graphite"></button><button class="swatch" data-color="2dbd86" style="background:#2dbd86" aria-label="Green"></button></div>
             <div class="panelTitle">ACCENT COLOUR</div><div class="swatches" id="accentSwatches"><button class="swatch active" data-color="48eaff" style="background:#48eaff"></button><button class="swatch" data-color="ff4b91" style="background:#ff4b91"></button><button class="swatch" data-color="ffd36a" style="background:#ffd36a"></button><button class="swatch" data-color="ffffff" style="background:#fff"></button></div>
           </div><div class="garageCard"><div class="panelTitle" style="margin-top:0">PERFORMANCE SHOP</div><div class="tinyNote">Each upgrade has three levels. Your purchase is saved locally.</div>
@@ -321,6 +315,7 @@ const TRACKS = {
 };
 const ROAD_WIDTH=18, HALF=ROAD_WIDTH/2, TOTAL_LAPS=3;
 let renderer, scene, camera, world, trackCurve, trackLength=0, currentTrack='neon';
+let garageRenderer=null,garageScene=null,garageCamera=null,garageStage=null,garageCar=null,garagePreviewAngle=-.55,garageDragging=false,garageLastX=0;
 let player, rivals=[], pickups=[], collected=new Set();
 let gameState='menu', raceTime=0, countdown=0, playerDistance=0, playerSpeed=0, playerOffset=0, nitro=100, damage=0, shieldTime=0, turboTime=0, offroadCooldown=0, hitCooldowns=[];
 let boostActive=false, toastTimer=0, lastFrame=0, frameCount=0;
@@ -336,14 +331,14 @@ const defaultProfile={credits:1200,storyStage:0,completed:[],aiSkill:1,aiRaces:0
 let profile=loadProfile();
 const PAINTS=['176de0','e83e63','f0b52d','8a55e8','e7edf2','202b35','2dbd86'];
 const CHAPTERS=[
- {title:'First Night',tag:'THE INVITATION',track:'neon',mode:'street',objective:'Finish in the top three to earn your first crew patch.',reward:500,unlock:'Coastal Run'},
- {title:'Coastal Getaway',tag:'THE HEAT',track:'coast',mode:'police',objective:'Survive the pursuit for 70 seconds. Keep your car in one piece.',reward:650,unlock:'Alpine Pass'},
- {title:'Cliffhanger',tag:'HIGH ALTITUDE',track:'alpine',mode:'time',objective:'Complete one lap before the target time expires.',reward:700,unlock:'Desert Canyon'},
- {title:'Canyon Contract',tag:'NO BACKING DOWN',track:'desert',mode:'street',objective:'Win the race and beat the local favourite.',reward:800,unlock:'Iron District'},
- {title:'Iron District',tag:'THE INSIDE JOB',track:'industrial',mode:'police',objective:'Stay ahead of the patrol cars until the pursuit timer ends.',reward:850,unlock:'Blackpine Loop'},
- {title:'Blackpine Run',tag:'NIGHT VISION',track:'forest',mode:'time',objective:'Beat the target clock through the forest esses.',reward:950,unlock:'Harbor Sprint'},
- {title:'Harbor Showdown',tag:'THE OLD GUARD',track:'harbor',mode:'street',objective:'Take first place in the harbor street race.',reward:1100,unlock:'Skyline GP'},
- {title:'Skyline Finale',tag:'THE LAST SHIFT',track:'skyline',mode:'street',objective:'Win the championship finale to own the night.',reward:1800,unlock:'Campaign complete'}
+ {title:'First Night',tag:'THE INVITATION',track:'neon',mode:'street',objective:'Finish in the top three to earn your first crew patch.',reward:500,unlock:'Coastal Run',contact:'Vex · Crew scout',dialogue:'“You have one night to show me you can drive. No excuses, no shortcuts. Make the city remember your name.”',story:'You arrive in the Neon District with an old car, a nearly empty wallet, and no reputation. Vex, a respected driver for the underground crew Nightshift, has been watching your practice runs. Tonight, the crew is holding an open qualifier. A clean result earns you a place at the table — and puts you on the radar of someone who does not want new talent rising.'},
+ {title:'Coastal Getaway',tag:'THE HEAT',track:'coast',mode:'police',objective:'Survive the pursuit for 70 seconds. Keep your car in one piece.',reward:650,unlock:'Alpine Pass',contact:'Mara · Mechanic',dialogue:'“Those patrols weren’t there by accident. Someone knew our route. Get back here and we’ll figure out who talked.”',story:'Your first win should have brought celebration. Instead, the crew’s meet is interrupted by a sudden patrol response. Mara, the crew’s mechanic, believes the route was leaked before the race even began. You are sent along the coast while the others disappear into the city. Survive the pressure and bring the car home. The question is no longer whether you belong — it is who is setting you up.'},
+ {title:'Cliffhanger',tag:'HIGH ALTITUDE',track:'alpine',mode:'time',objective:'Complete one lap before the target time expires.',reward:700,unlock:'Desert Canyon',contact:'Juno · Data analyst',dialogue:'“I traced the leaked route. It came from an old crew account. Someone has been using our name.”',story:'Juno studies the patrol timing and finds a pattern: the leaked routes are being sent from an account that belonged to the crew’s former champion, Rook. Vex insists Rook left town years ago. Before anyone can agree on what it means, Juno challenges you to a precision run through the Alpine Pass to test a theory about the timing data.'},
+ {title:'Canyon Contract',tag:'NO BACKING DOWN',track:'desert',mode:'street',objective:'Win the race and beat the local favourite.',reward:800,unlock:'Iron District',contact:'Rook · Former champion',dialogue:'“You’re quick. But speed doesn’t tell me who you are. Meet me at the canyon and earn the answer.”',story:'A message arrives from Rook himself. He claims he did not leak the routes — he says someone inside Nightshift is selling race information to a rival outfit. He offers proof, but only if you beat his driver in the canyon. Vex calls it a trap. Mara says it is the only lead you have. You line up knowing the result could split the crew.'},
+ {title:'Iron District',tag:'THE INSIDE JOB',track:'industrial',mode:'police',objective:'Stay ahead of the patrol cars until the pursuit timer ends.',reward:850,unlock:'Blackpine Loop',contact:'Mara · Mechanic',dialogue:'“I found the transmitter. It was hidden in our own garage. This goes deeper than Rook.”',story:'After the canyon race, Mara discovers a small transmitter hidden in the crew garage. It has been tracking cars and broadcasting their locations. The signal points toward the Iron District, where the rival outfit has been staging its meets. Your run through the district is a chance to draw their attention while Juno tracks the signal back to its source.'},
+ {title:'Blackpine Run',tag:'NIGHT VISION',track:'forest',mode:'time',objective:'Beat the target clock through the forest esses.',reward:950,unlock:'Harbor Sprint',contact:'Juno · Data analyst',dialogue:'“The signal stops here. Whoever planted it knows our habits — and knows us personally.”',story:'The transmitter trail ends outside Blackpine. Juno uncovers a set of messages showing that the leak began after Nightshift refused to join a citywide racing syndicate. The messages are signed with Vex’s old crew code. You need one last data run through the forest to recover the missing file before the syndicate wipes it.'},
+ {title:'Harbor Showdown',tag:'THE OLD GUARD',track:'harbor',mode:'street',objective:'Take first place in the harbor street race.',reward:1100,unlock:'Skyline GP',contact:'Vex · Crew scout',dialogue:'“I should have told you. I left the syndicate, but I never told the crew why. Tonight, I’ll explain everything.”',story:'The recovered file reveals the truth: Vex once helped build the syndicate before walking away when it began fixing races and threatening independent crews. He kept the secret to protect Nightshift, but his silence made everyone vulnerable. At the harbor, the syndicate challenges Nightshift to a public showdown. Vex finally agrees to face his past — with you beside him.'},
+ {title:'Skyline Finale',tag:'THE LAST SHIFT',track:'skyline',mode:'street',objective:'Win the championship finale to own the night.',reward:1800,unlock:'Campaign complete',contact:'Nightshift · All crew members',dialogue:'“Whatever happens after tonight, we decide our own future. Let’s finish this together.”',story:'The syndicate offers one final deal: win its championship and Nightshift can race freely, or lose and surrender its routes and garage. The crew refuses to be bought. You enter the Skyline GP as Nightshift’s lead driver, with Mara, Juno, Rook, and Vex backing you. This is not just a title race. It is the night the underground decides who controls its own future.'}
 ];
 
 function rnd(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
@@ -354,7 +349,7 @@ function makeMat(color,roughness=.65,metalness=0,extra={}){return new THREE.Mesh
 
 function init(){
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2.0));
   renderer.setSize(window.innerWidth,window.innerHeight);
   renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -363,7 +358,7 @@ function init(){
   camera=new THREE.PerspectiveCamera(68,window.innerWidth/window.innerHeight,.1,1200);
   camera.position.set(0,8,-16);camera2=new THREE.PerspectiveCamera(68,(window.innerWidth/2)/window.innerHeight,.1,1200);camera2.position.set(0,8,-16);
   const hemi=new THREE.HemisphereLight(0xc4e8ff,0x39404a,2.0);scene.add(hemi);
-  const sun=new THREE.DirectionalLight(0xffffff,2.5);sun.position.set(-100,150,90);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-250;sun.shadow.camera.right=250;sun.shadow.camera.top=250;sun.shadow.camera.bottom=-250;sun.shadow.bias=-.0003;scene.add(sun);
+  const sun=new THREE.DirectionalLight(0xffffff,2.5);sun.position.set(-100,150,90);sun.castShadow=true;sun.shadow.mapSize.set(3072,3072);sun.shadow.camera.left=-250;sun.shadow.camera.right=250;sun.shadow.camera.top=250;sun.shadow.camera.bottom=-250;sun.shadow.bias=-.0003;scene.add(sun);
   const fill=new THREE.DirectionalLight(0x78cfff,.65);fill.position.set(110,50,-100);scene.add(fill);
   buildWorld(currentTrack);
   window.addEventListener('resize',onResize);
@@ -453,34 +448,98 @@ function buildSpectators(cfg){
  }
 }
 
-function createCar(color,accent=0x6beeff,isPlayer=false,style='sport'){
- const root=new THREE.Group();const bodyMat=makeMat(color,.27,.72);
- const bodyW=style==='muscle'?2.2:style==='hyper'?1.94:2.05, bodyL=style==='muscle'?4.55:style==='hyper'?4.35:4.25;const trimMat=makeMat(0x111821,.38,.65);const glassMat=new THREE.MeshStandardMaterial({color:0x102536,roughness:.14,metalness:.5,transparent:true,opacity:.94});
- addBox(root,bodyW,.65,bodyL,bodyMat,0,.8,0);
- addBox(root,style==='muscle'?1.98:1.82,.22,style==='hyper'?1.0:1.23,bodyMat,0,1.15,1.35);
- addBox(root,1.56,.71,1.95,glassMat,0,1.42,-.18);
- addBox(root,1.34,.08,1.28,trimMat,0,1.81,-.2);
- addBox(root,1.88,.22,.52,trimMat,0,.55,-1.95);
- // bumpers, mirrors, lights
- addBox(root,2.0,.18,.22,trimMat,0,.58,2.13);addBox(root,2.0,.2,.22,trimMat,0,.59,-2.12);
- const lightMat=new THREE.MeshStandardMaterial({color:0xe8fbff,emissive:0xd8f8ff,emissiveIntensity:2.3});
- const tailMat=new THREE.MeshStandardMaterial({color:0xff1f4e,emissive:0xff163d,emissiveIntensity:2.0});
- for(const x of [-.69,.69]){addBox(root,.32,.15,.08,lightMat,x,.82,2.17);addBox(root,.38,.16,.08,tailMat,x,.83,-2.17);}
- const wheels=[];const tireMat=makeMat(0x090d11,.9,.08),rimMat=makeMat(0x8a9aa6,.25,.8),rimDark=makeMat(0x202c36,.35,.8);
- for(const x of [-1.03,1.03])for(const z of [-1.37,1.37]){const wg=new THREE.Group();wg.position.set(x,.46,z);const tire=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.3,18),tireMat);tire.rotation.z=Math.PI/2;wg.add(tire);const rim=new THREE.Mesh(new THREE.CylinderGeometry(.24,.24,.315,12),rimMat);rim.rotation.z=Math.PI/2;wg.add(rim);const hub=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.33,10),rimDark);hub.rotation.z=Math.PI/2;wg.add(hub);root.add(wg);wheels.push(wg);}
- // rear spoiler
- addBox(root,.12,.5,.12,trimMat,-.62,1.3,-1.68);addBox(root,.12,.5,.12,trimMat,.62,1.3,-1.68);addBox(root,2.0,.14,.55,bodyMat,0,1.55,-1.75);
- const accentMat=new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:isPlayer?1.0:.42,metalness:.35,roughness:.3});
- addBox(root,.055,.035,2.7,accentMat,-.94,.89,.05);addBox(root,.055,.035,2.7,accentMat,.94,.89,.05);
- const glow=new THREE.Mesh(new THREE.BoxGeometry(1.65,.03,2.5),new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.24}));glow.position.y=.13;root.add(glow);
- const flames=new THREE.Group();for(const x of [-.48,.48]){const flame=new THREE.Mesh(new THREE.ConeGeometry(.16,.9,8),new THREE.MeshBasicMaterial({color:0x39dfff,transparent:true,opacity:.92}));flame.rotation.x=-Math.PI/2;flame.position.set(x,.55,-2.45);flames.add(flame);}root.add(flames);flames.visible=false;
+function createCar(color,accent=0x6beeff,isPlayer=false,style='sport',upgrade=null){
+ const root=new THREE.Group(), bodyMat=makeMat(color,.24,.78), trimMat=makeMat(0x101720,.34,.72);
+ const glassMat=new THREE.MeshStandardMaterial({color:0x102536,roughness:.12,metalness:.58,transparent:true,opacity:.96});
+ const dims={
+  sport:{w:2.02,l:4.35,roofW:1.55,roofL:1.75,roofY:1.39,roofZ:-.18,wheel:.44},
+  muscle:{w:2.25,l:4.65,roofW:1.83,roofL:1.58,roofY:1.43,roofZ:-.12,wheel:.48},
+  hyper:{w:1.92,l:4.55,roofW:1.48,roofL:1.58,roofY:1.34,roofZ:-.1,wheel:.43},
+  rally:{w:2.16,l:4.25,roofW:1.72,roofL:1.8,roofY:1.48,roofZ:-.12,wheel:.49},
+  tuner:{w:2.12,l:4.4,roofW:1.62,roofL:1.72,roofY:1.36,roofZ:-.15,wheel:.45},
+  classic:{w:2.18,l:4.5,roofW:1.72,roofL:1.58,roofY:1.43,roofZ:-.12,wheel:.44}
+ };
+ const d=dims[style]||dims.sport, front=d.l/2-.05, rear=-d.l/2+.05;
+ addBox(root,d.w,.62,d.l,bodyMat,0,.79,0);
+ // Distinct hood and cabin profiles for each chassis.
+ if(style==='muscle'){
+  addBox(root,d.w*.88,.24,d.l*.38,bodyMat,0,1.05,1.18);
+  addBox(root,d.roofW,.72,d.roofL,glassMat,0,d.roofY,-.28);
+  addBox(root,.48,.18,.9,trimMat,0,1.18,1.45); // raised muscle hood scoop
+ }else if(style==='hyper'){
+  addBox(root,d.w*.96,.18,d.l*.33,bodyMat,0,1.0,1.38);
+  addBox(root,d.roofW,.58,d.roofL,glassMat,0,d.roofY,-.22);
+  addBox(root,.12,.16,1.2,trimMat,-.66,1.05,.98);addBox(root,.12,.16,1.2,trimMat,.66,1.05,.98);
+ }else if(style==='rally'){
+  addBox(root,d.w*.9,.22,d.l*.3,bodyMat,0,1.02,1.3);
+  addBox(root,d.roofW,.72,d.roofL,glassMat,0,d.roofY,-.18);
+  addBox(root,1.72,.16,.58,trimMat,0,1.84,-1.65); // rally roof wing
+  addBox(root,.14,.3,.14,trimMat,-.58,1.68,-1.65);addBox(root,.14,.3,.14,trimMat,.58,1.68,-1.65);
+ }else if(style==='tuner'){
+  addBox(root,d.w*.91,.19,d.l*.35,bodyMat,0,1.03,1.24);
+  addBox(root,d.roofW,.61,d.roofL,glassMat,0,d.roofY,-.2);
+  addBox(root,2.25,.12,.5,trimMat,0,1.45,-1.82); // wide tuner wing
+  addBox(root,.16,.26,.14,trimMat,-.82,1.3,-1.82);addBox(root,.16,.26,.14,trimMat,.82,1.3,-1.82);
+ }else if(style==='classic'){
+  addBox(root,d.w*.92,.3,d.l*.42,bodyMat,0,1.08,1.02);
+  addBox(root,d.roofW,.69,d.roofL,glassMat,0,d.roofY,-.2);
+  addBox(root,1.5,.12,.42,trimMat,0,1.1,1.7);
+ }else{
+  addBox(root,d.roofW,.68,d.roofL,glassMat,0,d.roofY,d.roofZ);
+ }
+ // Body details, front splitter and rear diffuser.
+ addBox(root,d.w*.94,.16,.2,trimMat,0,.55,front);
+ addBox(root,d.w*.94,.18,.22,trimMat,0,.57,rear);
+ if(style==='hyper'||style==='tuner')addBox(root,d.w*1.08,.09,.38,trimMat,0,.48,front+.08);
+ const lightMat=new THREE.MeshStandardMaterial({color:0xe8fbff,emissive:0xd8f8ff,emissiveIntensity:3.0});
+ const tailMat=new THREE.MeshStandardMaterial({color:0xff244f,emissive:0xff163d,emissiveIntensity:2.6});
+ for(const x of [-.7,.7]){
+  addBox(root,.38,.13,.09,lightMat,x,.83,front+.02);
+  addBox(root,.42,.15,.09,tailMat,x,.83,rear-.02);
+ }
+ const wheels=[], tireMat=makeMat(0x080c11,.92,.04), rimMat=makeMat(style==='classic'?0xc5a56a:0xa9bdca,.22,.88), rimDark=makeMat(0x202c36,.3,.8);
+ const wheelX=d.w*.49, wheelZ=d.l*.31, radius=d.wheel;
+ for(const x of [-wheelX,wheelX])for(const z of [-wheelZ,wheelZ]){
+  const wg=new THREE.Group();wg.position.set(x,radius+.02,z);
+  const tire=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,.32,24),tireMat);tire.rotation.z=Math.PI/2;wg.add(tire);
+  const rim=new THREE.Mesh(new THREE.CylinderGeometry(radius*.56,radius*.56,.335,16),rimMat);rim.rotation.z=Math.PI/2;wg.add(rim);
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(radius*.22,radius*.22,.35,12),rimDark);hub.rotation.z=Math.PI/2;wg.add(hub);
+  root.add(wg);wheels.push(wg);
+ }
+ // Chassis-specific spoilers and side skirts.
+ if(!['classic'].includes(style)){
+  const wingW=style==='muscle'?1.8:style==='hyper'?1.65:style==='rally'?1.9:2.0;
+  const wingH=style==='rally'?1.82:style==='hyper'?1.43:1.48;
+  addBox(root,.1,style==='rally'?.36:.32,.12,trimMat,-.68,wingH,rear+.18);
+  addBox(root,.1,style==='rally'?.36:.32,.12,trimMat,.68,wingH,rear+.18);
+  addBox(root,wingW,.13,.42,bodyMat,0,wingH+.13,rear+.18);
+ }
+ if(style==='rally'){for(const x of [-.88,.88])addBox(root,.08,.08,2.7,makeMat(0xf2f4e9,.35,.25),x,.91,0);}
+ if(style==='classic'){for(const x of [-.9,.9])addBox(root,.09,.09,2.1,makeMat(0xd9b66d,.28,.5),x,.91,0);}
+ // Purchased performance parts become visible on the selected car.
+ const engineLevel=upgrade?.engine||0, handlingLevel=upgrade?.handling||0, nitroLevel=upgrade?.nitro||0;
+ if(engineLevel>0){
+  addBox(root,.72,.12,.7,makeMat(0x202b36,.28,.8),0,1.15,1.58);
+  if(engineLevel>=2)addBox(root,.18,.2,.62,makeMat(0x9db2c4,.2,.85),0,1.29,1.58);
+ }
+ if(handlingLevel>0){
+  for(const x of [-1,1])addBox(root,.1,.16,1.9,trimMat,x*(d.w*.51),.64,0);
+ }
+ if(nitroLevel>0){
+  const bottleMat=makeMat(0x28bfff,.22,.7);
+  for(const x of [-.42,.42]){const bottle=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.62,12),bottleMat);bottle.rotation.x=Math.PI/2;bottle.position.set(x,.83,rear+.42);root.add(bottle);}
+ }
+ const accentMat=new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:isPlayer?1.15:.4,metalness:.42,roughness:.25});
+ addBox(root,.055,.035,d.l*.62,accentMat,-d.w*.46,.9,0);addBox(root,.055,.035,d.l*.62,accentMat,d.w*.46,.9,0);
+ const glow=new THREE.Mesh(new THREE.BoxGeometry(d.w*.82,.025,d.l*.58),new THREE.MeshBasicMaterial({color:accent,transparent:true,opacity:.27}));glow.position.y=.12;root.add(glow);
+ const flames=new THREE.Group();for(const x of [-.48,.48]){const flame=new THREE.Mesh(new THREE.ConeGeometry(.16,.9,8),new THREE.MeshBasicMaterial({color:0x39dfff,transparent:true,opacity:.92}));flame.rotation.x=-Math.PI/2;flame.position.set(x,.55,rear-.45);flames.add(flame);}root.add(flames);flames.visible=false;
  root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
- if(style==='muscle')root.scale.set(1.08,1.02,1.08);else if(style==='hyper')root.scale.set(.96,.93,1.08);
+ if(style==='muscle')root.scale.set(1.08,1.02,1.08);else if(style==='hyper')root.scale.set(.96,.93,1.08);else if(style==='rally')root.scale.set(1.02,1.08,1.02);
  world.add(root);return {group:root,wheels,flames};
 }
 function createRacers(){
  if(player?.group)world.remove(player.group);for(const r of rivals)if(r.car?.group)world.remove(r.car.group);if(player2?.group)world.remove(player2.group);rivals=[];
- player=createCar(parseInt(profile.garage.paint,16),parseInt(profile.garage.accent,16),true,profile.garage.style);player.group.scale.multiplyScalar(1.02);
+ player=createCar(parseInt(profile.garage.paint,16),parseInt(profile.garage.accent,16),true,profile.garage.style,profile.garage);player.group.scale.multiplyScalar(1.02);
  player2=null;
  if(isTwoPlayer){player2=createCar(0xe9a52f,0xffdf86,true,'muscle');player2.group.scale.multiplyScalar(1.0);}
  const police=gameMode==='police';
@@ -576,6 +635,39 @@ function updatePickups(dt){pickups.forEach(p=>{p.group.rotation.y+=dt*.9;p.group
  });}
 function updateCollisions(dt){rivals.forEach(r=>{if(r.hitCooldown>0)return;const diff=Math.abs(playerDistance-r.distance);if(diff<3.5&&Math.abs(playerOffset-r.offset)<2.15){r.hitCooldown=1.1;if(shieldTime>0){r.distance-=5;showToast('SHIELD · RIVAL DEFLECTED');}else{playerSpeed*=.68;damage=Math.min(5,damage+1);r.distance+=2;showToast('RIVAL COLLISION');}}});}
 function updateCamera(dt){const f=frameAt(playerDistance);const pos=f.p.clone().addScaledVector(f.tangent,-15.5).addScaledVector(f.side,-playerOffset*.12);pos.y+=7.1;camera.position.lerp(pos,1-Math.pow(.001,dt));const target=f.p.clone().addScaledVector(f.tangent,10);target.y+=1.5;camera.lookAt(target);const desired=boostActive||turboTime>0?75:68;camera.fov=THREE.MathUtils.lerp(camera.fov,desired,dt*2.2);camera.updateProjectionMatrix();}
+function initGaragePreview(){
+ const previewCanvas=$('garagePreviewCanvas');
+ try{
+  garageRenderer=new THREE.WebGLRenderer({canvas:previewCanvas,antialias:true,alpha:true,powerPreference:'low-power'});
+  garageRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));
+  garageRenderer.outputColorSpace=THREE.SRGBColorSpace;garageRenderer.toneMapping=THREE.ACESFilmicToneMapping;garageRenderer.toneMappingExposure=1.18;
+  garageScene=new THREE.Scene();garageScene.background=new THREE.Color(0x081522);
+  garageCamera=new THREE.PerspectiveCamera(37,1,.1,100);garageCamera.position.set(6.5,4.2,7.8);garageCamera.lookAt(0,.72,0);
+  garageScene.add(new THREE.HemisphereLight(0xc9edff,0x17202c,2.1));
+  const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,8,6);garageScene.add(key);
+  const rim=new THREE.DirectionalLight(0x36dfff,2.2);rim.position.set(5,4,-6);garageScene.add(rim);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(7,64),new THREE.MeshStandardMaterial({color:0x101d2b,roughness:.7,metalness:.25}));floor.rotation.x=-Math.PI/2;floor.position.y=-.035;garageScene.add(floor);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(4.2,.018,8,100),new THREE.MeshBasicMaterial({color:0x28cbe9,transparent:true,opacity:.45}));ring.rotation.x=Math.PI/2;ring.position.y=.005;garageScene.add(ring);
+  garageStage=new THREE.Group();garageScene.add(garageStage);
+  const preview=$('garagePreview');
+  preview.addEventListener('pointerdown',e=>{garageDragging=true;garageLastX=e.clientX;preview.setPointerCapture(e.pointerId);});
+  preview.addEventListener('pointermove',e=>{if(!garageDragging)return;garagePreviewAngle+=(e.clientX-garageLastX)*.012;garageLastX=e.clientX;if(garageCar)garageCar.rotation.y=garagePreviewAngle;});
+  const release=()=>garageDragging=false;preview.addEventListener('pointerup',release);preview.addEventListener('pointercancel',release);preview.addEventListener('lostpointercapture',release);
+  window.addEventListener('resize',resizeGaragePreview);resizeGaragePreview();refreshGaragePreview();
+ }catch(err){console.warn('Garage preview unavailable',err);$('garagePreviewHint')?.remove();}
+}
+function resizeGaragePreview(){if(!garageRenderer||!garageCamera)return;const el=$('garagePreview'),w=Math.max(1,el.clientWidth),h=Math.max(1,el.clientHeight);garageRenderer.setSize(w,h,false);garageCamera.aspect=w/h;garageCamera.updateProjectionMatrix();}
+function refreshGaragePreview(){
+ if(!garageScene||!garageStage)return;
+ if(garageCar){garageStage.remove(garageCar);garageCar=null;}
+ const previousWorld=world;world=garageStage;
+ const g=profile.garage;const built=createCar(parseInt(g.paint,16),parseInt(g.accent,16),true,g.style,g);
+ garageCar=built.group;garageCar.position.y=0;garageCar.rotation.y=garagePreviewAngle;garageStage.add(garageCar);world=previousWorld;
+ const names={sport:'SPORT COUPE',muscle:'MUSCLE GT',hyper:'HYPER CAR',rally:'RALLY SPEC',tuner:'TUNER BUILD',classic:'CLASSIC GT'};
+ $('garagePreviewName').textContent=names[g.style]||'CUSTOM BUILD';
+}
+function renderGaragePreview(now){if(!garageRenderer||!garageScene||$('garagePanel').classList.contains('hidden'))return;if(!garageDragging&&garageCar){garagePreviewAngle+=.0022;garageCar.rotation.y=garagePreviewAngle;}garageRenderer.render(garageScene,garageCamera);}
+
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFrame)/1000||0);lastFrame=now;if(!renderer)return;
  if(gameState==='countdown'){countdown-=dt;if(countdown>.5){$('countdown').textContent=String(Math.ceil(countdown-.5));$('countdown').classList.add('show');}else if(countdown>0){$('countdown').textContent='GO';$('countdown').classList.add('show');}else{gameState='racing';$('countdown').classList.remove('show');}}
  if(gameState==='racing'){
@@ -587,19 +679,20 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min(.04,(now-lastFr
  }else if(gameState==='countdown'){updateWeatherParticles(dt);positionCar(player,playerDistance,playerOffset);if(player2)positionCar(player2,player2Distance,player2Offset);rivals.forEach(r=>positionCar(r.car,r.distance,r.offset));trafficCars.forEach(t=>positionCar(t.car,t.distance,t.offset));updateCamera(dt);if(player2)updateCamera2(dt);}
  if(gameState==='racing'||gameState==='countdown'){updateCamera(dt);if(player2)updateCamera2(dt);}
  if(weatherGroup)weatherGroup.visible=gameState==='racing'||gameState==='countdown';if(gameState==='menu'&&frameCount%2===0){const t=now*.000025;camera.position.set(Math.sin(t)*230,125,Math.cos(t)*230);camera.lookAt(0,0,0);}
- renderFrame();frameCount++;
+ renderFrame();renderGaragePreview(now);frameCount++;
 }
 
 function loadProfile(){try{const saved=JSON.parse(localStorage.getItem('midnightRunProfile')||'null');return saved?{...defaultProfile,...saved,completed:Array.isArray(saved.completed)?saved.completed:[],garage:{...defaultProfile.garage,...(saved.garage||{})}}:JSON.parse(JSON.stringify(defaultProfile));}catch(e){return JSON.parse(JSON.stringify(defaultProfile));}}
 function saveProfile(){try{localStorage.setItem('midnightRunProfile',JSON.stringify(profile));}catch(e){}}
-function trackUnlocked(id){return true;}
+function trackUnlocked(id){if(id==='random')return true;const unlock={neon:0,coast:1,alpine:2,desert:3,industrial:4,forest:5,harbor:6,skyline:7};return profile.storyStage>=(unlock[id]??99);}
 function comma(n){return Math.round(n).toLocaleString('en-US');}
 function setView(view){document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));if(view==='garagePanel')refreshGarage();if(view==='storyPanel')refreshStory();}
 function selectMode(mode){gameMode=mode;document.querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));if(mode==='story'){setView('storyPanel');}else{$('raceSpec').innerHTML=mode==='street'?'3 LAPS / 5 RIVALS<br>TRAFFIC · POWER-UPS':mode==='time'?'1 LAP / TARGET CLOCK<br>RACING LINE · CLEAN RUN':'70 SEC SURVIVAL<br>ARCADE POLICE PURSUIT';}}
 function renderTracks(){document.querySelectorAll('.trackCard').forEach(card=>{const id=card.dataset.track,unlocked=trackUnlocked(id);card.classList.toggle('locked',!unlocked);let stamp=card.querySelector('.lockStamp');if(!unlocked){if(!stamp){stamp=document.createElement('span');stamp.className='lockStamp';card.appendChild(stamp);}const req=({coast:'CHAPTER 01',alpine:'CHAPTER 02',desert:'CHAPTER 03',industrial:'CHAPTER 04',forest:'CHAPTER 05',harbor:'CHAPTER 06',skyline:'CHAPTER 07'})[id]||'LOCKED';stamp.textContent='🔒 '+req;}else if(stamp)stamp.remove();card.classList.toggle('selected',id===currentTrack);});$('creditsValue').textContent=comma(profile.credits);}
-function refreshStory(){const stage=Math.min(profile.storyStage,CHAPTERS.length-1),ch=CHAPTERS[stage];if(profile.storyStage>=CHAPTERS.length){$('storyChapterTag').textContent='CAMPAIGN COMPLETE';$('storyChapterTitle').textContent='You own the night.';$('storyChapterDesc').textContent='The city knows your name. Free race events remain open, and every circuit is unlocked.';$('storyObjective').textContent='All eight chapters completed.';$('storyReward').textContent='CHAMPION STATUS · ALL DISTRICTS UNLOCKED';$('storyStartBtn').textContent='REPLAY FINAL CHAPTER ↗';}else{$('storyChapterTag').textContent=`CHAPTER ${String(stage+1).padStart(2,'0')} / ${ch.tag}`;$('storyChapterTitle').textContent=ch.title;$('storyChapterDesc').textContent=({0:'A veteran racer named Vex has offered you one shot at joining the crew. Make the first night count.',1:'The crew is being followed. Take on the coast pursuit in a fictional arcade chase event.',2:'A time trial through the mountain pass will prove whether your driving has real precision.',3:'A local champion has challenged you to a three-lap race through the canyon.',4:'The Iron District is crawling with patrol cars. Hold your line and stay ahead.',5:'A clean run through the forest will test your rhythm through linked corners.',6:'The old guard wants one final showdown on the harbor streets.',7:'The underground championship comes down to one final race above the city.'})[stage];$('storyObjective').textContent=ch.objective;$('storyReward').textContent=`REWARD: ${comma(ch.reward)} CREDITS · UNLOCK: ${ch.unlock}`;$('storyStartBtn').textContent='START CHAPTER '+String(stage+1).padStart(2,'0')+' ↗';}}
-function renderChapterList(){const host=$('chapterList');host.innerHTML='';CHAPTERS.forEach((ch,i)=>{const done=profile.completed.includes(i),current=i===profile.storyStage;const row=document.createElement('div');row.className='questRow';row.innerHTML=`<div><b>${String(i+1).padStart(2,'0')} · ${ch.title}</b><small>${ch.mode.toUpperCase()} · ${TRACKS[ch.track].name}</small></div><span class="questState">${done?'✓ CLEARED':current?'CURRENT':'LOCKED'}</span>`;host.appendChild(row);});}
-function refreshGarage(){const g=profile.garage;$('garageCar').style.setProperty('--paint','#'+g.paint);$('garageCar').style.setProperty('--accent','#'+g.accent);document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.paint));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.accent));document.querySelectorAll('.styleBtn').forEach(b=>b.classList.toggle('active',b.dataset.style===g.style));$('engineLevel').textContent=`LEVEL ${g.engine} / 3 · +${g.engine*5} KM/H`;$('handlingLevel').textContent=`LEVEL ${g.handling} / 3 · ${g.handling?'FASTER RESPONSE':'STANDARD'}`;$('nitroLevel').textContent=`LEVEL ${g.nitro} / 3 · ${g.nitro?g.nitro*10+'% LESS DRAIN':'STANDARD'}`;[['engine',450],['handling',400],['nitro',350]].forEach(([key,cost])=>{const btn=$(key+'Buy');btn.textContent=g[key]>=3?'MAX LEVEL':`BUY · ${cost+g[key]*200} CR`;btn.disabled=g[key]>=3||profile.credits<cost+g[key]*200;});$('creditsValue').textContent=comma(profile.credits);}
+function refreshStory(){const stage=Math.min(profile.storyStage,CHAPTERS.length-1),ch=CHAPTERS[stage];if(profile.storyStage>=CHAPTERS.length){$('storyChapterTag').textContent='CAMPAIGN COMPLETE · NIGHTSHIFT';$('storyChapterTitle').textContent='The city is yours.';$('storyChapterDesc').textContent='The syndicate is finished. Nightshift is independent, the crew is together, and every district is open. Your next chapter is whatever you choose to race.';$('storyDialogue').textContent='“We started as strangers chasing a place to belong. Now we own our name. This is only the beginning.” — NIGHTSHIFT';$('storyObjective').textContent='All eight chapters completed.';$('storyContact').textContent='NIGHTSHIFT · UNITED';$('storyReward').textContent='CHAMPION STATUS · ALL DISTRICTS UNLOCKED';$('storyStartBtn').textContent='REPLAY FINAL CHAPTER ↗';}else{$('storyChapterTag').textContent=`CHAPTER ${String(stage+1).padStart(2,'0')} / ${ch.tag}`;$('storyChapterTitle').textContent=ch.title;$('storyChapterDesc').textContent=ch.story;$('storyDialogue').textContent=ch.dialogue;$('storyObjective').textContent=ch.objective;$('storyContact').textContent=ch.contact;$('storyReward').textContent=`REWARD: ${comma(ch.reward)} CREDITS · UNLOCK: ${ch.unlock}`;$('storyStartBtn').textContent='START CHAPTER '+String(stage+1).padStart(2,'0')+' ↗';}renderChapterList();}
+function renderChapterList(){const host=$('chapterList');host.innerHTML='';CHAPTERS.forEach((ch,i)=>{const done=profile.completed.includes(i),current=i===profile.storyStage;const row=document.createElement('div');row.className='questRow'+(current?' current':'');row.innerHTML=`<div><b>${String(i+1).padStart(2,'0')} · ${ch.title}</b><small>${ch.contact} · ${TRACKS[ch.track].name}</small></div><span class="questState">${done?'✓ CLEARED':current?'▶ ACTIVE':'LOCKED'}</span>`;host.appendChild(row);});}
+
+function refreshGarage(){const g=profile.garage;document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.paint));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.classList.toggle('active',b.dataset.color===g.accent));document.querySelectorAll('.styleBtn').forEach(b=>b.classList.toggle('active',b.dataset.style===g.style));$('engineLevel').textContent=`LEVEL ${g.engine} / 3 · +${g.engine*5} KM/H`;$('handlingLevel').textContent=`LEVEL ${g.handling} / 3 · ${g.handling?'FASTER RESPONSE':'STANDARD'}`;$('nitroLevel').textContent=`LEVEL ${g.nitro} / 3 · ${g.nitro?g.nitro*10+'% LESS DRAIN':'STANDARD'}`;[['engine',450],['handling',400],['nitro',350]].forEach(([key,cost])=>{const btn=$(key+'Buy');btn.textContent=g[key]>=3?'MAX LEVEL':`BUY · ${cost+g[key]*200} CR`;btn.disabled=g[key]>=3||profile.credits<cost+g[key]*200;});$('creditsValue').textContent=comma(profile.credits);refreshGaragePreview();}
 function buyUpgrade(key){const g=profile.garage,cost=({engine:450,handling:400,nitro:350})[key]+g[key]*200;if(g[key]>=3)return;if(profile.credits<cost){$('garageStatus').textContent='Not enough Credits. Win events or complete story chapters to earn more.';return;}profile.credits-=cost;g[key]++;saveProfile();refreshGarage();$('garageStatus').textContent=`${key.toUpperCase()} UPGRADED TO LEVEL ${g[key]}. Your next race will use the new setup.`;}
 function awardCredits(amount){profile.credits+=amount;saveProfile();renderTracks();}
 function startAudio(){try{if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();engineOsc=audioCtx.createOscillator();engineGain=audioCtx.createGain();const filter=audioCtx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=380;engineOsc.type='sawtooth';engineOsc.frequency.value=65;engineGain.gain.value=0.0001;engineOsc.connect(filter);filter.connect(engineGain);engineGain.connect(audioCtx.destination);engineOsc.start();}if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
@@ -708,7 +801,7 @@ function renderFrame(){
 function bindHub(){
  document.querySelectorAll('.navBtn').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
  document.querySelectorAll('.modeCard').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
- document.querySelectorAll('.trackCard').forEach(card=>card.addEventListener('click',()=>{const id=card.dataset.track;currentTrack=id;gameMode='street';document.querySelectorAll('.trackCard').forEach(c=>c.classList.toggle('selected',c===card));initRace('street',id,false,false);}));
+ document.querySelectorAll('.trackCard').forEach(card=>card.addEventListener('click',()=>{const id=card.dataset.track;if(!trackUnlocked(id)){const needed=({coast:'Complete Chapter 01',alpine:'Complete Chapter 02',desert:'Complete Chapter 03',industrial:'Complete Chapter 04',forest:'Complete Chapter 05',harbor:'Complete Chapter 06',skyline:'Complete Chapter 07'})[id]||'Progress through Story Mode';$('trackDescription').textContent=`LOCKED LOCATION · ${needed} to unlock this circuit.`;return;}currentTrack=id;document.querySelectorAll('.trackCard').forEach(c=>c.classList.toggle('selected',c===card));$('trackDescription').textContent=id==='random'?'An endlessly regenerated circuit with a new corner sequence and biome each run. Weather conditions are randomized too.':TRACKS[id].description+' Weather is randomized for each event.';}));
  $('startBtn').addEventListener('click',startQuickRace);$('twoPlayerBtn').addEventListener('click',startLocalRace);$('storyStartBtn').addEventListener('click',startStoryRace);
  $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));$('backFromGarage').addEventListener('click',()=>setView('homePanel'));
  document.querySelectorAll('#paintSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.paint=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('#accentSwatches .swatch').forEach(b=>b.addEventListener('click',()=>{profile.garage.accent=b.dataset.color;saveProfile();refreshGarage();}));document.querySelectorAll('.styleBtn').forEach(b=>b.addEventListener('click',()=>{profile.garage.style=b.dataset.style;saveProfile();refreshGarage();}));
@@ -717,8 +810,7 @@ function bindHub(){
 bindHub();renderTracks();refreshStory();renderChapterList();refreshGarage();
 window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','Enter'].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==='KeyP'&&!e.repeat)pauseRace();if(e.code==='Escape'&&!e.repeat)pauseRace();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{Object.keys(keys).forEach(k=>keys[k]=false);if(gameState==='racing')pauseRace();});
 document.querySelectorAll('#mobile button').forEach(btn=>{const code=btn.dataset.key;btn.addEventListener('pointerdown',e=>{e.preventDefault();keys[code]=true;btn.classList.add('pressed');btn.setPointerCapture(e.pointerId);});const release=()=>{keys[code]=false;btn.classList.remove('pressed');};btn.addEventListener('pointerup',release);btn.addEventListener('pointercancel',release);btn.addEventListener('lostpointercapture',release);});
-try{init();}catch(err){console.error(err);$('engineError').classList.remove('hidden');$('errorText').textContent='The 3D engine failed to initialize. Reload the file with an internet connection and try again.';}
+try{init();initGaragePreview();}catch(err){console.error(err);$('engineError').classList.remove('hidden');$('errorText').textContent='The 3D engine failed to initialize. Reload the file with an internet connection and try again.';}
 </script>
-<script>if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.warn));}</script>
 </body>
 </html>
