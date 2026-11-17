@@ -1,12 +1,6 @@
-MIDNIGHT RUN — QUESTS & STAR RATINGS UPDATE
+MIDNIGHT RUN Story Race + Car Dealership Update
 
-Replace the existing index.html in your GitHub Pages repository with this file.
-Keep all other existing project files (including online.js and Supabase setup files).
-Commit directly to main, wait for GitHub Pages to publish, then hard-refresh the game.
+Replace only index.html in your existing GitHub Pages repository. Keep all other files, including Supabase configuration files.
 
-Features:
-- Up to 3 stars for each completed chapter based on race performance.
-- Each side story can now be launched as its own race challenge and earns up to 3 stars.
-- Best star rating is saved in the local game profile and included in cloud saves through the existing save system.
-- Crew quest board: complete 3 races, earn 2 podiums, and clear a story objective for credit rewards.
-- Each quest reward can be claimed once.
+Story Mode: select any unlocked chapter from the chapter list and press START STORY CHAPTER to play its mission as a race/event. Completed chapters can be replayed.
+Garage: static CSS car illustrations replace the unreliable 3D garage render. Car stats are displayed. The Sport car starts owned; other cars must be purchased with credits before selection.
