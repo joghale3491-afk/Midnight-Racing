@@ -1,6 +1,6 @@
 {
-  "name": "MIDNIGHT RUN",
-  "short_name": "Midnight Run",
+  "name": "MIDNIGHT RACING",
+  "short_name": "Midnight Racing",
   "description": "Neon street racing, campaign and multiplayer racing hub.",
   "start_url": "./index.html",
   "scope": "./",
