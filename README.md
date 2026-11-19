@@ -13,6 +13,14 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 - Shared online race start settings, remote racer positions / speed / lap / damage / nitro, online collision messaging, shared pickup claims, finish notifications and online results display.
 - 50 energy cap, randomized 2–6 lap races, per-race weather and seeded randomized supply-drop placement.
 
+
+## November 19 — UI / 3D Weather / Track Expansion
+
+- Expanded the procedural circuit roster to 30 tracks. The first three are available initially; additional groups unlock after completing a chapter race and all three crew episodes. The final routes unlock after the campaign is complete.
+- Replaced the block-based car shell with beveled, tapered body geometry, a separate glass cabin, angled glass panels, detailed wheels, lamps and class-dependent aero. The same vehicle builder is used in the garage and race world.
+- Replaced the fixed-screen weather graphic with 3D rain streaks, drifting snow, animated fog layers, wet-road materials and occasional storm lightning. Weather is identified in the race HUD.
+- Reorganized Race Hub track selection and pre-race preferences into collapsible setup groups, improved menu scrolling and responsive layouts, and refreshed touch-control surfaces.
+
 ## Install
 
 1. Extract the ZIP file.
