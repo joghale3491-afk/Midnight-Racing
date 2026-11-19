@@ -130,6 +130,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
 @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{flex-direction:row;overflow:auto;padding:0}.navBtn{flex:1;text-align:center;white-space:nowrap;padding:11px 9px;border-radius:8px}.modeGrid{grid-template-columns:repeat(2,1fr)}#trackGrid{grid-template-columns:repeat(2,1fr)}.storyLayout,.garageGrid,.mpWrap{grid-template-columns:1fr}}
 @media(max-width:520px){.menuWrap{width:98vw;max-height:96vh;padding:13px;border-radius:12px}.hubTop{padding-bottom:12px;margin-bottom:12px;flex-direction:column;align-items:flex-start}.hubLogo{font-size:27px}.hubTag{font-size:7px}.hubGrid{gap:12px}.heroStrip{border-radius:10px}.storyMetaGrid{grid-template-columns:1fr 1fr}.storyFeature,.storyList,.garageCard{padding:13px}}
 
+.storyEpisodeText{font-size:10px;line-height:1.55;color:#a9c1d2;max-width:620px;margin:5px 0}.storyEpisodeQuote{font-size:9px;line-height:1.5;color:#ffd36a;font-style:italic;margin-top:5px}.storyStars{color:#ffd36a;letter-spacing:.12em;white-space:nowrap}.lobbyDriver{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;background:#07121f;border:1px solid #7beaff20;border-radius:8px;font-size:10px}.lobbyDriver small{color:#89a4b8;font-size:8px}.mpActions .smallBtn{min-width:0}
 /* MIDNIGHT RACING expansion */
 .eyebrow,.questTag{font-size:9px;letter-spacing:.2em;color:#68eaff;font-weight:1000}
 .featureGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -400,6 +401,11 @@ body.local-two-player #p2Touch{display:block}
                 <div class="eyebrow">MISSION BRIEFING</div>
                 <p id="storyMissionBrief" style="margin:7px 0 0">Read the objective and required side stories before launching the chapter.</p>
               </div>
+              <div class="storyMetaGrid">
+                <div class="storyMetaBox"><small>CREW CONTACT</small><b id="storyContact">Vex · Crew scout</b></div>
+                <div class="storyMetaBox"><small>BEST CHAPTER RATING</small><b id="chapterStarRating">☆☆☆ · NOT COMPLETED</b></div>
+              </div>
+              <div class="featureCard" style="margin:10px 0 14px"><div class="eyebrow">CREW TRANSMISSION</div><p id="storyDialogue" style="margin:7px 0 0">Your crew is waiting for your decision.</p></div>
               <div class="panelTitle">CHOOSE YOUR STORY PATH</div>
               <div class="formRow"><button class="smallBtn pathChoice active" data-path="crew">JOIN THE CREW</button><button class="smallBtn pathChoice" data-path="solo">GO SOLO</button></div>
               <div class="panelTitle">REQUIRED SIDE STORIES</div>
@@ -481,6 +487,7 @@ body.local-two-player #p2Touch{display:block}
             <div class="featureCard"><h3>TOURNAMENT WINDOW</h3><p id="tournamentStatus">Checking schedule…</p><button class="goldBtn" id="tournamentBtn">ENTER TOURNAMENT</button></div>
             <div class="featureCard"><h3>ROTATING SPECIAL EVENT</h3><p id="specialEventStatus">Loading today's event…</p><button class="primaryBtn" id="specialEventBtn">ENTER SPECIAL EVENT</button></div>
             <div class="featureCard"><h3>STREET REP MILESTONES</h3><p id="milestoneStatus">Next reward at level 5.</p><div class="mutedText">Every 5 levels: Credits, a Ranked Ticket and a rare powerup.</div></div>
+            <div class="featureCard" style="grid-column:1/-1"><h3>NIGHTSHIFT CREW CONTRACTS</h3><p class="mutedText">Longer-term goals reward consistent racing, podium finishes and story progress.</p><div id="questBoard" class="dataList"></div></div>
           </div>
         </section>
         <section id="leaderboardPanel" class="viewPanel hidden">
@@ -510,7 +517,11 @@ body.local-two-player #p2Touch{display:block}
               <p class="mpMuted">Create a private casual room for up to six drivers, or join a friend's six-character room code.</p>
               <div class="formRow"><input class="mrInput" id="roomCodeInput" maxlength="6" placeholder="ROOM CODE"><button class="smallBtn" id="joinRoomBtn">JOIN ROOM</button></div>
               <button class="secondaryBtn" id="createRoomBtn" style="width:100%">CREATE PRIVATE LOBBY</button>
+              <button class="secondaryBtn" id="publicLobbyBtn" style="width:100%;margin-top:8px">ENTER PUBLIC LOBBY</button>
               <div class="mpStatus" id="lobbyStatus">Create a room to get a code to share.</div>
+              <div class="panelTitle">LOBBY DRIVERS · MAX 6</div>
+              <div id="lobbyPlayers" class="dataList"><div class="mutedText">No lobby connected.</div></div>
+              <div class="mpActions"><button class="smallBtn" id="lobbyReadyBtn" disabled>I’M READY</button><button class="smallBtn" id="lobbyStartBtn" disabled>START RACE · HOST</button><button class="smallBtn" id="lobbyLeaveBtn" disabled>LEAVE LOBBY</button></div>
             </div>
           </div>
         </section>
@@ -577,8 +588,9 @@ const keys = {};
 const clock = new THREE.Clock();
 
 let lobbyChannel = null, matchmakingChannel = null, queueMode = null, onlineRoomMode = 'casual', onlineRaceStarted = false, remoteOpponentMesh = null, remoteOpponentState = null;
-const remotePlayers = new Map(), remotePlayerMeshes = new Map();
-let queueStartTimer = null, lobbyStartTimer = null;
+const remotePlayers = new Map(), remotePlayerMeshes = new Map(), onlineFinishers = new Map();
+let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onlineRaceId = null, onlineLocalFinishSent = false, onlineCollisionCooldown = 0;
+let privateLobby = false, publicLobby = false, privateLobbyReady = false, isRoomHost = false, roomMetadata = null, onlineParticipants = [];
 let policeFailed = false, specialEventMode = 'infected', queuePairing = false;
 let authUser = null;
 let localPlayer2 = null;
@@ -615,13 +627,61 @@ const CAR_CATALOG = CAR_RANKS.flatMap((rank,ri)=>Array.from({length:20},(_,i)=>(
  body:1+(i%4),color:parseInt(PAINT_COLORS[(i*3+ri*2)%PAINT_COLORS.length],16)
 })));
 const POWERUPS = [{id:'boost',name:'Nitro Surge',price:180,desc:'Instant acceleration burst'},{id:'repair',name:'Quick Repair',price:220,desc:'Restore 35% vehicle condition'},{id:'shield',name:'Impact Shield',price:260,desc:'Reduce collision damage briefly'},{id:'scanner',name:'Traffic Scanner',price:160,desc:'Highlights traffic and pickups'}];
-const STORY_CHAPTERS = [
- {title:'First Night',desc:'A small crew spots your driving and offers a way into the underground. Your first choices decide who trusts you.',objective:'Finish in the top three',mode:'street',sides:['Prove Your Line','Courier After Dark','Crew Trial'],path:'crew'},
- {title:'Harbor Signals',desc:'A rival crew controls the harbor roads. Choose whether to build alliances or take the route alone.',objective:'Win the harbor run',mode:'time',sides:['Dockside Detour','Midnight Delivery','Harbor Pursuit'],path:'crew'},
- {title:'Heat Rising',desc:'The city patrol has noticed the races. Every shortcut brings a new consequence.',objective:'Escape the pursuit',mode:'police',sides:['Cold Trail','No-Stopping Zone','Underpass Run'],path:'solo'},
- {title:'Split Decisions',desc:'Your contacts disagree about the next move. Your chosen path changes the next event.',objective:'Complete the chosen route',mode:'infected',sides:['Old Friend','Rival Rematch','Backstreet Test'],path:'solo'},
- {title:'The Last Circuit',desc:'The underground championship is near. Finish the chapter route and settle the rivalry.',objective:'Take the championship',mode:'street',sides:['Final Tune-Up','Ghost of the Harbor','Last Chance Chase'],path:'crew'}
+const STORY_THREADS = [
+ [
+  {title:'Vex’s First Test',body:'Before the qualifier, Vex quietly checks the old car you brought to the meet. He notices the mismatched panels and worn steering wheel, but does not make a joke. He tells you that the best drivers learn to feel every weakness in a machine. The crew has seen expensive cars lose because their drivers panic. Your first test is not about money; it is about keeping your head when the whole street is watching.',dialogue:'“A fast car gets attention. A steady driver earns respect.” — VEX'},
+  {title:'Mara’s Workshop',body:'Mara lets you wait in the workshop while she replaces a damaged belt. She explains that the garage used to be a community space where drivers helped one another repair cars after long shifts. Lately, people have started treating it like a place to show off. She hopes your arrival reminds the crew that Nightshift was built on helping people, not just winning.',dialogue:'“Bring the car back in one piece. I can fix parts. Trust takes longer.” — MARA'},
+  {title:'A Name on the Board',body:'Juno adds your name to the crew’s old results board. Beside it are faded notes from drivers who left the city or gave up racing. One name has been scratched out: ROOK. Vex changes the subject when you ask about it. Juno notices, but says she wants proof before she starts another argument.',dialogue:'“Every name on this board has a story. Some are still unfinished.” — JUNO'}
+ ],
+ [
+  {title:'The Empty Meet',body:'After the coastal pursuit, you return to find the usual meet almost empty. Mara has moved the tools away from the windows and covered the crew’s route map. She says the patrols arrived too quickly to be random. Nobody accuses anyone, but every conversation stops when a phone lights up. The crew is beginning to doubt its own circle.',dialogue:'“A leak only works when people stop trusting each other.” — MARA'},
+  {title:'Juno’s Timeline',body:'Juno spreads printed race times across a workbench. The patrol cars appeared at three separate locations within minutes of the crew changing routes. She has ruled out coincidence, but the data does not reveal who sent the information. She asks you to remember who knew about the coastal run and when they found out.',dialogue:'“Patterns tell us what happened. People tell us why.” — JUNO'},
+  {title:'Vex Keeps Watch',body:'Vex stays behind after everyone leaves. He admits that he recognizes the patrol response because he has seen the same tactics before. He refuses to explain more, worried that old enemies will target the crew. For the first time, his confidence looks more like fear than certainty.',dialogue:'“I wanted to keep the past away from you. Maybe that was a mistake.” — VEX'}
+ ],
+ [
+  {title:'The Ghost Account',body:'Juno shows you the recovered login record. The account belonged to Rook, but the access pattern is unusual: it was active while Rook was reportedly out of the country. Someone may have copied his credentials or deliberately used his name. Juno asks you not to jump to conclusions until she can compare the timestamps with the Alpine data run.',dialogue:'“An account is evidence. It is not a confession.” — JUNO'},
+  {title:'Mara’s Old Photograph',body:'While looking for a spare sensor, you find an old photograph tucked behind a cabinet. Mara, Vex, and Rook stand together beside a half-built car. Mara says the three of them once planned to open a legal tuning shop. The plan fell apart after a fixed race cost them their savings and their trust.',dialogue:'“We used to build things together. That’s what I miss.” — MARA'},
+  {title:'The Alpine Promise',body:'At the foot of the pass, Vex tells you the crew needs a driver who can follow a plan without blindly following orders. The Alpine run will test your precision, but he also wants you to decide what to do with any evidence you find. He says loyalty should never mean ignoring the truth.',dialogue:'“Bring back the facts, even if they make things harder.” — VEX'}
+ ],
+ [
+  {title:'Rook’s Message',body:'Rook sends a short voice note before the canyon event. He says he never wanted Nightshift to fall apart, but he also refuses to let Vex decide which parts of the past everyone is allowed to know. He claims he has proof that a crew member has been selling route data. He will only reveal it after the race, when he knows you can handle yourself.',dialogue:'“I’m not asking you to trust me. I’m asking you to check.” — ROOK'},
+  {title:'A Split Workshop',body:'Mara argues that meeting Rook could expose the garage to another setup. Juno counters that refusing to hear him leaves the crew blind. Vex ends the argument by admitting he has been hiding information. Nobody is satisfied, but the conversation finally becomes honest.',dialogue:'“We can disagree and still stand in the same room.” — MARA'},
+  {title:'The Canyon Mechanic',body:'At the canyon staging area, a local mechanic recognizes the transmitter model from a shipment delivered to the syndicate. He remembers that the order was paid through a shell business connected to the Iron District. It is the first lead that does not depend on anyone’s memory or loyalty.',dialogue:'“Follow the parts. People can change their stories; serial numbers don’t.” — JUNO'}
+ ],
+ [
+  {title:'The Signal in the Walls',body:'Mara removes the transmitter casing and finds a second component hidden beneath the first. It has been relaying location data even when the main unit was switched off. The discovery explains how the syndicate kept finding the crew after routes changed. Mara is angry that the garage itself was used against them.',dialogue:'“This place was supposed to keep us safe.” — MARA'},
+  {title:'Rook’s Proof',body:'Rook arrives with a ledger showing payments made to a courier who had access to the garage. The name is not one of the core drivers, but the courier was trusted by everyone. Vex wants to confront the person immediately. Juno insists they should first find out who hired them and where the money came from.',dialogue:'“If we rush this, the person behind it walks away.” — ROOK'},
+  {title:'The Decoy Run',body:'The crew plans a decoy route through the Iron District. You volunteer to draw attention while Juno traces the signal. Mara reinforces the car and checks every connection twice. The mission is the first time all four crew members work together since the leak began.',dialogue:'“This time, nobody is carrying the whole risk alone.” — MARA'}
+ ],
+ [
+  {title:'The Missing File',body:'At Blackpine, Juno finds the storage device but discovers that its final folder is damaged. The recovered messages show the syndicate tried to recruit Nightshift, then began threatening independent crews when Vex refused. The missing file may identify the person who ordered the surveillance. Juno needs a clean data capture before the device fails.',dialogue:'“We are close. Don’t let impatience erase the last piece.” — JUNO'},
+  {title:'Rook’s Apology',body:'Rook admits he disappeared because he was ashamed that his old account had been used to target the crew. He should have returned sooner and explained what happened. Mara accepts that he was not the person behind the leak, but says trust will have to be rebuilt through actions rather than apologies.',dialogue:'“I can’t undo leaving. I can choose not to leave again.” — ROOK'},
+  {title:'Vex’s Old Code',body:'Vex explains that the code on the messages was once used by the original founders of the syndicate. He helped design it, then walked away when races began to be fixed. He feared the crew would see him as part of the problem. The others tell him that hiding the truth only gave the syndicate more power.',dialogue:'“I thought silence was protection. It only made us easier to divide.” — VEX'}
+ ],
+ [
+  {title:'The Harbor Invitation',body:'The syndicate sends a formal challenge for the harbor meet. The message promises that Nightshift can race freely if Vex returns and accepts responsibility for the syndicate’s past. Vex refuses to go alone. He asks the crew to stand beside him, not because he deserves a free pass, but because the future should be decided together.',dialogue:'“I’ll answer for what I did. I won’t let them choose what we become.” — VEX'},
+  {title:'Mara’s New Build',body:'Mara spends the night preparing a fresh setup for the harbor race. She explains each change and lets you choose between a stable configuration and a more aggressive one. Either way, she reminds you that a build only works when the driver understands it. The garage feels like a team again.',dialogue:'“The best upgrade is knowing exactly what your car can do.” — MARA'},
+  {title:'Juno’s Broadcast',body:'Juno prepares to release the recovered records to the underground racing community. She checks every source twice to protect innocent people and avoid spreading false claims. The syndicate has power because people believe it controls the story. Juno intends to let the evidence speak for itself.',dialogue:'“Truth should be checked before it is shared.” — JUNO'}
+ ],
+ [
+  {title:'The Last Garage Meeting',body:'Before the finale, the crew gathers around the original workshop table. Rook offers to take responsibility for the old account, Mara promises to keep the garage open to new drivers, and Juno prepares the evidence archive. Vex asks you what Nightshift should become after the championship. For once, nobody has a ready answer.',dialogue:'“We built this crew by choosing each other. We can choose what comes next.” — VEX'},
+  {title:'A Different Kind of Victory',body:'The syndicate offers a private deal: take the title and accept its sponsorship, and Nightshift will receive money and access to every major event. Mara points out that the offer comes with control over the crew’s routes and decisions. Rook says the choice is yours, but reminds you why they started racing together.',dialogue:'“A trophy is temporary. What you stand for follows you home.” — ROOK'},
+  {title:'After the Checkered Flag',body:'Whatever the result, the crew has already changed. The garage is no longer built around one leader, and the route board has space for new names. Juno suggests a community event where experienced drivers teach newcomers. Mara begins planning the first open workshop night. The city still has rivals, but Nightshift finally has a direction.',dialogue:'“The next chapter belongs to everyone who shows up.” — NIGHTSHIFT'}
+ ]
 ];
+const STORY_CHAPTERS = [
+ {title:'First Night',tag:'THE INVITATION',track:'neon',mode:'street',objective:'Finish in the top three to earn your first crew patch.',reward:500,unlock:'Coastal Run',contact:'Vex · Crew scout',dialogue:'“You have one night to show me you can drive. No excuses, no shortcuts. Make the city remember your name.”',story:'You arrive in the Neon District with an old car, a nearly empty wallet, and no reputation. Vex, a respected driver for the underground crew Nightshift, has been watching your practice runs. Tonight, the crew is holding an open qualifier. A clean result earns you a place at the table — and puts you on the radar of someone who does not want new talent rising.'},
+ {title:'Coastal Getaway',tag:'THE HEAT',track:'coast',mode:'police',objective:'Survive the pursuit for 70 seconds. Keep your car in one piece.',reward:650,unlock:'Alpine Pass',contact:'Mara · Mechanic',dialogue:'“Those patrols weren’t there by accident. Someone knew our route. Get back here and we’ll figure out who talked.”',story:'Your first win should have brought celebration. Instead, the crew’s meet is interrupted by a sudden patrol response. Mara, the crew’s mechanic, believes the route was leaked before the race even began. You are sent along the coast while the others disappear into the city. Survive the pressure and bring the car home. The question is no longer whether you belong — it is who is setting you up.'},
+ {title:'Cliffhanger',tag:'HIGH ALTITUDE',track:'alpine',mode:'time',objective:'Survive the elimination rounds and be the last driver standing.',reward:700,unlock:'Desert Canyon',contact:'Juno · Data analyst',dialogue:'“I traced the leaked route. It came from an old crew account. Someone has been using our name.”',story:'Juno studies the patrol timing and finds a pattern: the leaked routes are being sent from an account that belonged to the crew’s former champion, Rook. Vex insists Rook left town years ago. Before anyone can agree on what it means, Juno challenges you to a precision run through the Alpine Pass to test a theory about the timing data.'},
+ {title:'Canyon Contract',tag:'NO BACKING DOWN',track:'desert',mode:'street',objective:'Win the race and beat the local favourite.',reward:800,unlock:'Iron District',contact:'Rook · Former champion',dialogue:'“You’re quick. But speed doesn’t tell me who you are. Meet me at the canyon and earn the answer.”',story:'A message arrives from Rook himself. He claims he did not leak the routes — he says someone inside Nightshift is selling race information to a rival outfit. He offers proof, but only if you beat his driver in the canyon. Vex calls it a trap. Mara says it is the only lead you have. You line up knowing the result could split the crew.'},
+ {title:'Iron District',tag:'THE INSIDE JOB',track:'industrial',mode:'police',objective:'Stay ahead of the patrol cars until the pursuit timer ends.',reward:850,unlock:'Blackpine Loop',contact:'Mara · Mechanic',dialogue:'“I found the transmitter. It was hidden in our own garage. This goes deeper than Rook.”',story:'After the canyon race, Mara discovers a small transmitter hidden in the crew garage. It has been tracking cars and broadcasting their locations. The signal points toward the Iron District, where the rival outfit has been staging its meets. Your run through the district is a chance to draw their attention while Juno tracks the signal back to its source.'},
+ {title:'Blackpine Run',tag:'NIGHT VISION',track:'forest',mode:'time',objective:'Survive the elimination rounds through the forest esses and finish as the last driver standing.',reward:950,unlock:'Harbor Sprint',contact:'Juno · Data analyst',dialogue:'“The signal stops here. Whoever planted it knows our habits — and knows us personally.”',story:'The transmitter trail ends outside Blackpine. Juno uncovers a set of messages showing that the leak began after Nightshift refused to join a citywide racing syndicate. The messages are signed with Vex’s old crew code. You need one last data run through the forest to recover the missing file before the syndicate wipes it.'},
+ {title:'Harbor Showdown',tag:'THE OLD GUARD',track:'harbor',mode:'street',objective:'Take first place in the harbor street race.',reward:1100,unlock:'Skyline GP',contact:'Vex · Crew scout',dialogue:'“I should have told you. I left the syndicate, but I never told the crew why. Tonight, I’ll explain everything.”',story:'The recovered file reveals the truth: Vex once helped build the syndicate before walking away when it began fixing races and threatening independent crews. He kept the secret to protect Nightshift, but his silence made everyone vulnerable. At the harbor, the syndicate challenges Nightshift to a public showdown. Vex finally agrees to face his past — with you beside him.'},
+ {title:'Skyline Finale',tag:'THE LAST SHIFT',track:'skyway',mode:'street',objective:'Win the championship finale to own the night.',reward:1800,unlock:'Campaign complete',contact:'Nightshift · All crew members',dialogue:'“Whatever happens after tonight, we decide our own future. Let’s finish this together.”',story:'The syndicate offers one final deal: win its championship and Nightshift can race freely, or lose and surrender its routes and garage. The crew refuses to be bought. You enter the Skyline GP as Nightshift’s lead driver, with Mara, Juno, Rook, and Vex backing you. This is not just a title race. It is the night the underground decides who controls its own future.'}
+];
+STORY_CHAPTERS.forEach((ch,i)=>{ch.sides=(STORY_THREADS[i]||[]).map(x=>x.title);ch.desc=ch.story;});
+
+// --- PROFILE & AUDIO ---
 
 // --- PROFILE & AUDIO ---
 let profile = {
@@ -630,7 +690,7 @@ let profile = {
     garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, attachments:{spoiler:false,underglow:false,rims:false} },
     ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0}, completedSides:{}, storyMain:{}, storyPath:'crew', selectedPowerup:'boost', daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
 };
-try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];
+try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];
 // Restore energy earned while the game was closed, preserving partial six-minute intervals.
 try{
   const now=Date.now();let stamp=Number(localStorage.getItem('mr_energy_stamp'));
@@ -1066,10 +1126,10 @@ function update(dt){
 
   // Civilian traffic collisions and collectible powerups.
   if(!playerEliminated)trafficCars.forEach(t=>{if(!t.active)return;const gap=trackGap(t.dist,playerDistance);if(gap<4.2&&Math.abs(t.offset-playerOffset)<2.6){if(!activeEffects.shield){damage+=21*dt;playerSpeed=Math.max(45,playerSpeed-45*dt);if(crashSoundCooldown<=0){playSfx(85,.16);crashSoundCooldown=.65;}}else playerSpeed=Math.max(0,playerSpeed-12*dt);}});
-  powerupPickups.forEach(p=>{
-    if(!p.active){p.respawn-=dt;if(p.respawn<=0){p.active=true;p.mesh.visible=true;}return;}
+  powerupPickups.forEach((p,pickupIndex)=>{
+    if(!p.active){p.respawn-=dt;if(p.respawn<=0&&!lobbyChannel){p.active=true;p.mesh.visible=true;}return;}
     p.mesh.rotation.y+=dt*1.8;
-    if(!playerEliminated&&trackGap(p.dist,playerDistance)<5&&Math.abs(p.offset-playerOffset)<3){const key=p.powerupId||'boost';profile.inventory[key]=(profile.inventory[key]||0)+1;if(profile.daily.progress)profile.daily.progress[2]=(profile.daily.progress[2]||0)+1;p.active=false;p.respawn=5+Math.random()*3;p.mesh.visible=false;$('powerStatus').innerText=`SUPPLY DROP · ${POWERUPS.find(x=>x.id===key)?.name||key}`;updateUI();saveProfile();}
+    if(!playerEliminated&&trackGap(p.dist,playerDistance)<5&&Math.abs(p.offset-playerOffset)<3){const key=p.powerupId||'boost';profile.inventory[key]=(profile.inventory[key]||0)+1;if(profile.daily.progress)profile.daily.progress[2]=(profile.daily.progress[2]||0)+1;p.active=false;p.respawn=lobbyChannel?0:5+Math.random()*3;p.mesh.visible=false;if(lobbyChannel&&onlineRaceStarted)lobbyChannel.send({type:'broadcast',event:'pickup_claim',payload:{user_id:authUser?.id,race_id:onlineRaceId,pickup_index:pickupIndex,lap:Math.floor(playerDistance/Math.max(1,trackLength))}}).catch(()=>{});$('powerStatus').innerText=`SUPPLY DROP · ${POWERUPS.find(x=>x.id===key)?.name||key}`;updateUI();saveProfile();}
   });
   if(localPlayer2){powerupPickups.forEach(p=>{if(!p2Eliminated&&p.active&&trackGap(p.dist,p2State.dist)<5&&Math.abs(p.offset-p2State.offset)<3){const key=p.powerupId||'boost';profile.inventory[key]=(profile.inventory[key]||0)+1;if(profile.daily.progress)profile.daily.progress[2]=(profile.daily.progress[2]||0)+1;p.active=false;p.respawn=5+Math.random()*3;p.mesh.visible=false;updateUI();saveProfile();}});}
   crashSoundCooldown=Math.max(0,crashSoundCooldown-dt);Object.keys(activeEffects).forEach(k=>{activeEffects[k]-=dt;if(activeEffects[k]<=0){delete activeEffects[k];if(k==='scanner')trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=false;});}});
@@ -1107,7 +1167,27 @@ function update(dt){
 
   if(ghostCar&&bestTimes[currentTrack]){const ghostProgress=clamp(raceTime/bestTimes[currentTrack],0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
   if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=90){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText='CLEAN · AVOID THE INFECTED RACER';}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
-  if(lobbyChannel&&gameState==='racing'&&(raceTime-lastNetworkSync)>.1){lastNetworkSync=raceTime;lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{user_id:authUser?.id,dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:getDisplayUsername(),eliminated:playerEliminated}}).catch(()=>{});}
+  if(lobbyChannel&&onlineRaceStarted&&gameState==='racing'&&(raceTime-lastNetworkSync)>.08){
+    lastNetworkSync=raceTime;const carSpec=getSelectedCar();
+    lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{user_id:authUser?.id,race_id:onlineRaceId,dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:getDisplayUsername(),eliminated:playerEliminated,damage,nitro,lap:Math.floor(playerDistance/Math.max(1,trackLength)),race_time:raceTime,paint:profile.garage.paint,bodyStyle:carSpec.body,finished:false}}).catch(()=>{});
+    onlineCollisionCooldown=Math.max(0,onlineCollisionCooldown-.08);
+    if(onlineCollisionCooldown<=0&&authUser){
+      for(const [id,state] of remotePlayers){
+        if(String(authUser.id)<String(id)&&!state.eliminated&&Math.abs(state.dist-playerDistance)<3.2&&Math.abs(state.offset-playerOffset)<2.05){
+          onlineCollisionCooldown=1.15;
+          if(activeEffects.shield>0){delete activeEffects.shield;playerSpeed*=.94;showToast('SHIELD · ONLINE IMPACT BLOCKED');}
+          else{playerSpeed*=.68;damage=Math.min(100,damage+18);showToast(`ONLINE COLLISION · ${state.username}`);}
+          lobbyChannel.send({type:'broadcast',event:'player_impact',payload:{user_id:authUser.id,target_user_id:id,race_id:onlineRaceId,username:getDisplayUsername()}}).catch(()=>{});
+          break;
+        }
+      }
+    }
+  }
+  for(const [id,state] of remotePlayers){
+    const mesh=remotePlayerMeshes.get(id);if(!mesh)continue;
+    const a=1-Math.pow(.001,dt);state.displayDist+=(state.dist-state.displayDist)*a;state.displayOffset+=(state.offset-state.displayOffset)*a;
+    const rf=frameAt(state.displayDist);mesh.position.copy(rf.p).addScaledVector(rf.side,state.displayOffset);mesh.position.y=.2;mesh.lookAt(frameAt(state.displayDist+5).p.clone().addScaledVector(rf.side,state.displayOffset));
+  }
   const pFrame=frameAt(playerDistance);player.position.copy(pFrame.p).addScaledVector(pFrame.side,playerOffset);player.position.y=.2;
   const ahead=frameAt(playerDistance+12),lookTarget=ahead.p.clone().addScaledVector(ahead.side,playerOffset);player.lookAt(lookTarget);
   let cameraTarget=pFrame.p.clone().add(new THREE.Vector3(0,7,0)).addScaledVector(pFrame.tangent,-14);
@@ -1182,33 +1262,77 @@ function getSelectedCar(){return CAR_CATALOG.find(c=>c.id===profile.garage.carId
 function setView(view){document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));if(view==='garagePanel'){setTimeout(()=>{if(garageRenderer&&garageCamera){const c=$('garageCanvasContainer');garageRenderer.setSize(c.clientWidth||340,c.clientHeight||250);garageCamera.aspect=(c.clientWidth||340)/(c.clientHeight||250);garageCamera.updateProjectionMatrix();}},50);}}
 function storyKey(ch){return `chapter${ch+1}`;}
 function sideMissionBrief(chapterIndex, sideIndex){
-  const briefs=[
-    ['Hold first place for one full lap.','Deliver the package before the timer expires.','Evade the patrol and finish the route.'],
-     ['Finish the dockside sprint in the top three.','Beat the courier time target.','Escape the harbor patrol without being busted.'],
-     ['Break the pursuit line and escape.','Finish the no-stopping sprint before the clock.','Survive the underpass ambush and reach the finish.'],
-     ['Complete the old crew challenge.','Beat your rival on the backstreet route.','Finish the test circuit without being tagged.'],
-     ['Earn a clean finish before the championship.','Beat the saved harbor ghost time.','Escape the final patrol pursuit.']
-  ];
-  return briefs[chapterIndex]?.[sideIndex]||'Complete the route objective and reach the finish.';
+  const chapter=STORY_CHAPTERS[chapterIndex];
+  const mode=sideIndex===2?'police':sideIndex===1?'time':'street';
+  if(mode==='police')return 'Evade the patrol fleet and finish without the vehicle being disabled.';
+  if(mode==='time')return 'Survive each 30-second elimination round and be the last racer standing.';
+  return 'Finish in the top three to complete this crew episode.';
 }
+function starText(n){return '★'.repeat(Math.max(0,Math.min(3,n)))+'☆'.repeat(3-Math.max(0,Math.min(3,n)));}
+function storyStarsForChapter(i){return Number(profile.chapterStars?.[i]||0);}
+function storyStarsForSide(ch,i){return Number(profile.sideStoryStars?.[`${ch}-${i}`]||0);}
+function storySideComplete(ch,i){return storyStarsForSide(ch,i)>0||!!profile.completedSides[`${storyKey(ch)}-${i}`];}
 function renderStory(){
-  selectedStoryPath=profile.storyPath||selectedStoryPath;const ch=STORY_CHAPTERS[selectedChapter];
+  selectedStoryPath=profile.storyPath||selectedStoryPath;
+  const ch=STORY_CHAPTERS[selectedChapter];
+  if(!ch)return;
+  const chapterUnlocked=selectedChapter===0||(!!profile.storyMain[storyKey(selectedChapter-1)]&&STORY_CHAPTERS[selectedChapter-1].sides.every((_,j)=>storySideComplete(selectedChapter-1,j)));
   $('storyChapterTag').innerText=`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${profile.storyPath.toUpperCase()} PATH`;
   $('storyChapterTitle').innerText=ch.title;
   $('storyChapterDesc').innerText=ch.desc+(profile.storyPath==='solo'?' Your solo decisions favor high-risk routes and self-reliance.':' Your crew choices open team-based opportunities and support.');
-  $('storyObjective').innerText=ch.objective;$('storyReward').innerText='500 CREDITS · STREET REP';
-  $('storyMissionBrief').innerText=`MISSION GOAL: ${ch.objective}. Complete the main chapter race, then finish all three required side stories to unlock the next chapter. Selected path: ${profile.storyPath.toUpperCase()}. Race conditions (weather, supply drops and standard race laps) are randomized each attempt.`;
+  $('storyObjective').innerText=ch.objective;
+  $('storyReward').innerText=`${Number(ch.reward||500).toLocaleString()} CREDITS · STREET REP · ${ch.unlock||'NEXT CHAPTER'}`;
+  $('storyMissionBrief').innerText=`MISSION OBJECTIVE: ${ch.objective} Track: ${TRACKS[ch.track]?.name||ch.track}. Complete this main race first, then finish all three required crew episodes with at least one star each. The next chapter stays locked until every episode is complete.`;
+  $('storyContact').innerText=ch.contact||'NIGHTSHIFT CREW';
+  $('storyDialogue').innerText=ch.dialogue||ch.desc;
+  $('chapterStarRating').innerText=`${starText(storyStarsForChapter(selectedChapter))} · ${storyStarsForChapter(selectedChapter)?'BEST RESULT':'NOT COMPLETED'}`;
   document.querySelectorAll('.pathChoice').forEach(b=>b.classList.toggle('active',b.dataset.path===profile.storyPath));
-  const sideHost=$('sideStoryList');sideHost.innerHTML='';ch.sides.forEach((name,i)=>{
-    const done=!!profile.completedSides[`${storyKey(selectedChapter)}-${i}`];
-    const row=document.createElement('div');row.className='dataRow';
-    row.innerHTML=`<div style="min-width:0"><b>${escapeHtml(name)}</b><small>OBJECTIVE: ${escapeHtml(sideMissionBrief(selectedChapter,i))}</small><small>${done?'COMPLETED · REQUIRED':'REQUIRED TO UNLOCK NEXT CHAPTER'} · ${i===2?'POLICE PURSUIT':i===1?'ELIMINATION ATTACK':'STREET RACE'}</small></div><div><span class="pillTag">${done?'✓ DONE':profile.storyMain[storyKey(selectedChapter)]?'AVAILABLE':'LOCKED'}</span> <button class="smallBtn" data-side="${i}" ${profile.storyMain[storyKey(selectedChapter)]?'':'disabled'}>${done?'REPLAY':'PLAY'}</button></div>`;
-    sideHost.appendChild(row);
+  const sideHost=$('sideStoryList');sideHost.innerHTML='';
+  const episodeRows=STORY_THREADS[selectedChapter]||[];
+  const doneCount=episodeRows.filter((_,i)=>storySideComplete(selectedChapter,i)).length;
+  const progress=document.createElement('div');progress.className='mutedText';progress.textContent=`CREW EPISODES COMPLETE: ${doneCount}/3 · ALL THREE ARE REQUIRED TO UNLOCK THE NEXT CHAPTER.`;sideHost.appendChild(progress);
+  episodeRows.forEach((episode,i)=>{
+    const done=storySideComplete(selectedChapter,i),stars=storyStarsForSide(selectedChapter,i);
+    const row=document.createElement('div');row.className='dataRow';row.style.alignItems='flex-start';
+    const info=document.createElement('div');info.style.minWidth='0';
+    const title=document.createElement('b');title.textContent=`SIDE STORY ${i+1} · ${episode.title}`;info.appendChild(title);
+    const objective=document.createElement('small');objective.textContent=`OBJECTIVE: ${sideMissionBrief(selectedChapter,i)}`;info.appendChild(objective);
+    const body=document.createElement('p');body.className='storyEpisodeText';body.textContent=episode.body;info.appendChild(body);
+    const quote=document.createElement('p');quote.className='storyEpisodeQuote';quote.textContent=episode.dialogue;info.appendChild(quote);
+    const side=document.createElement('div');side.style.textAlign='right';side.style.flex='0 0 auto';
+    const rating=document.createElement('div');rating.className='storyStars';rating.textContent=starText(stars);side.appendChild(rating);
+    const status=document.createElement('small');status.textContent=done?'COMPLETED':profile.storyMain[storyKey(selectedChapter)]?'AVAILABLE':'LOCKED';side.appendChild(status);
+    const btn=document.createElement('button');btn.className='smallBtn';btn.dataset.side=String(i);btn.textContent=done?'REPLAY EPISODE':'PLAY EPISODE';btn.disabled=!profile.storyMain[storyKey(selectedChapter)];side.appendChild(btn);
+    row.append(info,side);sideHost.appendChild(row);
   });
-  const list=$('chapterList');list.innerHTML='';STORY_CHAPTERS.forEach((c,i)=>{const prev=i===0||((profile.storyMain[storyKey(i-1)])&&STORY_CHAPTERS[i-1].sides.every((_,j)=>profile.completedSides[`${storyKey(i-1)}-${j}`]));const el=document.createElement('button');el.className='questRow'+(i===selectedChapter?' active':'');el.innerHTML=`<span><b>CHAPTER ${String(i+1).padStart(2,'0')} · ${c.title}</b><small>${prev?'AVAILABLE':'COMPLETE PREVIOUS CHAPTER + ALL SIDE STORIES'}</small><small>MAIN OBJECTIVE: ${c.objective}</small></span><span>${c.sides.filter((_,j)=>profile.completedSides[`${storyKey(i)}-${j}`]).length}/${c.sides.length} ✦</span>`;el.disabled=!prev;el.addEventListener('click',()=>{selectedChapter=i;renderStory();});list.appendChild(el);});
-  const complete=!!profile.storyMain[storyKey(selectedChapter)];$('storyStartBtn').disabled=complete;$('storyStartBtn').innerText=complete?'CHAPTER COMPLETE':'START CHAPTER ↗';
+  const list=$('chapterList');list.innerHTML='';
+  STORY_CHAPTERS.forEach((c,i)=>{
+    const unlocked=i===0||(!!profile.storyMain[storyKey(i-1)]&&STORY_CHAPTERS[i-1].sides.every((_,j)=>storySideComplete(i-1,j)));
+    const completed=!!profile.storyMain[storyKey(i)];
+    const doneCount=(STORY_THREADS[i]||[]).filter((_,j)=>storySideComplete(i,j)).length;
+    const el=document.createElement('button');el.type='button';el.className='questRow'+(i===selectedChapter?' active':'');el.disabled=!unlocked;
+    const label=document.createElement('span');
+    const title=document.createElement('b');title.textContent=`CHAPTER ${String(i+1).padStart(2,'0')} · ${c.title}`;label.appendChild(title);
+    const details=document.createElement('small');details.textContent=`${unlocked?(completed?'CLEARED · REPLAY AVAILABLE':'AVAILABLE'):'COMPLETE THE PREVIOUS CHAPTER + ALL THREE EPISODES'} · ${c.objective}`;label.appendChild(details);
+    const stars=document.createElement('small');stars.className='storyStars';stars.textContent=`${starText(storyStarsForChapter(i))} · EPISODES ${doneCount}/3`;label.appendChild(stars);
+    const state=document.createElement('span');state.textContent=completed?'✓':unlocked?'▶':'🔒';el.append(label,state);
+    el.addEventListener('click',()=>{if(!unlocked)return;selectedChapter=i;renderStory();});list.appendChild(el);
+  });
+  $('storyStartBtn').disabled=!chapterUnlocked;
+  $('storyStartBtn').innerText=profile.storyMain[storyKey(selectedChapter)]?'REPLAY CHAPTER ↗':'START CHAPTER ↗';
 }
-function startStory(sideIndex=-1){const ch=STORY_CHAPTERS[selectedChapter];if(profile.energy<10){alert('Not enough energy.');return;}if(sideIndex>=0){storySideIndex=sideIndex;gameMode=sideIndex===2?'police':(sideIndex===1?'time':'street');}else{storySideIndex=-1;gameMode=profile.storyPath==='solo'?(ch.mode==='street'?'ghost':ch.mode==='time'?'time':ch.mode):ch.mode;}profile.storyPath=selectedStoryPath;document.body.dataset.returnView='storyPanel';playerMode='solo';$('playerModeSelect').value='solo';$('modeGrid').querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===gameMode));isPoliceMode=gameMode==='police';raceLaps=gameMode==='time'||gameMode==='ghost'?1:3;beginRace();}
+function startStory(sideIndex=-1){
+  const ch=STORY_CHAPTERS[selectedChapter];if(!ch)return;
+  if(profile.energy<10){alert('Not enough energy.');return;}
+  if(sideIndex>=0){
+    if(!profile.storyMain[storyKey(selectedChapter)]){alert('Complete the main chapter race before playing its side stories.');return;}
+    storySideIndex=sideIndex;gameMode=sideIndex===2?'police':(sideIndex===1?'time':'street');
+  }else{storySideIndex=-1;gameMode=profile.storyPath==='solo'?(ch.mode==='street'?'ghost':ch.mode):ch.mode;}
+  currentTrack=ch.track==='skyline'?'skyway':ch.track;
+  profile.storyPath=selectedStoryPath;document.body.dataset.returnView='storyPanel';document.body.dataset.storyRace=sideIndex<0?'1':'0';
+  playerMode='solo';$('playerModeSelect').value='solo';$('modeGrid').querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===gameMode));
+  isPoliceMode=gameMode==='police';raceLaps=gameMode==='ghost'?1:(gameMode==='time'?999:3);beginRace();
+}
 function renderCarSelect(){const sel=$('carSelect');if(!sel)return;sel.innerHTML='';CAR_CATALOG.filter(c=>profile.ownedCars?.includes(c.id)||c.id==='D-01').forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});if(!profile.ownedCars)profile.ownedCars=['D-01'];sel.value=profile.garage.carId;if(!sel.value)sel.value='D-01';const c=getSelectedCar();$('carStats').innerText=`${c.rank}-Class · Top speed ${c.speed} · Handling ${c.handling} · Level ${profile.garage.carLevels?.[c.id]||1}`;$('carLevelText').innerText=`CAR LEVEL ${profile.garage.carLevels?.[c.id]||1} · ${c.rank} CLASS`;
 }
 function renderStore(){
@@ -1216,13 +1340,32 @@ function renderStore(){
   const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${p.name}</b><small>${p.desc} · OWNED ${profile.inventory[p.id]||0}</small></div><button class="smallBtn" ${profile.credits<p.price?'disabled':''}>BUY ${p.price}</button>`;row.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;renderStore();updateUI();saveProfile();});powers.appendChild(row);});
   $('inventoryList').innerHTML=POWERUPS.map(p=>`<div class="dataRow"><span>${p.name}</span><b>${profile.inventory[p.id]||0}</b></div>`).join('');
 }
+function renderQuestBoard(){
+  const host=$('questBoard');if(!host)return;
+  const q=profile.questStats||(profile.questStats={races:0,podiums:0,storyWins:0,claimed:[]});
+  if(!Array.isArray(q.claimed))q.claimed=[];
+  const quests=[
+    {id:'races',name:'Street Regular',desc:'Complete 3 races',target:3,value:q.races||0,reward:300},
+    {id:'podiums',name:'Podium Finisher',desc:'Finish in the top three twice',target:2,value:q.podiums||0,reward:450},
+    {id:'storyWins',name:'Nightshift Rising',desc:'Clear one main story objective',target:1,value:q.storyWins||0,reward:500}
+  ];
+  host.innerHTML='';
+  quests.forEach(x=>{
+    const done=x.value>=x.target,claimed=q.claimed.includes(x.id),row=document.createElement('div');row.className='dataRow';
+    const info=document.createElement('div');const b=document.createElement('b');b.textContent=x.name;const sm=document.createElement('small');sm.textContent=`${x.desc} · ${Math.min(x.value,x.target)}/${x.target} · ${x.reward} CR`;info.append(b,sm);
+    const btn=document.createElement('button');btn.className='smallBtn';btn.textContent=claimed?'CLAIMED':done?'CLAIM REWARD':'IN PROGRESS';btn.disabled=!done||claimed;
+    btn.addEventListener('click',()=>{if(!done||claimed)return;q.claimed.push(x.id);addCredits(x.reward);saveProfile();renderQuestBoard();updateUI();});
+    row.append(info,btn);host.appendChild(row);
+  });
+}
+
 function refreshQuests(){
   const day=new Date().toISOString().slice(0,10),week=(()=>{const d=new Date();d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10);})();
   if(profile.daily.date!==day)profile.daily={date:day,progress:0,claimed:false};if(profile.weekly.date!==week)profile.weekly={date:week,progress:0,claimed:false};
   const daily=[{name:'Complete Three Laps',goal:3,reward:450},{name:'Finish Two Events',goal:2,reward:600},{name:'Collect Five Supply Drops',goal:5,reward:500}];
   const weekly=[{name:'Complete Eight Races',goal:8,reward:2200},{name:'Earn 2,000 Street Rep',goal:2000,reward:3000}];
   const render=(arr,host,obj)=>{host.innerHTML='';arr.forEach((q,i)=>{const pr=obj.progress?.[i]||0;const done=pr>=q.goal;const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${q.name}</b><small>${Math.min(pr,q.goal)}/${q.goal} · REWARD ${q.reward} CREDITS</small></div><button class="smallBtn" ${!done||obj.claimed?.[i]?'disabled':''}>${obj.claimed?.[i]?'CLAIMED':done?'CLAIM':'IN PROGRESS'}</button>`;row.querySelector('button').addEventListener('click',()=>{if(!done||obj.claimed?.[i])return;obj.claimed=obj.claimed||{};obj.claimed[i]=true;addCredits(q.reward);updateUI();refreshQuests();saveProfile();});host.appendChild(row);});};
-  profile.daily.progress=profile.daily.progress||{};profile.weekly.progress=profile.weekly.progress||{};render(daily,$('dailyQuestList'),profile.daily);render(weekly,$('weeklyQuestList'),profile.weekly);
+  profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.weekly.progress=profile.weekly.progress&&typeof profile.weekly.progress==='object'?profile.weekly.progress:{};render(daily,$('dailyQuestList'),profile.daily);render(weekly,$('weeklyQuestList'),profile.weekly);renderQuestBoard();
   const next=(Math.floor(profile.level/5)+1)*5;$('milestoneStatus').innerText=`Level ${next} reward: credits, a tournament ticket and a shield powerup.`;
   const now=new Date(),dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);$('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · Top finish earns 3,000 Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. A limited event is selected at random on event days.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
   const specialModes=['infected','police','time','random'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT'};$('specialEventStatus').innerText=`TODAY'S ROTATING EVENT: ${eventNames[specialEventMode]}. Complete the event for bonus Credits and Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
@@ -1241,7 +1384,7 @@ function activatePowerup(){if(powerupCooldown)return;powerupCooldown=true;setTim
 function beginRace(){
   if(profile.energy<10){alert('Not enough energy. Energy regenerates over time.');return;}
   profile.energy-=10;localStorage.setItem('mr_energy_stamp',String(Date.now()));saveProfile();updateUI();initAudio();document.body.classList.add('race-active');
-  lastNetworkSync=0;
+  lastNetworkSync=0;if(lobbyChannel){onlineLocalFinishSent=false;onlineFinishers.clear();$('finishSummary').dataset.baseSummary='';}
   if(gameMode==='random'){const tracks=Object.keys(TRACKS);currentTrack=tracks[Math.floor(Math.random()*tracks.length)];const modes=['street','time','police','ghost','infected'];gameMode=modes[Math.floor(Math.random()*modes.length)];}
   if(!TRACKS[currentTrack])currentTrack='neon';
   isPoliceMode=gameMode==='police';
@@ -1263,9 +1406,9 @@ function finishRace(){
   const isSpecialEvent=document.body.dataset.specialEvent==='1';
   const xpBase=isRanked?210:(isSpecialEvent?170:(gameMode==='street'?130:gameMode==='police'?150:gameMode==='time'?120:115));
   const xp=won?Math.round(xpBase*1.35):xpBase;
-  profile.totalRaces++;if(won)profile.wins++;addCredits(reward);addXP(xp);
+  profile.totalRaces++;if(won)profile.wins++;profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.races=(profile.questStats.races||0)+1;if(place<=3)profile.questStats.podiums=(profile.questStats.podiums||0)+1;addCredits(reward);addXP(xp);
   if(isSpecialEvent&&won){addCredits(900);profile.rankedTickets=(profile.rankedTickets||0)+1;}
-  if(profile.daily.date===new Date().toISOString().slice(0,10)){profile.daily.progress=profile.daily.progress||{};profile.daily.progress[1]=(profile.daily.progress[1]||0)+1;profile.daily.progress[0]=(profile.daily.progress[0]||0)+raceLaps;}
+  if(profile.daily.date===new Date().toISOString().slice(0,10)){profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.daily.progress[1]=(profile.daily.progress[1]||0)+1;profile.daily.progress[0]=(profile.daily.progress[0]||0)+Math.min(6,Math.max(1,raceLaps));}
   if(profile.weekly.progress){profile.weekly.progress[0]=(profile.weekly.progress[0]||0)+1;profile.weekly.progress[1]=(profile.weekly.progress[1]||0)+xp;}
   if(gameMode==='time'||gameMode==='ghost'){
     const key=currentTrack;const old=bestTimes[key];if(!old||raceTime<old){bestTimes[key]=raceTime;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}
@@ -1273,24 +1416,31 @@ function finishRace(){
     if(gameMode==='ghost'&&bestTimes[key]&&raceTime<=bestTimes[key])addCredits(300);
   }
   let storyMissionResult='';
+  profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};
   if(storySideIndex>=0){
-    const sideSuccess=storySideIndex===2?!policeFailed:storySideIndex===1?(gameMode==='time'&&raceTime>0):place<=3;
-    if(sideSuccess){profile.completedSides[`${storyKey(selectedChapter)}-${storySideIndex}`]=true;storyMissionResult='SIDE STORY OBJECTIVE COMPLETE.';}
-    else storyMissionResult='SIDE STORY OBJECTIVE NOT MET — replay this side story to complete it.';
+    const sideSuccess=gameMode==='police'?!policeFailed:gameMode==='time'?won:place<=3;
+    const stars=sideSuccess?(gameMode==='police'?(damage<=20?3:2):gameMode==='time'?3:place===1?3:place===2?2:1):0;
+    const sideKey=`${selectedChapter}-${storySideIndex}`;profile.sideStoryStars[sideKey]=Math.max(Number(profile.sideStoryStars[sideKey]||0),stars);
+    if(stars>0)profile.completedSides[`${storyKey(selectedChapter)}-${storySideIndex}`]=true;
+    const sideName=STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'SIDE STORY';
+    storyMissionResult=stars>0?`${sideName} COMPLETE · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}.`:`${sideName} OBJECTIVE NOT MET — replay this episode.`;
     storySideIndex=-1;
   } else if(document.body.dataset.storyRace==='1'){
-    const mainSuccess=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected:(selectedChapter===0?place<=3:won));
-    if(mainSuccess){profile.storyMain[storyKey(selectedChapter)]=true;storyMissionResult='CHAPTER OBJECTIVE COMPLETE. Required side stories are now unlocked.';}
+    const mainSuccess=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected:(gameMode==='time'?won:(selectedChapter===0?place<=3:won)));
+    const stars=mainSuccess?(isPoliceMode?(damage<=20?3:2):gameMode==='time'?3:place===1?3:place===2?2:1):0;
+    profile.chapterStars[selectedChapter]=Math.max(Number(profile.chapterStars[selectedChapter]||0),stars);
+    if(mainSuccess){profile.storyMain[storyKey(selectedChapter)]=true;profile.questStats.storyWins=(profile.questStats.storyWins||0)+1;storyMissionResult=`CHAPTER OBJECTIVE COMPLETE · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}. All three crew episodes are now available.`;}
     else storyMissionResult='CHAPTER OBJECTIVE NOT MET — replay the chapter to continue the story.';
     document.body.dataset.storyRace='0';
   }
   if(gameMode==='police'&&won)addCredits(250);
   const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(3000);profile.rankedTickets=(profile.rankedTickets||0)+2;}document.body.dataset.tournament='0';
+  if(lobbyChannel&&onlineRaceStarted&&authUser&&!onlineLocalFinishSent){onlineLocalFinishSent=true;onlineFinishers.set(authUser.id,{user_id:authUser.id,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),place});lobbyChannel.send({type:'broadcast',event:'race_finish',payload:{user_id:authUser.id,race_id:onlineRaceId,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),distance:playerDistance,place}}).catch(()=>{});}
   if(authUser&&supabaseReady)submitServerResult(raceTime,place,reward).catch(e=>console.warn(e));
   $('finishTitle').innerText=gameMode==='time'?(won?'ELIMINATION CHAMPION':'ELIMINATED · #'+place):isPoliceMode?(policeFailed?'BUSTED · PURSUIT FAILED':'PURSUIT ESCAPED'):gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);
   $('finishSummary').innerText=(localPlayer2?`PLAYER 1 #${place} · PLAYER 2 #${p2Place}. `:'')+`${formatTime(raceTime)} · ${gameMode==='time'?(won?'You survived every elimination and were the last racer standing.':`You were eliminated in position ${place}.`):isPoliceMode?(policeFailed?'Vehicle disabled. Police chase ended with no respawn.':'You escaped the patrol fleet.'):place===1?'1st place':`Place ${place}`} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion: +3,000 Credits and 2 Ranked Tickets.':` Tournament placement: #${place}.`):'')+(isSpecialEvent? ' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
   $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText= lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
-  $('finishMenu').classList.remove('hidden');saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
+  $('finishMenu').classList.remove('hidden');if(lobbyChannel&&onlineRaceStarted)updateOnlineFinishSummary();saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
 function pauseRace(){if(gameState!=='racing')return;gameState='paused';document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
 function resumeRace(){if(gameState!=='paused')return;gameState='racing';document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
@@ -1311,75 +1461,171 @@ function stableRoomCode(ids){
   return 'Q'+(h>>>0).toString(36).toUpperCase().padStart(5,'0').slice(-5);
 }
 async function leaveQueue(){
-  if(matchmakingChannel&&supabaseReady){try{await supabase.removeChannel(matchmakingChannel);}catch(e){console.warn(e);} }
+  if(matchmakingChannel&&supabaseReady){try{await supabase.removeChannel(matchmakingChannel);}catch(e){console.warn(e);}}
   matchmakingChannel=null;queueMode=null;queuePairing=false;
+}
+function updateOnlineFinishSummary(){
+  if(!$('finishMenu')||$('finishMenu').classList.contains('hidden'))return;
+  const expected=Math.max(onlineParticipants.length,onlineFinishers.size);
+  const rows=Array.from(onlineFinishers.values()).sort((a,b)=>Number(a.race_time)-Number(b.race_time));
+  const own=rows.findIndex(x=>x.user_id===authUser?.id)+1;
+  const text=rows.map((r,i)=>`${i+1}. ${escapeHtml(r.username||'RACER')} · ${formatTime(Number(r.race_time)||0)}`).join(' | ');
+  const base=$('finishSummary').dataset.baseSummary||$('finishSummary').innerText.split(' · ONLINE RESULTS:')[0];
+  $('finishSummary').dataset.baseSummary=base;
+  $('finishSummary').innerText=`${base} · ONLINE RESULTS: ${rows.length}/${expected} FINISHED${own?` · CURRENT PLACE ${own}/${expected}`:''}${text?' · '+text:''}`;
+  if(own&&rows.length===expected)$('finishTitle').innerText=`ONLINE PLACE ${own} / ${expected}`;
+}
+function renderLobbyPlayers(members){
+  const host=$('lobbyPlayers');if(!host)return;host.innerHTML='';
+  const list=(members||[]).slice(0,6);
+  if(!list.length){host.innerHTML='<div class="mutedText">No lobby connected.</div>';return;}
+  list.forEach(m=>{const row=document.createElement('div');row.className='lobbyDriver';const name=document.createElement('b');name.textContent=String(m.username||'RACER');const status=document.createElement('small');status.textContent=m.isHost?'HOST':m.ready?'READY':'WAITING';row.append(name,status);host.appendChild(row);});
+}
+function roomMemberList(){
+  if(!lobbyChannel)return[];
+  return Object.values(lobbyChannel.presenceState()).flat().filter(m=>m&&m.user_id&&m.room_code===roomMetadata?.room_code&&m.mode===onlineRoomMode).sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+}
+function applyRemoteImpact(payload){
+  if(activeEffects.shield>0){delete activeEffects.shield;playerSpeed*=.94;showToast('SHIELD BLOCKED ONLINE IMPACT');}
+  else{playerSpeed*=.68;damage=Math.min(100,damage+18);showToast(`ONLINE IMPACT · ${payload?.username||'RIVAL'}`);}
+}
+function launchOnlineRace(payload){
+  if(!lobbyChannel||onlineRaceStarted)return;
+  if(payload.mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){ $('mmStatus').innerText='Ranked requires Level 10 and one Ranked Ticket.';return; }
+  if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race.';return;}
+  onlineRaceStarted=true;onlineRaceId=String(payload.race_id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`);onlineLocalFinishSent=false;onlineFinishers.clear();onlineCollisionCooldown=0;
+  onlineRoomMode=payload.mode||onlineRoomMode;
+  if(onlineRoomMode==='ranked'){profile.rankedTickets=Math.max(0,(profile.rankedTickets||0)-1);saveProfile();updateUI();}
+  currentTrack=TRACKS[payload.track]?payload.track:currentTrack;gameMode='street';playerMode='solo';isPoliceMode=false;
+  forcedRaceLaps=clamp(Math.floor(Number(payload.laps)||3),2,6);forcedRaceWeather=payload.weather||'CLEAR';forcedRaceSeed=Number(payload.seed)||null;
+  document.body.dataset.returnView=onlineRoomMode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament='0';document.body.dataset.storyRace='0';
+  $('matchmakingModal').classList.add('hidden');
+  if(onlineStartTimer)clearTimeout(onlineStartTimer);
+  const startAt=Number(payload.start_at)||Date.now()+3500;
+  const delay=Math.max(0,startAt-Date.now()-3150);
+  $('mmStatus').innerText=`Matched ${onlineParticipants.length||2} drivers. Synchronizing race start…`;
+  onlineStartTimer=setTimeout(()=>{onlineStartTimer=null;if(!lobbyChannel)return;beginRace();},delay);
+}
+async function sendOnlineRaceStart(mode,hostRecord){
+  if(!lobbyChannel||!authUser)return;
+  const members=roomMemberList().slice(0,6);if(members.length<2)return;
+  const host=hostRecord||members.find(m=>m.isHost)||members[0];
+  const payload={user_id:authUser.id,mode,track:TRACKS[host.track]?host.track:currentTrack,laps:clamp(Math.floor(Number(host.laps)||3),2,6),weather:host.weather||'CLEAR',seed:Number(host.seed)||Math.floor(Math.random()*4294967295),race_id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,start_at:Date.now()+5200};
+  await lobbyChannel.send({type:'broadcast',event:'race_start',payload});
+  launchOnlineRace(payload);
 }
 async function leaveOnlineRoom(){
   if(lobbyStartTimer){clearTimeout(lobbyStartTimer);lobbyStartTimer=null;}
   if(queueStartTimer){clearTimeout(queueStartTimer);queueStartTimer=null;}
+  if(onlineStartTimer){clearTimeout(onlineStartTimer);onlineStartTimer=null;}
   await leaveQueue();
-  if(lobbyChannel&&supabaseReady){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);} }
-  lobbyChannel=null;onlineRaceStarted=false;remoteOpponentState=null;onlineRoomMode='casual';
+  if(lobbyChannel&&supabaseReady){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}}
+  lobbyChannel=null;onlineRaceStarted=false;onlineRaceId=null;onlineLocalFinishSent=false;onlineRoomMode='casual';remoteOpponentState=null;privateLobby=false;publicLobby=false;privateLobbyReady=false;isRoomHost=false;roomMetadata=null;onlineParticipants=[];onlineFinishers.clear();
   remotePlayerMeshes.forEach(mesh=>{if(scene)scene.remove(mesh);});remotePlayerMeshes.clear();remotePlayers.clear();
   if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
   $('againBtn').classList.remove('hidden');
+  if($('lobbyPlayers'))$('lobbyPlayers').innerHTML='<div class="mutedText">No lobby connected.</div>';
+  ['lobbyReadyBtn','lobbyStartBtn','lobbyLeaveBtn'].forEach(id=>{if($(id))$(id).disabled=true;});
+  if($('lobbyReadyBtn'))$('lobbyReadyBtn').innerText='I’M READY';
 }
-async function startRaceRoom(roomCode,mode,isHost){
+async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=false){
   if(!supabaseReady||!authUser)return;
   if(lobbyChannel){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}lobbyChannel=null;}
-  onlineRaceStarted=false;remoteOpponentState=null;onlineRoomMode=mode;
+  onlineRaceStarted=false;onlineRaceId=null;onlineFinishers.clear();onlineLocalFinishSent=false;remoteOpponentState=null;onlineRoomMode=mode;privateLobby=!!privateRoom;publicLobby=!!isPublic;privateLobbyReady=false;isRoomHost=!!isHost;
   remotePlayerMeshes.forEach(mesh=>{if(scene)scene.remove(mesh);});remotePlayerMeshes.clear();remotePlayers.clear();
   if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
   $('roomCodeInput').value=roomCode;
-  if(mode==='casual')$('lobbyStatus').innerText=`Room ${roomCode} · share this code with your friend.`;
-  $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':'CASUAL LOBBY';
-  $('mmStatus').innerText=`Connecting to ${mode} room ${roomCode}…`;
+  if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connecting to the public casual lobby…':`Room ${roomCode} · share this code with up to five other drivers.`;
+  $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':isPublic?'PUBLIC CASUAL LOBBY':'CASUAL LOBBY';
+  $('mmStatus').innerText=`Connecting to ${mode} room…`;
+  roomMetadata={user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:2+Math.floor(Math.random()*5),weather:['CLEAR','RAIN','STORM','FOG','SNOW'][Math.floor(Math.random()*5)],seed:Math.floor(Math.random()*4294967295),isHost:!!isHost,ready:false,level:profile.level,paint:profile.garage.paint,bodyStyle:getSelectedCar().body};
   lobbyChannel=supabase.channel(`race:${roomCode}`,{config:{broadcast:{self:false},presence:{key:authUser.id}}});
   lobbyChannel.on('broadcast',{event:'player_pos'},({payload})=>{
     if(!payload||!payload.user_id||payload.user_id===authUser?.id)return;
-    const id=String(payload.user_id),state={dist:Number(payload.dist)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,username:String(payload.username||'ONLINE RACER'),eliminated:!!payload.eliminated};
-    remotePlayers.set(id,state);
-    let mesh=remotePlayerMeshes.get(id);if(!mesh){mesh=createCar([0xff4b91,0xffd36a,0x63f3ff,0x8a55e8,0x75e66d,0xf07c3e][remotePlayerMeshes.size%6],false,1+Math.floor(Math.random()*4));remotePlayerMeshes.set(id,mesh);if(scene)scene.add(mesh);}
-    mesh.visible=!state.eliminated;const f=frameAt(state.dist);mesh.position.copy(f.p).addScaledVector(f.side,state.offset);mesh.position.y=.2;mesh.lookAt(frameAt(state.dist+5).p);
+    if(onlineRaceId&&payload.race_id&&payload.race_id!==onlineRaceId)return;
+    const id=String(payload.user_id),state={dist:Number(payload.dist)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,username:String(payload.username||'ONLINE RACER'),eliminated:!!payload.eliminated,damage:Number(payload.damage)||0,nitro:Number(payload.nitro)||0,lap:Number(payload.lap)||0,finished:!!payload.finished,paint:String(payload.paint||'ff4b91'),bodyStyle:Number(payload.bodyStyle)||1,stamp:Date.now()};
+    const previous=remotePlayers.get(id);state.displayDist=previous?.displayDist??state.dist;state.displayOffset=previous?.displayOffset??state.offset;remotePlayers.set(id,state);
+    let mesh=remotePlayerMeshes.get(id);if(!mesh){mesh=createCar(parseInt(state.paint,16)||0xff4b91,false,state.bodyStyle);remotePlayerMeshes.set(id,mesh);if(scene)scene.add(mesh);}
+    mesh.visible=!state.eliminated;
     remoteOpponentState=Array.from(remotePlayers.values())[0]||null;
   });
+  lobbyChannel.on('broadcast',{event:'race_start'},({payload})=>{if(!payload||payload.user_id===authUser?.id)return;launchOnlineRace(payload);});
+  lobbyChannel.on('broadcast',{event:'pickup_claim'},({payload})=>{
+    if(!payload||payload.user_id===authUser?.id||(onlineRaceId&&payload.race_id!==onlineRaceId))return;
+    const item=powerupPickups[Number(payload.pickup_index)];if(item){item.active=false;item.respawn=0;item.mesh.visible=false;}
+  });
+  lobbyChannel.on('broadcast',{event:'player_impact'},({payload})=>{
+    if(!payload||payload.target_user_id!==authUser?.id||(onlineRaceId&&payload.race_id!==onlineRaceId))return;
+    applyRemoteImpact(payload);
+  });
+  lobbyChannel.on('broadcast',{event:'race_finish'},({payload})=>{
+    if(!payload||payload.user_id===authUser?.id||(onlineRaceId&&payload.race_id!==onlineRaceId))return;
+    onlineFinishers.set(String(payload.user_id),{user_id:String(payload.user_id),username:String(payload.username||'RACER'),race_time:Number(payload.race_time)||0,lap:Number(payload.lap)||0,place:Number(payload.place)||0});
+    const remote=remotePlayers.get(String(payload.user_id));if(remote)remote.finished=true;
+    $('mmStatus').innerText=`${payload.username||'A driver'} finished. ${onlineFinishers.size+1}/${Math.max(2,onlineParticipants.length)} finishers reported.`;
+    updateOnlineFinishSummary();
+  });
   lobbyChannel.on('presence',{event:'sync'},()=>{
-    const readMembers=()=>Object.values(lobbyChannel.presenceState()).flat().filter(m=>m.room_code===roomCode&&m.mode===mode).sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
-    const members=readMembers(),activeMembers=members.slice(0,6);
-    if(members.length>6)$('mmStatus').innerText=`Room capacity is six. ${members.length-6} racer(s) are waiting outside.`;
-    if(!activeMembers.some(m=>m.user_id===authUser.id)){$('mmStatus').innerText=`Room ${roomCode} is full (6/6).`;return;}
-    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 racers connected. Starting shortly…`:`Room ${roomCode} · waiting for another racer (${activeMembers.length}/6).`;
+    const members=roomMemberList(),activeMembers=members.slice(0,6);onlineParticipants=activeMembers.map(m=>({user_id:m.user_id,username:m.username||'RACER'}));
+    const activeIds=new Set(activeMembers.map(m=>String(m.user_id)));
+    for(const [id,mesh] of remotePlayerMeshes){if(!activeIds.has(id)){if(scene)scene.remove(mesh);remotePlayerMeshes.delete(id);remotePlayers.delete(id);}}
+    const inside=activeMembers.some(m=>m.user_id===authUser.id);
+    if(!inside){$('mmStatus').innerText=`Room ${roomCode} is full (6/6).`;return;}
+    if(privateLobby){
+      renderLobbyPlayers(activeMembers);
+      const allReady=activeMembers.length>=2&&activeMembers.every(m=>m.ready);
+      isRoomHost=(activeMembers.find(m=>m.isHost)?.user_id||activeMembers[0]?.user_id)===authUser.id;
+      $('lobbyStatus').innerText=`${isPublic?'Public lobby':`Room ${roomCode}`} · ${activeMembers.length}/6 drivers · ${allReady?'All drivers ready.':'Waiting for drivers to ready up.'}`;
+      $('lobbyReadyBtn').disabled=activeMembers.length>=6&&!privateLobbyReady;$('lobbyReadyBtn').innerText=privateLobbyReady?'CANCEL READY':'I’M READY';
+      $('lobbyStartBtn').disabled=!isRoomHost||!allReady||onlineRaceStarted;$('lobbyStartBtn').style.display=isRoomHost?'block':'none';$('lobbyLeaveBtn').disabled=false;
+      return;
+    }
+    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 racers connected. Pairing complete.`:`Searching for another racer (${activeMembers.length}/6).`;
     if(activeMembers.length>=2&&!onlineRaceStarted&&!lobbyStartTimer){
-      const waitMs=activeMembers.length>=6?250:6500;
       lobbyStartTimer=setTimeout(async()=>{
         lobbyStartTimer=null;if(!lobbyChannel||onlineRaceStarted)return;
-        const group=readMembers().slice(0,6);if(group.length<2||!group.some(m=>m.user_id===authUser.id))return;
+        const group=roomMemberList().slice(0,6);if(group.length<2||!group.some(m=>m.user_id===authUser.id))return;
         const host=group.find(m=>m.isHost)||group[0];
-        if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race. Rejoin when your energy has recovered.';return;}
-        if(mode==='ranked'){
-          if(profile.level<10||(profile.rankedTickets||0)<1){$('mmStatus').innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
-          profile.rankedTickets=Math.max(0,(profile.rankedTickets||0)-1);saveProfile();updateUI();
-        }
-        onlineRaceStarted=true;$('matchmakingModal').classList.add('hidden');
-        currentTrack=TRACKS[host.track]?host.track:currentTrack;gameMode='street';playerMode='solo';forcedRaceLaps=Number(host.laps)||3;forcedRaceWeather=host.weather||'CLEAR';forcedRaceSeed=Number(host.seed)||null;isPoliceMode=false;
-        document.body.dataset.returnView=mode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament='0';
-        beginRace();
-      },waitMs);
+        if(host.user_id!==authUser.id){$('mmStatus').innerText='Players found. Waiting for the lobby host to start the shared race…';return;}
+        if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race.';return;}
+        if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$('mmStatus').innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
+        await sendOnlineRaceStart(mode,host);
+      },2200);
     }
   });
   await lobbyChannel.subscribe(async status=>{
     if(status==='SUBSCRIBED'){
-      await lobbyChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:2+Math.floor(Math.random()*5),weather:['CLEAR','RAIN','STORM','FOG','SNOW'][Math.floor(Math.random()*5)],seed:Math.floor(Math.random()*4294967295),isHost:!!isHost,level:profile.level});
-      if(mode==='casual')$('lobbyStatus').innerText=`Room ${roomCode} is open. Share the code and wait for a friend.`;
-      $('mmStatus').innerText=mode==='ranked'?'Opponent connection established. Waiting for race synchronization…':`Room ${roomCode} connected. Waiting for another racer.`;
-    }
+      await lobbyChannel.track({...roomMetadata});
+      if(privateLobby){$('lobbyReadyBtn').disabled=false;$('lobbyLeaveBtn').disabled=false;$('lobbyStartBtn').disabled=true;$('lobbyStartBtn').style.display=isHost?'block':'none';}
+      if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connected to public casual lobby.':`Room ${roomCode} is open. Share the code with up to five other drivers.`;
+      $('mmStatus').innerText=privateLobby?'Lobby connected. Ready up when everyone is here.':mode==='ranked'?'Connected to the Ranked queue room. Waiting for the shared start signal.':'Casual match connected. Waiting for the shared start signal.';
+    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){$('mmStatus').innerText='Lobby connection failed. Check Supabase Realtime settings.';}
   });
+}
+async function setLobbyReady(){
+  if(!lobbyChannel||!privateLobby||!roomMetadata)return;
+  privateLobbyReady=!privateLobbyReady;roomMetadata.ready=privateLobbyReady;
+  try{await lobbyChannel.track({...roomMetadata});}catch(e){$('lobbyStatus').innerText=`Could not update ready state: ${e.message}`;}
+}
+async function startPrivateLobbyRace(){
+  if(!lobbyChannel||!privateLobby||!isRoomHost)return;
+  const members=roomMemberList().slice(0,6);
+  if(members.length<2||members.length>6){$('lobbyStatus').innerText='A race needs 2–6 connected drivers.';return;}
+  if(!members.every(m=>m.ready)){$('lobbyStatus').innerText='Every driver must press I’M READY first.';return;}
+  if(profile.energy<10){$('lobbyStatus').innerText='You need 10 energy to enter this race.';return;}
+  await sendOnlineRaceStart('casual',members.find(m=>m.isHost)||members[0]);
 }
 async function connectPrivateRoom(mode,roomCode,isHost){
   if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to create or join an online lobby.';return;}
   if(profile.energy<10){$('lobbyStatus').innerText='You need at least 10 energy to enter a casual race.';return;}
   $('matchmakingModal').classList.remove('hidden');
-  await startRaceRoom(roomCode,mode,isHost);
+  await startRaceRoom(roomCode,mode,isHost,true,false);
+}
+async function connectPublicLobby(){
+  if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to enter the public lobby.';return;}
+  if(profile.energy<10){$('lobbyStatus').innerText='You need at least 10 energy to enter a casual race.';return;}
+  $('matchmakingModal').classList.remove('hidden');
+  await startRaceRoom('PUBLIC','casual',false,true,true);
 }
 async function findOnlineMatch(mode){
   const status=mode==='ranked'?'rankedQueueStatus':'casualQueueStatus';
@@ -1395,13 +1641,12 @@ async function findOnlineMatch(mode){
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
       const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=10&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0)));
       members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
-      const myIndex=members.findIndex(m=>m.user_id===authUser.id);
-      if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
+      const myIndex=members.findIndex(m=>m.user_id===authUser.id);if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
       if(group.length<2){$(status).innerText=mode==='ranked'?'Searching globally for eligible Ranked racers…':'Searching globally for Casual racers…';$('mmStatus').innerText=$(status).innerText;return;}
-      queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;
-      const code=stableRoomCode(ids);$(status).innerText=`${group.length}/6 players found. Joining ${mode} race…`;$('mmStatus').innerText=$(status).innerText;
-      try{await startRaceRoom(code,mode,authUser.id===hostId);await leaveQueue();}catch(e){queuePairing=false;throw e;}
+      queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
+      $(status).innerText=`${group.length}/6 players found. Joining ${mode} race…`;$('mmStatus').innerText=$(status).innerText;
+      try{await startRaceRoom(code,mode,authUser.id===hostId,false,false);await leaveQueue();}catch(e){queuePairing=false;throw e;}
     };
     matchmakingChannel.on('presence',{event:'sync'},()=>{tryPair().catch(e=>{$(status).innerText=`Matchmaking error: ${e.message}`;});});
     await matchmakingChannel.subscribe(async state=>{
@@ -1439,11 +1684,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
   [['spoilerToggle','spoiler',180],['underglowToggle','underglow',250],['rimsToggle','rims',150]].forEach(([id,key,cost])=>$(id).addEventListener('change',e=>{if(e.target.checked&&!profile.garage.attachments[key]){if(profile.credits<cost){e.target.checked=false;alert('Not enough credits.');return;}profile.credits-=cost;}profile.garage.attachments[key]=e.target.checked;updateUI();refreshGarageCar();saveProfile();}));
   $('powerupSelect').addEventListener('change',()=>{profile.selectedPowerup=$('powerupSelect').value;updateUI();saveProfile();});
   document.querySelectorAll('.pathChoice').forEach(b=>b.addEventListener('click',()=>{selectedStoryPath=b.dataset.path;profile.storyPath=selectedStoryPath;renderStory();saveProfile();}));
-  $('storyStartBtn').addEventListener('click',()=>{if(profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='1';document.body.dataset.returnView='storyPanel';startStory(-1);});
+  $('storyStartBtn').addEventListener('click',()=>{document.body.dataset.storyRace='1';document.body.dataset.returnView='storyPanel';startStory(-1);});
   $('sideStoryList').addEventListener('click',e=>{const b=e.target.closest('button[data-side]');if(!b)return;const n=Number(b.dataset.side);if(!profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='0';document.body.dataset.returnView='storyPanel';startStory(n);});
   $('mpCasualBtn').addEventListener('click',()=>findOnlineMatch('casual'));
   $('createRoomBtn').addEventListener('click',()=>{const code=Math.random().toString(36).slice(2,8).toUpperCase();connectPrivateRoom('casual',code,true);});
   $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){alert('Enter a six-character room code.');return;}connectPrivateRoom('casual',code,false);});
+  $('publicLobbyBtn').addEventListener('click',connectPublicLobby);$('lobbyReadyBtn').addEventListener('click',setLobbyReady);$('lobbyStartBtn').addEventListener('click',startPrivateLobbyRace);$('lobbyLeaveBtn').addEventListener('click',async()=>{await leaveOnlineRoom();$('matchmakingModal').classList.add('hidden');$('lobbyStatus').innerText='You left the lobby.';});
   $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
   $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('mmCancelBtn').addEventListener('click',async()=>{$('matchmakingModal').classList.add('hidden');await leaveOnlineRoom();$('mmStatus').innerText='Search cancelled.';$('casualQueueStatus').innerText='Not currently searching.';$('rankedQueueStatus').innerText='Not currently searching.';});
