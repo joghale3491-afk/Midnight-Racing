@@ -78,3 +78,7 @@ create policy "Signed-in racers submit own results" on public.race_leaderboard f
 -- Realtime private-room codes use Supabase Realtime broadcast/presence channels
 -- (race:ABC123). They do not require a database table. For production, switch to
 -- private channels and add Realtime authorization policies before public release.
+
+-- Ranked leaderboard lookup (the browser filters mode = 'ranked').
+create index if not exists race_leaderboard_mode_time_idx
+  on public.race_leaderboard (mode, race_time asc, created_at desc);

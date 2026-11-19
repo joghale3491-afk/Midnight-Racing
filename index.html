@@ -120,7 +120,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
 .mpMuted{color:#9eb4c5;font-size:12px;line-height:1.5}
 .mpActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
 .mpActions button{flex:1;min-width:130px}
-.mpStatus{margin-top:10px;min-height:22px;color:#8feaff;font-size:12px}
+.mpStatus{margin-top:10px;min-height:22px;color:#8feaff;font-size:12px;line-height:1.45}
+#rankedPanel .heroStrip{border-color:#ffcf6a55}
+#rankedPanel .goldBtn{margin-top:8px}
+.navBtn{font-size:10px}
+@media(max-width:850px){.sideNav{scrollbar-width:thin}.navBtn{flex:0 0 auto}.mpWrap{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.mpWrap{grid-template-columns:1fr}.formRow .mrInput{flex-basis:100%}}
 @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{flex-direction:row;overflow:auto;padding:0}.navBtn{flex:1;text-align:center;white-space:nowrap;padding:11px 9px;border-radius:8px}.modeGrid{grid-template-columns:repeat(2,1fr)}#trackGrid{grid-template-columns:repeat(2,1fr)}.storyLayout,.garageGrid,.mpWrap{grid-template-columns:1fr}}
 @media(max-width:520px){.menuWrap{width:98vw;max-height:96vh;padding:13px;border-radius:12px}.hubTop{padding-bottom:12px;margin-bottom:12px;flex-direction:column;align-items:flex-start}.hubLogo{font-size:27px}.hubTag{font-size:7px}.hubGrid{gap:12px}.heroStrip{border-radius:10px}.storyMetaGrid{grid-template-columns:1fr 1fr}.storyFeature,.storyList,.garageCard{padding:13px}}
 
@@ -157,6 +162,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
 .touchRight{grid-template-columns:repeat(2,58px);grid-template-rows:repeat(2,54px)}
 .touchLabel{grid-column:1/-1;text-align:center;font-size:8px;color:#c8e5f2;letter-spacing:.13em;text-shadow:0 2px 5px #000}
 #p2Touch{display:none}
+body.local-two-player #touchControls .touchRight{display:none}
+body.local-two-player #p2Touch{display:block}
 #p2Touch .touchCluster button{border-color:#ff83b0aa}
 #mobileControlsHint{position:fixed;bottom:2px;left:50%;transform:translateX(-50%);z-index:6;color:#d3e7f5;font-size:8px;text-shadow:0 2px 4px #000;white-space:nowrap;display:none}
 @media(pointer:coarse),(max-width:850px){
@@ -220,7 +227,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
       <div class="damagePips" id="damagePips"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
-  <div class="controlsHint">WASD DRIVE · SPACE NITRO · SHIFT DRIFT · P PAUSE</div>
+  <div class="controlsHint">WASD / ARROWS DRIVE · SPACE NITRO · Q POWERUP · P PAUSE</div>
 </div>
 
 <div id="countdown"></div>
@@ -263,6 +270,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
         <button class="navBtn" data-view="leaderboardPanel">♜ &nbsp; RANKINGS</button>
         <button class="navBtn" data-view="settingsPanel">⚙ &nbsp; SETTINGS</button>
         <button class="navBtn" data-view="multiplayerPanel">◎ &nbsp; MULTIPLAYER</button>
+        <button class="navBtn" data-view="rankedPanel">🏆 &nbsp; RANKED</button>
       </aside>
       
       <main class="hubMain">
@@ -316,8 +324,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
               <h3 id="storyChapterTitle">First Night</h3>
               <p id="storyChapterDesc">Your first run is a chance to prove you belong.</p>
               <div class="storyMetaGrid">
-                <div class="storyMetaBox"><small>OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div>
-                <div class="storyMetaBox"><small>REWARD</small><b>500 CREDITS</b></div>
+                <div class="storyMetaBox"><small>PRIMARY MISSION OBJECTIVE</small><b id="storyObjective">Finish in the top three.</b></div>
+                <div class="storyMetaBox"><small>MISSION REWARD</small><b id="storyReward">500 CREDITS · STREET REP</b></div>
+              </div>
+              <div class="featureCard" style="margin:10px 0 14px">
+                <div class="eyebrow">MISSION BRIEFING</div>
+                <p id="storyMissionBrief" style="margin:7px 0 0">Read the objective and required side stories before launching the chapter.</p>
               </div>
               <div class="panelTitle">CHOOSE YOUR STORY PATH</div>
               <div class="formRow"><button class="smallBtn pathChoice active" data-path="crew">JOIN THE CREW</button><button class="smallBtn pathChoice" data-path="solo">GO SOLO</button></div>
@@ -382,7 +394,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
             <div class="featureCard"><h3>DAILY CONTRACTS</h3><div id="dailyQuestList" class="dataList"></div></div>
             <div class="featureCard"><h3>WEEKLY CHALLENGES</h3><div id="weeklyQuestList" class="dataList"></div></div>
             <div class="featureCard"><h3>TOURNAMENT WINDOW</h3><p id="tournamentStatus">Checking schedule…</p><button class="goldBtn" id="tournamentBtn">ENTER TOURNAMENT</button></div>
-            <div class="featureCard"><h3>STREET REP MILESTONES</h3><p id="milestoneStatus">Next reward at level 5.</p><div class="mutedText">Every 5 levels: credits, tickets and rare powerups.</div></div>
+            <div class="featureCard"><h3>ROTATING SPECIAL EVENT</h3><p id="specialEventStatus">Loading today's event…</p><button class="primaryBtn" id="specialEventBtn">ENTER SPECIAL EVENT</button></div>
+            <div class="featureCard"><h3>STREET REP MILESTONES</h3><p id="milestoneStatus">Next reward at level 5.</p><div class="mutedText">Every 5 levels: Credits, a Ranked Ticket and a rare powerup.</div></div>
           </div>
         </section>
         <section id="leaderboardPanel" class="viewPanel hidden">
@@ -393,28 +406,37 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
           <div class="heroStrip"><div><div class="eyebrow">PERSONALIZE YOUR NIGHT DRIVE</div><h2>GAME <span style="color:var(--pink)">SETTINGS</span></h2></div></div>
           <div class="featureGrid">
             <div class="featureCard"><h3>PROFILE</h3><label class="eyebrow" for="usernameInput">RACER USERNAME</label><input class="mrInput" id="usernameInput" maxlength="18" placeholder="Choose a username"><button class="smallBtn" id="saveUsernameBtn">SAVE USERNAME</button><p id="accountStatus" class="mutedText">Guest profile. Sign in to sync progress across devices.</p></div>
-            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Synthwave music</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are both available in solo mode.</p></div>
+            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Original EDM / techno soundtrack</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are both available in solo mode.</p></div>
             <div class="featureCard"><h3>ACCOUNT ACCESS</h3><input class="mrInput" id="accountEmail" type="email" placeholder="Email address"><input class="mrInput" id="accountPassword" type="password" placeholder="Password"><div class="formRow"><button class="smallBtn" id="signInBtn">SIGN IN</button><button class="smallBtn" id="signUpBtn">CREATE ACCOUNT</button></div><button class="smallBtn" id="signOutBtn">SIGN OUT</button><p class="mutedText" id="cloudSaveStatus">Cloud save is available after Supabase is configured.</p></div>
           </div>
         </section>
 
         <section id="multiplayerPanel" class="viewPanel hidden">
-          <div class="heroStrip"><div><div class="eyebrow">ONLINE</div><h2>CASUAL & RANKED</h2></div></div>
+          <div class="heroStrip"><div><div class="eyebrow">ONLINE</div><h2>CASUAL <span style="color:var(--pink)">MULTIPLAYER</span></h2></div></div>
           <div class="mpWrap">
             <div class="mpCard">
-              <h3>PRIVATE ROOM</h3><p class="mpMuted">Create a room or enter a friend's six-character room code. Both players must sign in and join the same Supabase project.</p>
+              <h3>CASUAL QUICK MATCH</h3>
+              <p class="mpMuted">Find another online racer who is also queueing for casual. No ranked ticket is needed.</p>
+              <button class="primaryBtn" id="mpCasualBtn" style="width:100%">FIND CASUAL MATCH</button>
+              <div class="mpStatus" id="casualQueueStatus">Not currently searching.</div>
+            </div>
+            <div class="mpCard">
+              <h3>PRIVATE LOBBY</h3>
+              <p class="mpMuted">Create a room code for a friend or join a friend's six-character code. Private rooms are casual only.</p>
               <div class="formRow"><input class="mrInput" id="roomCodeInput" maxlength="6" placeholder="ROOM CODE"><button class="smallBtn" id="joinRoomBtn">JOIN ROOM</button></div>
-              <button class="primaryBtn" id="createRoomBtn" style="width:100%">CREATE ROOM</button>
-            </div>
-            <div class="mpCard">
-              <h3>CASUAL</h3>
-              <button class="primaryBtn" id="mpCasualBtn" style="width:100%">FIND MATCH</button>
-            </div>
-            <div class="mpCard">
-              <h3>RANKED</h3>
-              <button class="goldBtn" id="mpRankedBtn" style="width:100%">FIND RANKED (1 🎟️)</button>
+              <button class="secondaryBtn" id="createRoomBtn" style="width:100%">CREATE PRIVATE LOBBY</button>
+              <div class="mpStatus" id="lobbyStatus">Create a room to get a code to share.</div>
             </div>
           </div>
+        </section>
+
+        <section id="rankedPanel" class="viewPanel hidden">
+          <div class="heroStrip"><div><div class="eyebrow">COMPETITIVE CIRCUIT · ONLINE ONLY</div><h2>RANKED <span style="color:var(--pink)">SERIES</span></h2><p>Ranked races only match signed-in players who are searching for Ranked at the same time. There is no solo Ranked option.</p></div></div>
+          <div class="featureGrid">
+            <div class="featureCard"><div class="eyebrow">ENTRY REQUIREMENTS</div><h3>STREET REP LEVEL 10+</h3><p>Each Ranked race costs one Ranked Ticket and 10 energy. Ranked Tickets are separate from Credits and are consumed only after a valid opponent is found.</p><div class="dataRow"><b>YOUR STREET REP</b><span id="rankedLevelStatus">LVL 1 · LOCKED</span></div><div class="dataRow"><b>RANKED TICKETS</b><span id="rankedTicketStatus">1 AVAILABLE</span></div><button class="goldBtn" id="mpRankedBtn" style="width:100%;margin-top:12px">SEARCH FOR RANKED OPPONENT</button><div class="mpStatus" id="rankedQueueStatus">Not currently searching.</div></div>
+            <div class="featureCard"><div class="eyebrow">RANKED RULES</div><h3>ONLINE HEAD-TO-HEAD</h3><p>Ranked requires a configured online account, an eligible level, a Ranked Ticket, and another player queued for Ranked. Private rooms and local two-player do not count as Ranked.</p><div class="dataRow"><b>RACE TYPE</b><span>3-LAP CIRCUIT</span></div><div class="dataRow"><b>REWARDS</b><span>CREDITS + STREET REP</span></div><div class="dataRow"><b>LEADERBOARD</b><span>SERVER RANKINGS</span></div></div>
+          </div>
+          <div class="featureCard" style="margin-top:12px"><div class="panelTitle">RANKED SERVER STANDINGS</div><div id="rankedLeaderboard" class="dataList"><div class="mutedText">Connect to Supabase to load Ranked standings.</div></div><button class="smallBtn" id="refreshRankedLeaderboard">REFRESH RANKED</button></div>
         </section>
       </main>
     </div>
@@ -431,7 +453,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
   </div>
   <div class="touchCluster touchRight"><div class="touchLabel">BOOST / POWERUP</div><button data-control="p1boost">N₂</button><button data-control="p1power">Q</button><button data-control="p1gas">▲</button><button data-control="p1brake">▼</button></div>
 </div>
-<div id="mobileControlsHint">P1: WASD / touch · P2: IJKL + U · Q POWERUP · P PAUSE</div>
+<div id="mobileControlsHint">SOLO: KEYBOARD OR TOUCH · LOCAL 2P: P1 + P2 CONTROL CLUSTERS · P PAUSE</div>
 <div class="overlay hidden" id="tutorialModal">
   <div class="overlayCard"><div class="eyebrow">ROOKIE DRIVER SCHOOL</div><h2 id="tutorialTitle">STEP 1 · DRIVE</h2><p id="tutorialText">Use W or the Up Arrow to accelerate. A/D or the arrow keys steer around the circuit.</p><div class="overlayButtons"><button class="secondaryBtn" id="tutorialBack">BACK</button><button class="primaryBtn" id="tutorialNext">NEXT ↗</button><button class="secondaryBtn" id="tutorialClose">CLOSE</button></div></div>
 </div>
@@ -469,7 +491,8 @@ let raceLaps = 3;
 const keys = {};
 const clock = new THREE.Clock();
 
-let lobbyChannel = null, onlineRoomMode = 'casual', onlineRaceStarted = false, remoteOpponentMesh = null, remoteOpponentState = null;
+let lobbyChannel = null, matchmakingChannel = null, queueMode = null, onlineRoomMode = 'casual', onlineRaceStarted = false, remoteOpponentMesh = null, remoteOpponentState = null;
+let policeFailed = false, specialEventMode = 'infected', queuePairing = false;
 let authUser = null;
 let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
@@ -501,11 +524,11 @@ const STORY_CHAPTERS = [
 // --- PROFILE & AUDIO ---
 let profile = {
     username: 'RACER_' + Math.floor(Math.random()*999),
-    level: 1, xp: 0, credits: 1200, energy: 50, maxEnergy: 50, tickets: 1,
+    level: 1, xp: 0, credits: 1200, energy: 50, maxEnergy: 50, tickets: 1, rankedTickets: 1,
     garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, attachments:{spoiler:false,underglow:false,rims:false} },
     ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0}, completedSides:{}, storyMain:{}, storyPath:'crew', selectedPowerup:'boost', daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
 };
-try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];
+try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];
 // Restore energy earned while the game was closed, preserving partial six-minute intervals.
 try{
   const now=Date.now();let stamp=Number(localStorage.getItem('mr_energy_stamp'));
@@ -533,33 +556,35 @@ function makeMat(color,roughness=.65,metalness=0,extra={}){return new THREE.Mesh
 // --- EDM SYNTH ---
 function playSfx(frequency=120,duration=.12){if(!soundEnabled||!audioCtx)return;try{const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sawtooth';osc.frequency.setValueAtTime(frequency,audioCtx.currentTime);gain.gain.setValueAtTime(.08,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration);}catch(e){console.warn('Audio effect:',e.message);}}
 function initAudio() {
-    if(audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx) { audioCtx.resume?.().catch(()=>{}); return; }
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return;
+    try{audioCtx=new AudioContextClass();}catch(e){console.warn('Audio unavailable:',e.message);return;}
+    const bpm = 128, tickMs = 60000 / bpm / 4;
     let step = 0;
+    const envelopeTone = (frequency, type, volume, duration, endFrequency=null) => {
+      const now=audioCtx.currentTime, osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+      osc.type=type;osc.frequency.setValueAtTime(frequency,now);if(endFrequency)osc.frequency.exponentialRampToValueAtTime(endFrequency,now+duration);
+      gain.gain.setValueAtTime(Math.max(.0001,volume*musicVolume),now);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+      osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+duration+.015);
+    };
     musicInterval = setInterval(() => {
-        if(!audioCtx || !musicEnabled || gameState === 'menu' || gameState === 'paused') return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        if(step % 4 === 0) {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.5*musicVolume, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        } else if(step % 2 === 0) {
-            osc.type = 'square'; osc.frequency.setValueAtTime(10000, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05*musicVolume, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-        } else {
-            osc.type = 'sawtooth'; 
-            const notes = [55, 65.41, 73.42, 82.41];
-            osc.frequency.setValueAtTime(notes[Math.floor(step/8)%4], audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1*musicVolume, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-        }
-        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        step++;
-    }, 150);
+      if(!audioCtx || !musicEnabled || gameState === 'paused') return;
+      // Four-on-the-floor kick, clap on beats 2/4 and crisp off-beat hi-hats.
+      if(step%4===0) envelopeTone(125,'sine',.42,.22,43);
+      if(step%8===4) { envelopeTone(185,'triangle',.11,.085,110); envelopeTone(1120,'square',.025,.055,650); }
+      if(step%2===1) envelopeTone(7600,'square',.012,.025,5200);
+      // Pumping off-beat bass and a repeating minor-key synth arpeggio.
+      if(step%2===0) {
+        const bass=[55,55,65.41,73.42,55,55,82.41,73.42];
+        envelopeTone(bass[Math.floor(step/2)%bass.length],'sawtooth',.12,.105);
+      }
+      if(step%4===2) {
+        const lead=[220,261.63,329.63,293.66,220,246.94,329.63,392];
+        envelopeTone(lead[(Math.floor(step/4))%lead.length],'sawtooth',.045,.12);
+      }
+      step=(step+1)%64;
+    }, tickMs);
 }
 
 // --- INIT THREEJS ---
@@ -674,8 +699,19 @@ function createCar(color, isPlayer=false){
   const bodyMat = makeMat(color, .24, .78);
   const b = new THREE.Mesh(new THREE.BoxGeometry(2.02, .62, 4.35), bodyMat);
   b.position.y = .79; b.castShadow = true; root.add(b);
+  const hood = new THREE.Mesh(new THREE.BoxGeometry(1.82,.14,1.26),bodyMat);hood.position.set(0,1.12,1.25);root.add(hood);
+  const rearDeck = new THREE.Mesh(new THREE.BoxGeometry(1.78,.12,.78),bodyMat);rearDeck.position.set(0,1.12,-1.62);root.add(rearDeck);
+  const bumperMat=makeMat(0x111a25,.32,.72), trimMat=makeMat(0x0a1119,.42,.5);
+  const frontBumper=new THREE.Mesh(new THREE.BoxGeometry(2.08,.2,.24),bumperMat);frontBumper.position.set(0,.57,2.17);root.add(frontBumper);
+  const rearBumper=new THREE.Mesh(new THREE.BoxGeometry(2.08,.2,.24),bumperMat);rearBumper.position.set(0,.57,-2.17);root.add(rearBumper);
+  const grille=new THREE.Mesh(new THREE.BoxGeometry(.72,.2,.035),trimMat);grille.position.set(0,.78,2.3);root.add(grille);
+  for(const x of [-1,1]){
+    const skirt=new THREE.Mesh(new THREE.BoxGeometry(.12,.18,2.65),bumperMat);skirt.position.set(x*1.02,.54,0);root.add(skirt);
+    const mirror=new THREE.Mesh(new THREE.BoxGeometry(.28,.14,.34),bodyMat);mirror.position.set(x*1.05,1.23,.68);root.add(mirror);
+  }
   const c = new THREE.Mesh(new THREE.BoxGeometry(1.55, .68, 1.75), makeMat(0x102536, .12, .58));
   c.position.set(0, 1.39, -.18); root.add(c);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(1.32,.12,.88),makeMat(0x172b3d,.16,.52));roof.position.set(0,1.75,-.24);root.add(roof);
   const wheelGeo = new THREE.CylinderGeometry(.44, .44, .32, 16);
   const wheelMat = makeMat(0x080c11, .9);
   for(const x of [-1, 1]) for(const z of [-1.35, 1.35]){
@@ -718,21 +754,25 @@ function createRacers(){
   const carColor=parseInt(profile.garage.paint,16);
   player=createCar(carColor,true);scene.add(player);
   if(gameMode==='ghost'&&bestTimes[currentTrack]){ghostCar=createCar(0x71f5ff,false);ghostCar.traverse(o=>{if(o.material){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.32;}});scene.add(ghostCar);}
+  document.body.classList.toggle('local-two-player',playerMode==='local2');
+  $('p2Touch').style.display=playerMode==='local2'?'block':'none';
+  $('p1Touch').style.display='block';
   if(playerMode==='local2'){
     localPlayer2=createCar(0xff4b91,false);scene.add(localPlayer2);
     p2State={dist:-7,offset:3,speed:0,nitro:100,damage:0};
   } else localPlayer2=null;
-  const colors=[0xff4b91,0xffd36a,0x63f3ff,0x8a55e8,0x2dbd86,0xe83e63];
+  const colors=Array.from({length:12},()=>new THREE.Color().setHSL(Math.random(),.78,.55).getHex());
   const playerSpec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];
   const playerPace=1+(profile.garage.engine*.045)+(playerSpec.speed/1000);
-  for(let i=0;i<5;i++){
-    const isCop=isPoliceMode && i<2;
+  const rivalCount=(lobbyChannel||gameMode==='time'||gameMode==='ghost')?0:5;
+  for(let i=0;i<rivalCount;i++){
+    const isCop=isPoliceMode;
     const rMesh=createCar(isCop?0x9bb8d0:colors[Math.floor(Math.random()*colors.length)]);
     if(isCop){const lightBlue=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0x1d88ff}));lightBlue.position.set(-.2,1.55,-.2);rMesh.add(lightBlue);const lightRed=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0xff254b}));lightRed.position.set(.2,1.55,-.2);rMesh.add(lightRed);}
     scene.add(rMesh);
-    rivals.push({mesh:rMesh,dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:.92+Math.random()*.16,adapt:playerPace,isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0});
+    rivals.push({mesh:rMesh,index:i,dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:.92+Math.random()*.16,adapt:playerPace,isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0,active:true});
   }
-  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;powerupCooldown=false;activeEffects={};
+  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;powerupCooldown=false;activeEffects={};
   $('lap').innerText=`1/${raceLaps}`;$('position').innerText=`${rivals.length+1}/6`;
   gameState='countdown';$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
   const cdInterval=setInterval(()=>{cd--;if(cd>0)$('countdown').innerText=cd;else if(cd===0)$('countdown').innerText='GO!';else{clearInterval(cdInterval);$('countdown').classList.remove('show');gameState='racing';$('pauseGraphic').classList.add('visible');}},1000);
@@ -759,17 +799,25 @@ function update(dt){
 
   // Adapt AI pace to the selected car and player's upgrade profile. Skilled rivals learn from the player's current pace.
   rivals.forEach(r=>{
+    if(!r.active)return;
     if(r.respawn>0){r.respawn-=dt;return;}
     const playerPace=Math.max(95,playerSpeed*.91+profile.garage.engine*5+spec.speed*.35);
-    const target=clamp(playerPace*r.ability*(r.adapt||1),105,maxSpeed*1.08);
-    r.speed+=(target-r.speed)*Math.min(1,dt*.8);
+    const target=clamp(playerPace*r.ability*(r.adapt||1),105,maxSpeed*1.12);
+    r.speed+=(target-r.speed)*Math.min(1,dt*(r.isPolice?1.25:.8));
     if(r.isPolice){
-      policeHeat=clamp(policeHeat+dt*.035,0,1);
-      const chaseTarget=playerOffset+(Math.sin(raceTime*1.4)*1.5);
-      r.offset+=clamp(chaseTarget-r.offset,-(8+policeHeat*7)*dt,(8+policeHeat*7)*dt);
-      r.dist+=(r.speed+18+policeHeat*22)*dt;
-      if(trackGap(r.dist,playerDistance)<7&&Math.abs(r.offset-playerOffset)<3.2&&!activeEffects.shield){damage+= (8+policeHeat*9)*dt;}
-      if(trackGap(r.dist,playerDistance)<5&&Math.abs(r.offset-playerOffset)<2.2)playerSpeed=Math.max(40,playerSpeed-30*dt);
+      policeHeat=clamp(policeHeat+dt*.055,0,1);
+      // Patrol cars try to cut across the player's line rather than following a passive lane.
+      const sideBias=(r.index%2===0?-1:1)*(1.25+policeHeat*.65);
+      const desiredOffset=clamp(playerOffset+sideBias,-6.8,6.8);
+      r.offset+=clamp(desiredOffset-r.offset,-(10+policeHeat*9)*dt,(10+policeHeat*9)*dt);
+      const closingBoost=(trackGap(r.dist,playerDistance)<22?22:10)+policeHeat*24;
+      r.dist+=(r.speed+closingBoost)*dt;
+      const contactGap=trackGap(r.dist,playerDistance);
+      if(contactGap<7.2&&Math.abs(r.offset-playerOffset)<3.35){
+        if(!activeEffects.shield){damage+=(14+policeHeat*16)*dt;playerSpeed=Math.max(25,playerSpeed-(38+policeHeat*30)*dt);}
+        // A player who hits a patrol car at speed can damage the pursuing vehicle.
+        if(playerSpeed>r.speed+18)r.damage+=Math.min(24,(playerSpeed-r.speed)*.12)*dt;
+      }
     }else{
       const frame=frameAt(r.dist);
       const curveLook=frameAt(r.dist+15).tangent;
@@ -780,9 +828,11 @@ function update(dt){
     }
     trafficCars.forEach(t=>{if(t.active&&trackGap(t.dist,r.dist)<3.5&&Math.abs(t.offset-r.offset)<2.4)r.damage+=12*dt;});
     if(gameMode==='infected'){if(r.infected&&trackGap(r.dist,playerDistance)<5&&Math.abs(r.offset-playerOffset)<3)playerInfected=true;if(playerInfected&&trackGap(r.dist,playerDistance)<5&&Math.abs(r.offset-playerOffset)<3)r.infected=true;}
-    // Rival condition resets to full after a takedown / collision-out event.
     r.damage=Math.min(100,r.damage+Math.max(0,Math.abs(r.offset)-7.8)*dt*8);
-    if(r.damage>=100){r.damage=0;r.dist=Math.max(0,playerDistance-35);r.offset=(Math.random()-.5)*5;r.speed=0;r.respawn=.7;}
+    if(r.damage>=100){
+      if(isPoliceMode){r.active=false;scene.remove(r.mesh);}
+      else {r.damage=0;r.dist=Math.max(0,playerDistance-35);r.offset=(Math.random()-.5)*5;r.speed=0;r.respawn=.7;}
+    }
   });
 
   // Local split-screen-free couch multiplayer: P2 has its own dedicated IJKL/U keys and touch cluster.
@@ -796,7 +846,7 @@ function update(dt){
     if(p2left)p2State.offset-=14*dt;if(p2right)p2State.offset+=14*dt;
     p2State.offset=clamp(p2State.offset,-8,8);p2State.speed=clamp(p2State.speed,-30,p2max);p2State.dist+=Math.max(0,p2State.speed)*dt;
     trafficCars.forEach(t=>{if(t.active&&trackGap(t.dist,p2State.dist)<4.2&&Math.abs(t.offset-p2State.offset)<2.6)p2State.damage+=18*dt;});
-    if(p2State.damage>=100){p2State.damage=0;p2State.speed=0;p2State.offset=3;p2State.dist=Math.max(0,p2State.dist-18);}
+    if(p2State.damage>=100){if(isPoliceMode){policeFailed=true;finishRace();return;}p2State.damage=0;p2State.speed=0;p2State.offset=3;p2State.dist=Math.max(0,p2State.dist-18);}
     const f2=frameAt(p2State.dist);localPlayer2.position.copy(f2.p).addScaledVector(f2.side,p2State.offset);localPlayer2.position.y=.2;localPlayer2.lookAt(frameAt(p2State.dist+5).p.clone().addScaledVector(frameAt(p2State.dist+5).side,p2State.offset));
     // Camera centers between the two racers so both remain in view.
   }
@@ -813,12 +863,15 @@ function update(dt){
   const powerDown=!!(keys.KeyQ||mobilePressed.has('p1power'));if(powerDown&&!powerupInputWasDown)activatePowerup();powerupInputWasDown=powerDown;
 
   if(Math.abs(playerOffset)>8.2)damage+=18*dt;
-  if(damage>=100){damage=0;playerSpeed=0;playerOffset=0;playerDistance=Math.max(0,playerDistance-18);$('finishSummary').innerText='Your car has been reset with full condition. Get back into the race!';}
-  if(localPlayer2&&p2State.damage>=100){p2State.damage=0;p2State.speed=0;p2State.offset=3;p2State.dist=Math.max(0,p2State.dist-18);}
+  if(damage>=100){
+    if(isPoliceMode){policeFailed=true;damage=100;playerSpeed=0;finishRace();return;}
+    damage=0;playerSpeed=0;playerOffset=0;playerDistance=Math.max(0,playerDistance-18);$('finishSummary').innerText='Your car has been reset with full condition. Get back into the race!';
+  }
+  if(localPlayer2&&p2State.damage>=100){if(isPoliceMode){policeFailed=true;finishRace();return;}p2State.damage=0;p2State.speed=0;p2State.offset=3;p2State.dist=Math.max(0,p2State.dist-18);}
 
   if(ghostCar&&bestTimes[currentTrack]){const ghostProgress=clamp(raceTime/bestTimes[currentTrack],0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
   if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=90){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText='CLEAN · AVOID THE INFECTED RACER';}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
-  if(lobbyChannel&&gameState==='racing'&&(raceTime-lastNetworkSync)>.1){lastNetworkSync=raceTime;lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:profile.username}}).catch(()=>{});}
+  if(lobbyChannel&&gameState==='racing'&&(raceTime-lastNetworkSync)>.1){lastNetworkSync=raceTime;lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:getDisplayUsername()}}).catch(()=>{});}
   const pFrame=frameAt(playerDistance);player.position.copy(pFrame.p).addScaledVector(pFrame.side,playerOffset);player.position.y=.2;
   const ahead=frameAt(playerDistance+12),lookTarget=ahead.p.clone().addScaledVector(ahead.side,playerOffset);player.lookAt(lookTarget);
   let cameraTarget=pFrame.p.clone().add(new THREE.Vector3(0,7,0)).addScaledVector(pFrame.tangent,-14);
@@ -830,7 +883,8 @@ function update(dt){
   $('speed').innerText=Math.floor(playerSpeed*1.5).toString().padStart(3,'0');$('timer').innerText=formatTime(raceTime);
   $('nitroFill').style.width=`${nitro}%`; $('nitroText').innerText=`${Math.floor(nitro)}%`;$('damageText').innerText=`${Math.max(0,100-Math.floor(damage))}%`;
   const pips=$('damagePips').children;for(let i=0;i<5;i++){if(damage>(i+1)*20)pips[i].classList.add('off');else pips[i].classList.remove('off');}
-  const sorted=[{dist:playerDistance},...(localPlayer2?[{dist:p2State.dist}]:[]),...rivals].sort((a,b)=>b.dist-a.dist);$('position').innerHTML=`${sorted.findIndex(x=>x.dist===playerDistance)+1}<span style="font-size:.5em">/${sorted.length}</span>`;
+  const sorted=[{dist:playerDistance},...(localPlayer2?[{dist:p2State.dist}]:[]),...(remoteOpponentState?[{dist:remoteOpponentState.dist}]:[]),...rivals.filter(r=>r.active)].sort((a,b)=>b.dist-a.dist);$('position').innerHTML=`${sorted.findIndex(x=>x.dist===playerDistance)+1}<span style="font-size:.5em">/${sorted.length}</span>`;
+  if(isPoliceMode&&rivals.length&&rivals.every(r=>!r.active)){finishRace();return;}
   if(playerDistance>=trackLength*raceLaps||(localPlayer2&&p2State.dist>=trackLength*raceLaps))finishRace();
 }
 function loop() {
@@ -841,9 +895,18 @@ function loop() {
 }
 
 // --- UI & MENU LOGIC ---
+function getDisplayUsername(){return String(profile.username||'RACER').trim().slice(0,18)||'RACER';}
+async function syncPublicUsername(){
+  if(!supabaseReady||!authUser)return;
+  try{const {data,error}=await supabase.from('player_profiles').select('username').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.username){profile.username=String(data.username).slice(0,18);saveProfile();}}
+  catch(e){console.warn('Public racer username lookup:',e.message);}
+}
 function updateUI(){
   $('energyHudText').innerText=`${profile.energy} / ${profile.maxEnergy}`;$('energyFill').style.width=`${100*profile.energy/profile.maxEnergy}%`;
-  $('usernamePill').innerText=profile.username;$('repPill').innerText=`LVL ${profile.level} · ${profile.xp}/${XP_PER_LEVEL} REP`;$('energyPill').innerText=`⚡ ${profile.energy}/${profile.maxEnergy}`;$('creditsValue').innerText=profile.credits.toLocaleString();$('ticketPill').innerText=`🎟️ ${profile.tickets}`;
+  $('usernamePill').innerText=getDisplayUsername();$('repPill').innerText=`LVL ${profile.level} · ${profile.xp}/${XP_PER_LEVEL} REP`;$('energyPill').innerText=`⚡ ${profile.energy}/${profile.maxEnergy}`;$('creditsValue').innerText=profile.credits.toLocaleString();$('ticketPill').innerText=`🎟️ RANKED ${profile.rankedTickets||0}`;
+  if($('rankedLevelStatus'))$('rankedLevelStatus').innerText=profile.level>=10?`LVL ${profile.level} · ELIGIBLE`:`LVL ${profile.level} · NEED LVL 10`;
+  if($('rankedTicketStatus'))$('rankedTicketStatus').innerText=`${profile.rankedTickets||0} AVAILABLE`;
+  if($('mpRankedBtn'))$('mpRankedBtn').disabled=profile.level<10||(profile.rankedTickets||0)<1||!supabaseReady||!authUser;
   $('engineLevel').innerText=`LEVEL ${profile.garage.engine} / 5`;$('handlingLevel').innerText=`LEVEL ${profile.garage.handling} / 5`;$('nitroLevel').innerText=`LEVEL ${profile.garage.nitro} / 5`;
   $('engineBuy').innerText=`BUY ${500+profile.garage.engine*250}`;$('handlingBuy').innerText=`BUY ${420+profile.garage.handling*220}`;$('nitroBuy').innerText=`BUY ${380+profile.garage.nitro*200}`;
   $('engineBuy').disabled=profile.garage.engine>=5||profile.credits<500+profile.garage.engine*250;$('handlingBuy').disabled=profile.garage.handling>=5||profile.credits<420+profile.garage.handling*220;$('nitroBuy').disabled=profile.garage.nitro>=5||profile.credits<380+profile.garage.nitro*200;
@@ -874,18 +937,38 @@ function saveProfile(){
 function addCredits(amount){profile.credits=Math.max(0,profile.credits+amount);}
 function addXP(amount){
   profile.xp+=amount;let leveled=false;
-  while(profile.xp>=XP_PER_LEVEL){profile.xp-=XP_PER_LEVEL;profile.level++;leveled=true;if(profile.level%5===0){addCredits(1200+profile.level*80);profile.tickets++;profile.inventory.shield=(profile.inventory.shield||0)+1;}}
+  while(profile.xp>=XP_PER_LEVEL){profile.xp-=XP_PER_LEVEL;profile.level++;leveled=true;if(profile.level%5===0){addCredits(1200+profile.level*80);profile.rankedTickets=(profile.rankedTickets||0)+1;profile.inventory.shield=(profile.inventory.shield||0)+1;}}
   if(leveled)alert(`Street Rep increased! You reached level ${profile.level}.`);
 }
 function carUnlockRank(rank){const r=CAR_RANKS.find(x=>x.name===rank);return !!r&&profile.level>=r.level;}
 function getSelectedCar(){return CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];}
 function setView(view){document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));if(view==='garagePanel'){setTimeout(()=>{if(garageRenderer&&garageCamera){const c=$('garageCanvasContainer');garageRenderer.setSize(c.clientWidth||340,c.clientHeight||250);garageCamera.aspect=(c.clientWidth||340)/(c.clientHeight||250);garageCamera.updateProjectionMatrix();}},50);}}
 function storyKey(ch){return `chapter${ch+1}`;}
+function sideMissionBrief(chapterIndex, sideIndex){
+  const briefs=[
+    ['Hold first place for one full lap.','Deliver the package before the timer expires.','Evade the patrol and finish the route.'],
+     ['Finish the dockside sprint in the top three.','Beat the courier time target.','Escape the harbor patrol without being busted.'],
+     ['Break the pursuit line and escape.','Finish the no-stopping sprint before the clock.','Survive the underpass ambush and reach the finish.'],
+     ['Complete the old crew challenge.','Beat your rival on the backstreet route.','Finish the test circuit without being tagged.'],
+     ['Earn a clean finish before the championship.','Beat the saved harbor ghost time.','Escape the final patrol pursuit.']
+  ];
+  return briefs[chapterIndex]?.[sideIndex]||'Complete the route objective and reach the finish.';
+}
 function renderStory(){
-  selectedStoryPath=profile.storyPath||selectedStoryPath;const ch=STORY_CHAPTERS[selectedChapter];$('storyChapterTag').innerText=`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${profile.storyPath.toUpperCase()} PATH`;$('storyChapterTitle').innerText=ch.title;$('storyChapterDesc').innerText=ch.desc+(profile.storyPath==='solo'?' Your solo decisions will favor high-risk routes and self-reliance.':' Your crew choices open team-based opportunities and support.');$('storyObjective').innerText=ch.objective;
+  selectedStoryPath=profile.storyPath||selectedStoryPath;const ch=STORY_CHAPTERS[selectedChapter];
+  $('storyChapterTag').innerText=`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${profile.storyPath.toUpperCase()} PATH`;
+  $('storyChapterTitle').innerText=ch.title;
+  $('storyChapterDesc').innerText=ch.desc+(profile.storyPath==='solo'?' Your solo decisions favor high-risk routes and self-reliance.':' Your crew choices open team-based opportunities and support.');
+  $('storyObjective').innerText=ch.objective;$('storyReward').innerText='500 CREDITS · STREET REP';
+  $('storyMissionBrief').innerText=`MISSION GOAL: ${ch.objective}. Complete the main chapter race, then finish all three required side stories to unlock the next chapter. Selected path: ${profile.storyPath.toUpperCase()}.`;
   document.querySelectorAll('.pathChoice').forEach(b=>b.classList.toggle('active',b.dataset.path===profile.storyPath));
-  const sideHost=$('sideStoryList');sideHost.innerHTML='';ch.sides.forEach((name,i)=>{const done=!!profile.completedSides[`${storyKey(selectedChapter)}-${i}`];const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${name}</b><small>${done?'COMPLETED · REQUIRED':'SIDE STORY · REQUIRED'}</small></div><div><span class="pillTag">${done?'✓ DONE':'LOCKED TO CHAPTER'}</span> <button class="smallBtn" data-side="${i}" ${profile.storyMain[storyKey(selectedChapter)]?'':'disabled'}>${done?'REPLAY':'PLAY'}</button></div>`;sideHost.appendChild(row);});
-  const list=$('chapterList');list.innerHTML='';STORY_CHAPTERS.forEach((c,i)=>{const prev=i===0||((profile.storyMain[storyKey(i-1)])&&STORY_CHAPTERS[i-1].sides.every((_,j)=>profile.completedSides[`${storyKey(i-1)}-${j}`]));const el=document.createElement('button');el.className='questRow'+(i===selectedChapter?' active':'');el.innerHTML=`<span><b>CHAPTER ${String(i+1).padStart(2,'0')} · ${c.title}</b><small>${prev?'AVAILABLE':'COMPLETE PREVIOUS CHAPTER + ALL SIDE STORIES'}</small></span><span>${c.sides.filter((_,j)=>profile.completedSides[`${storyKey(i)}-${j}`]).length}/${c.sides.length} ✦</span>`;el.disabled=!prev;el.addEventListener('click',()=>{selectedChapter=i;renderStory();});list.appendChild(el);});
+  const sideHost=$('sideStoryList');sideHost.innerHTML='';ch.sides.forEach((name,i)=>{
+    const done=!!profile.completedSides[`${storyKey(selectedChapter)}-${i}`];
+    const row=document.createElement('div');row.className='dataRow';
+    row.innerHTML=`<div style="min-width:0"><b>${escapeHtml(name)}</b><small>OBJECTIVE: ${escapeHtml(sideMissionBrief(selectedChapter,i))}</small><small>${done?'COMPLETED · REQUIRED':'REQUIRED TO UNLOCK NEXT CHAPTER'} · ${i===2?'POLICE PURSUIT':i===1?'TIME ATTACK':'STREET RACE'}</small></div><div><span class="pillTag">${done?'✓ DONE':profile.storyMain[storyKey(selectedChapter)]?'AVAILABLE':'LOCKED'}</span> <button class="smallBtn" data-side="${i}" ${profile.storyMain[storyKey(selectedChapter)]?'':'disabled'}>${done?'REPLAY':'PLAY'}</button></div>`;
+    sideHost.appendChild(row);
+  });
+  const list=$('chapterList');list.innerHTML='';STORY_CHAPTERS.forEach((c,i)=>{const prev=i===0||((profile.storyMain[storyKey(i-1)])&&STORY_CHAPTERS[i-1].sides.every((_,j)=>profile.completedSides[`${storyKey(i-1)}-${j}`]));const el=document.createElement('button');el.className='questRow'+(i===selectedChapter?' active':'');el.innerHTML=`<span><b>CHAPTER ${String(i+1).padStart(2,'0')} · ${c.title}</b><small>${prev?'AVAILABLE':'COMPLETE PREVIOUS CHAPTER + ALL SIDE STORIES'}</small><small>MAIN OBJECTIVE: ${c.objective}</small></span><span>${c.sides.filter((_,j)=>profile.completedSides[`${storyKey(i)}-${j}`]).length}/${c.sides.length} ✦</span>`;el.disabled=!prev;el.addEventListener('click',()=>{selectedChapter=i;renderStory();});list.appendChild(el);});
   const complete=!!profile.storyMain[storyKey(selectedChapter)];$('storyStartBtn').disabled=complete;$('storyStartBtn').innerText=complete?'CHAPTER COMPLETE':'START CHAPTER ↗';
 }
 function startStory(sideIndex=-1){const ch=STORY_CHAPTERS[selectedChapter];if(profile.energy<10){alert('Not enough energy.');return;}if(sideIndex>=0){storySideIndex=sideIndex;gameMode=sideIndex===2?'police':(sideIndex===1?'time':'street');}else{storySideIndex=-1;gameMode=profile.storyPath==='solo'?(ch.mode==='street'?'ghost':ch.mode==='time'?'time':ch.mode):ch.mode;}profile.storyPath=selectedStoryPath;document.body.dataset.returnView='storyPanel';playerMode='solo';$('playerModeSelect').value='solo';$('modeGrid').querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===gameMode));isPoliceMode=gameMode==='police';$('lapSelect').value=gameMode==='time'||gameMode==='ghost'?'1':'3';raceLaps=gameMode==='time'||gameMode==='ghost'?1:3;beginRace();}
@@ -904,7 +987,8 @@ function refreshQuests(){
   const render=(arr,host,obj)=>{host.innerHTML='';arr.forEach((q,i)=>{const pr=obj.progress?.[i]||0;const done=pr>=q.goal;const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${q.name}</b><small>${Math.min(pr,q.goal)}/${q.goal} · REWARD ${q.reward} CREDITS</small></div><button class="smallBtn" ${!done||obj.claimed?.[i]?'disabled':''}>${obj.claimed?.[i]?'CLAIMED':done?'CLAIM':'IN PROGRESS'}</button>`;row.querySelector('button').addEventListener('click',()=>{if(!done||obj.claimed?.[i])return;obj.claimed=obj.claimed||{};obj.claimed[i]=true;addCredits(q.reward);updateUI();refreshQuests();saveProfile();});host.appendChild(row);});};
   profile.daily.progress=profile.daily.progress||{};profile.weekly.progress=profile.weekly.progress||{};render(daily,$('dailyQuestList'),profile.daily);render(weekly,$('weeklyQuestList'),profile.weekly);
   const next=(Math.floor(profile.level/5)+1)*5;$('milestoneStatus').innerText=`Level ${next} reward: credits, a tournament ticket and a shield powerup.`;
-  const now=new Date(),dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);$('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · Top finish earns 3,000 credits and 2 tickets.`:`Next tournament window: Friday or Sunday. A limited event is selected at random on event days.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
+  const now=new Date(),dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);$('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · Top finish earns 3,000 Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. A limited event is selected at random on event days.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
+  const specialModes=['infected','police','time','random'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT'};$('specialEventStatus').innerText=`TODAY'S ROTATING EVENT: ${eventNames[specialEventMode]}. Complete the event for bonus Credits and Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
   saveProfile();
 }
 function renderLocalLeaderboard(){const host=$('localLeaderboard');if(!host)return;host.innerHTML='';const rows=leaderboardLocal.slice().sort((a,b)=>a.time-b.time).slice(0,10);if(!rows.length)host.innerHTML='<div class="mutedText">Finish a time trial to set your first record.</div>';rows.forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${r.username}</b><span>${formatTime(r.time)}</span>`;host.appendChild(el);});}
@@ -926,10 +1010,15 @@ function beginRace(){
 }
 function finishRace(){
   if(raceAwarded)return;raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
-  const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...(remoteOpponentState?[{name:remoteOpponentState.username||'ONLINE RACER',dist:remoteOpponentState.dist,online:true}]:[]),...rivals.map(r=>({name:r.isPolice?'PATROL':`RIVAL`,dist:r.dist}))].sort((a,b)=>b.dist-a.dist);const place=sorted.findIndex(r=>r.player)+1;const p2Place=sorted.findIndex(r=>r.player2)+1;const won=place===1;
+  const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...(remoteOpponentState?[{name:remoteOpponentState.username||'ONLINE RACER',dist:remoteOpponentState.dist,online:true}]:[]),...rivals.map(r=>({name:r.isPolice?'PATROL':`RIVAL`,dist:r.dist}))].sort((a,b)=>b.dist-a.dist);const place=sorted.findIndex(r=>r.player)+1;const p2Place=sorted.findIndex(r=>r.player2)+1;const won=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected&&place===1:place===1);
   if(localPlayer2)$('finishSummary').dataset.p2=`Player 2: place ${p2Place}.`;
-  const reward=won?850:Math.max(250,650-place*70);const xp=won?180:110;
+  const reward=won?850:Math.max(250,650-place*70);
+  const isRanked=onlineRoomMode==='ranked'&&!!lobbyChannel;
+  const isSpecialEvent=document.body.dataset.specialEvent==='1';
+  const xpBase=isRanked?210:(isSpecialEvent?170:(gameMode==='street'?130:gameMode==='police'?150:gameMode==='time'?120:115));
+  const xp=won?Math.round(xpBase*1.35):xpBase;
   profile.totalRaces++;if(won)profile.wins++;addCredits(reward);addXP(xp);
+  if(isSpecialEvent&&won){addCredits(900);profile.rankedTickets=(profile.rankedTickets||0)+1;}
   if(profile.daily.date===new Date().toISOString().slice(0,10)){profile.daily.progress=profile.daily.progress||{};profile.daily.progress[1]=(profile.daily.progress[1]||0)+1;profile.daily.progress[0]=(profile.daily.progress[0]||0)+raceLaps;}
   if(profile.weekly.progress){profile.weekly.progress[0]=(profile.weekly.progress[0]||0)+1;profile.weekly.progress[1]=(profile.weekly.progress[1]||0)+xp;}
   if(gameMode==='time'||gameMode==='ghost'){
@@ -937,38 +1026,134 @@ function finishRace(){
     leaderboardLocal.push({username:profile.username,time:raceTime,track:currentTrack});localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));
     if(gameMode==='ghost'&&bestTimes[key]&&raceTime<=bestTimes[key])addCredits(300);
   }
-  if(storySideIndex>=0){profile.completedSides[`${storyKey(selectedChapter)}-${storySideIndex}`]=true;storySideIndex=-1;}
-  else if(document.body.dataset.storyRace==='1'){profile.storyMain[storyKey(selectedChapter)]=true;document.body.dataset.storyRace='0';}
+  let storyMissionResult='';
+  if(storySideIndex>=0){
+    const sideSuccess=storySideIndex===2?!policeFailed:storySideIndex===1?(gameMode==='time'&&raceTime>0):place<=3;
+    if(sideSuccess){profile.completedSides[`${storyKey(selectedChapter)}-${storySideIndex}`]=true;storyMissionResult='SIDE STORY OBJECTIVE COMPLETE.';}
+    else storyMissionResult='SIDE STORY OBJECTIVE NOT MET — replay this side story to complete it.';
+    storySideIndex=-1;
+  } else if(document.body.dataset.storyRace==='1'){
+    const mainSuccess=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected:(selectedChapter===0?place<=3:won));
+    if(mainSuccess){profile.storyMain[storyKey(selectedChapter)]=true;storyMissionResult='CHAPTER OBJECTIVE COMPLETE. Required side stories are now unlocked.';}
+    else storyMissionResult='CHAPTER OBJECTIVE NOT MET — replay the chapter to continue the story.';
+    document.body.dataset.storyRace='0';
+  }
   if(gameMode==='police'&&won)addCredits(250);
-  const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(3000);profile.tickets+=2;}document.body.dataset.tournament='0';
+  const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(3000);profile.rankedTickets=(profile.rankedTickets||0)+2;}document.body.dataset.tournament='0';
   if(authUser&&supabaseReady)submitServerResult(raceTime,place,reward).catch(e=>console.warn(e));
-  $('finishTitle').innerText=gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);$('finishSummary').innerText=(localPlayer2?`PLAYER 1 #${place} · PLAYER 2 #${p2Place}. `:'')+`${formatTime(raceTime)} · ${place===1?'1st place':`Place ${place}`} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion: +3,000 credits and 2 tickets.':` Tournament placement: #${place}.`):'')+' Your profile and story progress have been saved.';
+  $('finishTitle').innerText=isPoliceMode?(policeFailed?'BUSTED · PURSUIT FAILED':'PURSUIT ESCAPED'):gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);
+  $('finishSummary').innerText=(localPlayer2?`PLAYER 1 #${place} · PLAYER 2 #${p2Place}. `:'')+`${formatTime(raceTime)} · ${isPoliceMode?(policeFailed?'Vehicle disabled. Police chase ended with no respawn.':'You escaped the patrol fleet.'):place===1?'1st place':`Place ${place}`} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion: +3,000 Credits and 2 Ranked Tickets.':` Tournament placement: #${place}.`):'')+(isSpecialEvent? ' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
+  $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText= lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
   $('finishMenu').classList.remove('hidden');saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
 function pauseRace(){if(gameState!=='racing')return;gameState='paused';document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
 function resumeRace(){if(gameState!=='paused')return;gameState='racing';document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
-async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:profile.username,track:currentTrack,mode:gameMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
-async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';}
+async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const resultMode=onlineRoomMode==='ranked'&&lobbyChannel?'ranked':gameMode;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:getDisplayUsername(),track:currentTrack,mode:resultMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
+async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';
+  const ranked=$('rankedLeaderboard');if(ranked){ranked.innerHTML='<div class="mutedText">Loading Ranked standings…</div>';const {data:rankedData,error:rankedError}=await supabase.from('race_leaderboard').select('username,track,race_time,placement').eq('mode','ranked').order('race_time',{ascending:true}).limit(20);if(rankedError){ranked.innerHTML=`<div class="mutedText">Ranked standings unavailable: ${escapeHtml(rankedError.message)}</div>`;}else{ranked.innerHTML='';(rankedData||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)} · ${escapeHtml(r.track||'')}</span>`;ranked.appendChild(el);});if(!rankedData?.length)ranked.innerHTML='<div class="mutedText">No Ranked results yet. Complete an online Ranked race while signed in.</div>';}}
+}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function saveCloudProfile(){if(!supabaseReady||!authUser)return;const {error}=await supabase.from('player_saves').upsert({user_id:authUser.id,save_data:{profile,bestTimes,leaderboardLocal},updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('cloudSaveStatus').innerText='Cloud save synced.';}
-async function loadCloudProfile(){if(!supabaseReady||!authUser)return;const {data,error}=await supabase.from('player_saves').select('save_data').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.save_data?.profile){const local=profile;profile={...local,...data.save_data.profile,garage:{...local.garage,...data.save_data.profile.garage,carLevels:{...local.garage.carLevels,...(data.save_data.profile.garage?.carLevels||{})},attachments:{...local.garage.attachments,...(data.save_data.profile.garage?.attachments||{})}},inventory:{...local.inventory,...data.save_data.profile.inventory}};if(data.save_data.bestTimes){bestTimes=data.save_data.bestTimes;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}if(data.save_data.leaderboardLocal){leaderboardLocal=data.save_data.leaderboardLocal;localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));}saveProfile();renderAll();}}
-async function handleAuth(signup=false,email=$('gateEmail').value,password=$('gatePassword').value,username=$('gateUsername').value||profile.username){if(!supabaseReady){$('authStatus').innerText='Supabase is not configured. Continue as guest, or add your project URL and public anon key in the game file.';return false;}if(!email||!password){$('authStatus').innerText='Enter an email and password.';return false;}try{let result;if(signup)result=await supabase.auth.signUp({email,password,options:{data:{username}}});else result=await supabase.auth.signInWithPassword({email,password});if(result.error)throw result.error;authUser=result.data.user||result.data.session?.user||null;if(!authUser){$('authStatus').innerText='Check your email to verify the new account, then sign in.';return false;}profile.username=(signup?username:(authUser.user_metadata?.username||username)).slice(0,18);await loadCloudProfile();$('authStatus').innerText=`Signed in as ${profile.username}`;$('accountStatus').innerText=`Signed in: ${profile.username}`;saveProfile();return true;}catch(e){$('authStatus').innerText=e.message;return false;}}
-async function refreshAuth(){if(!supabaseReady)return;try{const {data}=await supabase.auth.getSession();authUser=data.session?.user||null;if(authUser){profile.username=(authUser.user_metadata?.username||profile.username).slice(0,18);$('accountStatus').innerText=`Signed in: ${profile.username}`;await loadCloudProfile();}}catch(e){console.warn(e);}}
+async function loadCloudProfile(){if(!supabaseReady||!authUser)return;const {data,error}=await supabase.from('player_saves').select('save_data').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.save_data?.profile){const local=profile;profile={...local,...data.save_data.profile,garage:{...local.garage,...data.save_data.profile.garage,carLevels:{...local.garage.carLevels,...(data.save_data.profile.garage?.carLevels||{})},attachments:{...local.garage.attachments,...(data.save_data.profile.garage?.attachments||{})}},inventory:{...local.inventory,...data.save_data.profile.inventory}};profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));if(data.save_data.bestTimes){bestTimes=data.save_data.bestTimes;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}if(data.save_data.leaderboardLocal){leaderboardLocal=data.save_data.leaderboardLocal;localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));}saveProfile();renderAll();}}
+async function handleAuth(signup=false,email=$('gateEmail').value,password=$('gatePassword').value,username=$('gateUsername').value||profile.username){if(!supabaseReady){$('authStatus').innerText='Supabase is not configured. Continue as guest, or add your project URL and public anon key in the game file.';return false;}if(!email||!password){$('authStatus').innerText='Enter an email and password.';return false;}try{let result;if(signup)result=await supabase.auth.signUp({email,password,options:{data:{username}}});else result=await supabase.auth.signInWithPassword({email,password});if(result.error)throw result.error;authUser=result.data.user||result.data.session?.user||null;if(!authUser){$('authStatus').innerText='Check your email to verify the new account, then sign in.';return false;}profile.username=(authUser.user_metadata?.username||username||profile.username).slice(0,18);await loadCloudProfile();await syncPublicUsername();$('authStatus').innerText=`Signed in as ${getDisplayUsername()}`;$('accountStatus').innerText=`Signed in: ${getDisplayUsername()}`;saveProfile();return true;}catch(e){$('authStatus').innerText=e.message;return false;}}
+async function refreshAuth(){if(!supabaseReady)return;try{const {data}=await supabase.auth.getSession();authUser=data.session?.user||null;if(authUser){profile.username=(authUser.user_metadata?.username||profile.username).slice(0,18);$('accountStatus').innerText=`Signed in: ${getDisplayUsername()}`;await loadCloudProfile();await syncPublicUsername();}}catch(e){console.warn(e);}}
 
-// --- SUPABASE MATCHMAKING LOGIC ---
-async function findOnlineMatch(mode,joinCode=''){
-  $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=`SEARCHING ${mode.toUpperCase()}...`;
-  if(!supabaseReady||!authUser){$('mmStatus').innerText='Online matchmaking needs a configured Supabase project and a signed-in account. Apply the supplied SQL setup first.';return;}
+// --- SUPABASE MATCHMAKING & PRIVATE LOBBIES ---
+function stableRoomCode(ids){
+  const text=ids.slice().sort().join('|');let h=2166136261;
+  for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+  return 'Q'+(h>>>0).toString(36).toUpperCase().padStart(5,'0').slice(-5);
+}
+async function leaveQueue(){
+  if(matchmakingChannel&&supabaseReady){try{await supabase.removeChannel(matchmakingChannel);}catch(e){console.warn(e);} }
+  matchmakingChannel=null;queueMode=null;queuePairing=false;
+}
+async function leaveOnlineRoom(){
+  await leaveQueue();
+  if(lobbyChannel&&supabaseReady){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);} }
+  lobbyChannel=null;onlineRaceStarted=false;remoteOpponentState=null;onlineRoomMode='casual';
+  if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
+  $('againBtn').classList.remove('hidden');
+}
+async function startRaceRoom(roomCode,mode,isHost){
+  if(!supabaseReady||!authUser)return;
   if(lobbyChannel){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}lobbyChannel=null;}
-  onlineRaceStarted=false;remoteOpponentState=null;if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
-  const roomCode=joinCode||Math.random().toString(36).slice(2,8).toUpperCase();onlineRoomMode=mode;$('roomCodeInput').value=roomCode;$('mmStatus').innerText=`Connecting to room ${roomCode}…`;
-  if(!joinCode)$('mmStatus').innerText=`Share room code ${roomCode} with your opponent.`;
+  onlineRaceStarted=false;remoteOpponentState=null;onlineRoomMode=mode;
+  if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
+  $('roomCodeInput').value=roomCode;
+  if(mode==='casual')$('lobbyStatus').innerText=`Room ${roomCode} · share this code with your friend.`;
+  $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':'CASUAL LOBBY';
+  $('mmStatus').innerText=`Connecting to ${mode} room ${roomCode}…`;
+  lobbyChannel=supabase.channel(`race:${roomCode}`,{config:{broadcast:{self:false},presence:{key:authUser.id}}});
+  lobbyChannel.on('broadcast',{event:'player_pos'},({payload})=>{
+    if(!payload)return;
+    remoteOpponentState={dist:Number(payload.dist)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,username:String(payload.username||'ONLINE RACER')};
+    if(!remoteOpponentMesh){remoteOpponentMesh=createCar([0xff4b91,0xffd36a,0x63f3ff,0x8a55e8][Math.floor(Math.random()*4)]);if(scene)scene.add(remoteOpponentMesh);}
+    const f=frameAt(remoteOpponentState.dist);remoteOpponentMesh.position.copy(f.p).addScaledVector(f.side,remoteOpponentState.offset);remoteOpponentMesh.position.y=.2;remoteOpponentMesh.lookAt(frameAt(remoteOpponentState.dist+5).p);
+  });
+  lobbyChannel.on('presence',{event:'sync'},()=>{
+    const members=Object.values(lobbyChannel.presenceState()).flat().filter(m=>m.room_code===roomCode&&m.mode===mode);
+    members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+    const activeMembers=members.slice(0,2);
+    if(members.length>2&&!activeMembers.some(m=>m.user_id===authUser.id)){$('mmStatus').innerText=`Room ${roomCode} is full. Waiting for a place to open.`;return;}
+    $('mmStatus').innerText=members.length>=2?`2 racers connected. Starting race…`:`Room ${roomCode} · waiting for another racer (${members.length}/2).`;
+    if(activeMembers.length>=2&&!onlineRaceStarted){
+      const host=activeMembers.find(m=>m.isHost)||activeMembers[0];
+      if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race. Rejoin when your energy has recovered.';return;}
+      if(mode==='ranked'){
+        if(profile.level<10||(profile.rankedTickets||0)<1){$('mmStatus').innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
+        profile.rankedTickets=Math.max(0,(profile.rankedTickets||0)-1);saveProfile();updateUI();
+      }
+      onlineRaceStarted=true;$('matchmakingModal').classList.add('hidden');
+      currentTrack=TRACKS[host.track]?host.track:currentTrack;gameMode='street';playerMode='solo';raceLaps=Number(host.laps)||3;isPoliceMode=false;
+      document.body.dataset.returnView=mode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament='0';
+      beginRace();
+    }
+  });
+  await lobbyChannel.subscribe(async status=>{
+    if(status==='SUBSCRIBED'){
+      await lobbyChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:mode==='ranked'?3:raceLaps,isHost:!!isHost,level:profile.level});
+      if(mode==='casual')$('lobbyStatus').innerText=`Room ${roomCode} is open. Share the code and wait for a friend.`;
+      $('mmStatus').innerText=mode==='ranked'?'Opponent connection established. Waiting for race synchronization…':`Room ${roomCode} connected. Waiting for another racer.`;
+    }
+  });
+}
+async function connectPrivateRoom(mode,roomCode,isHost){
+  if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to create or join an online lobby.';return;}
+  if(profile.energy<10){$('lobbyStatus').innerText='You need at least 10 energy to enter a casual race.';return;}
+  $('matchmakingModal').classList.remove('hidden');
+  await startRaceRoom(roomCode,mode,isHost);
+}
+async function findOnlineMatch(mode){
+  const status=mode==='ranked'?'rankedQueueStatus':'casualQueueStatus';
+  if(!supabaseReady||!authUser){$(status).innerText='Sign in and configure Supabase Realtime to search for online players.';return;}
+  if(profile.energy<10){$(status).innerText='Not enough energy. You need 10 energy to race.';return;}
+  if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$(status).innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
+  await leaveOnlineRoom();queueMode=mode;queuePairing=false;
+  $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':'SEARCHING FOR CASUAL PLAYERS';
+  $('mmStatus').innerText='Joining the online queue…';$(status).innerText='Searching for another online racer…';
   try{
-    lobbyChannel=supabase.channel(`race:${roomCode}`,{config:{broadcast:{self:false},presence:{key:authUser.id}}});
-    lobbyChannel.on('broadcast',{event:'player_pos'},({payload})=>{if(!payload)return;remoteOpponentState={dist:Number(payload.dist)||0,offset:Number(payload.offset)||0,speed:Number(payload.speed)||0,username:String(payload.username||'ONLINE RACER')};if(!remoteOpponentMesh){remoteOpponentMesh=createCar(0xffd36a);if(scene)scene.add(remoteOpponentMesh);}const f=frameAt(remoteOpponentState.dist);remoteOpponentMesh.position.copy(f.p).addScaledVector(f.side,remoteOpponentState.offset);remoteOpponentMesh.position.y=.2;remoteOpponentMesh.lookAt(frameAt(remoteOpponentState.dist+5).p);});
-    lobbyChannel.on('presence',{event:'sync'},()=>{const state=lobbyChannel.presenceState();const members=Object.values(state).flat();const count=members.length;$('mmStatus').innerText=`Room ${roomCode} · ${count} racer(s) connected.`;if(count>=2&&!onlineRaceStarted){const host=members.find(m=>m.isHost)||members[0];if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race.';$('matchmakingModal').classList.remove('hidden');return;}if(host.mode==='ranked'&&joinCode){if(profile.level<10||profile.tickets<1){$('mmStatus').innerText='Ranked rooms require Street Rep level 10 and one ticket.';$('matchmakingModal').classList.remove('hidden');return;}profile.tickets--;updateUI();saveProfile();}onlineRaceStarted=true;$('matchmakingModal').classList.add('hidden');currentTrack=TRACKS[host.track]?host.track:currentTrack;gameMode=host.mode==='ranked'?'street':(host.mode||'street');playerMode='solo';raceLaps=Number(host.laps)||3;isPoliceMode=gameMode==='police';document.body.dataset.returnView='multiplayerPanel';beginRace();}});
-    await lobbyChannel.subscribe(async status=>{if(status==='SUBSCRIBED'){await lobbyChannel.track({username:profile.username,joined_at:new Date().toISOString(),mode,track:currentTrack,laps:raceLaps,isHost:!joinCode});$('mmStatus').innerText=`Room ${roomCode} is live. Waiting for another racer to join the same room channel.`;}});
-  }catch(e){$('mmStatus').innerText=`Could not connect: ${e.message}`;}
+    matchmakingChannel=supabase.channel(`matchmaking:${mode}`,{config:{presence:{key:authUser.id}}});
+    const tryPair=async()=>{
+      if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
+      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=10&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0)));
+      members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+      const myIndex=members.findIndex(m=>m.user_id===authUser.id);
+      if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
+      const pairStart=Math.floor(myIndex/2)*2,pair=members.slice(pairStart,pairStart+2);
+      if(pair.length<2){$(status).innerText=mode==='ranked'?'Searching globally for another eligible Ranked racer…':'Searching globally for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
+      queuePairing=true;const ids=pair.map(m=>m.user_id).sort();const hostId=pair[0].user_id;
+      const code=stableRoomCode(ids);$(status).innerText=`Opponent found. Joining ${mode} race…`;$('mmStatus').innerText=$(status).innerText;
+      try{await startRaceRoom(code,mode,authUser.id===hostId);await leaveQueue();}catch(e){queuePairing=false;throw e;}
+    };
+    matchmakingChannel.on('presence',{event:'sync'},()=>{tryPair().catch(e=>{$(status).innerText=`Matchmaking error: ${e.message}`;});});
+    await matchmakingChannel.subscribe(async state=>{
+      if(state==='SUBSCRIBED'){
+        await matchmakingChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,energy:profile.energy,level:profile.level,tickets:profile.rankedTickets||0});
+        await tryPair();
+      }else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){$(status).innerText='Queue connection failed. Check Supabase Realtime settings.';}
+    });
+  }catch(e){$(status).innerText=`Could not join queue: ${e.message}`;$('mmStatus').innerText=$(status).innerText;}
 }
 // --- EVENT LISTENERS ---
 document.addEventListener('DOMContentLoaded',async()=>{
@@ -977,7 +1162,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if(supabaseReady){await refreshAuth();if(authUser)$('authGate').classList.add('hidden');}
   // Energy recovery: one point every six minutes, capped at the profile maximum.
   const last=Number(localStorage.getItem('mr_energy_stamp')||Date.now());localStorage.setItem('mr_energy_stamp',String(last));const recovered=Math.floor(Math.max(0,Date.now()-last)/360000);if(recovered>0){profile.energy=Math.min(profile.maxEnergy,profile.energy+recovered);localStorage.setItem('mr_energy_stamp',String(Date.now()));saveProfile();updateUI();}
-  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
+  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   document.querySelectorAll('.trackCard').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.trackCard').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');currentTrack=btn.dataset.track;}));
   $('startBtn').addEventListener('click',()=>{document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';initAudio();beginRace();});
@@ -987,7 +1172,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('signInBtn').addEventListener('click',async()=>{if(await handleAuth(false,$('accountEmail').value,$('accountPassword').value,profile.username)){$('cloudSaveStatus').innerText='Signed in. Cloud save is active.';}});
   $('signUpBtn').addEventListener('click',async()=>{if(await handleAuth(true,$('accountEmail').value,$('accountPassword').value,profile.username))$('cloudSaveStatus').innerText='Account created. Check your email if verification is required.';});
   $('signOutBtn').addEventListener('click',async()=>{if(supabaseReady)await supabase.auth.signOut();authUser=null;$('accountStatus').innerText='Signed out. Guest progress remains on this device.';});
-  $('saveUsernameBtn').addEventListener('click',async()=>{const v=$('usernameInput').value.trim();if(!/^[a-zA-Z0-9_ -]{3,18}$/.test(v)){alert('Use 3–18 letters, numbers, spaces or underscores.');return;}profile.username=v;updateUI();saveProfile();if(authUser&&supabaseReady){try{const meta=await supabase.auth.updateUser({data:{username:v}});if(meta.error)throw meta.error;const {error}=await supabase.from('player_profiles').upsert({user_id:authUser.id,username:v,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('accountStatus').innerText=`Username saved to your account: ${v}`;}catch(e){$('accountStatus').innerText=`Username saved on this device; cloud update failed: ${e.message}`;}}});
+  $('saveUsernameBtn').addEventListener('click',async()=>{const v=$('usernameInput').value.trim();if(!/^[a-zA-Z0-9_ -]{3,18}$/.test(v)){alert('Use 3–18 letters, numbers, spaces or underscores.');return;}profile.username=v;updateUI();saveProfile();if(authUser&&supabaseReady){try{const meta=await supabase.auth.updateUser({data:{username:v}});if(meta.error)throw meta.error;const {error}=await supabase.from('player_profiles').upsert({user_id:authUser.id,username:v,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('accountStatus').innerText=`Public racer username saved: ${v}`;}catch(e){$('accountStatus').innerText=`Username saved on this device; cloud update failed: ${e.message}`;}}});
   const buyUpgrade=(type)=>{const cost=type==='engine'?500+profile.garage.engine*250:type==='handling'?420+profile.garage.handling*220:380+profile.garage.nitro*200;if(profile.credits<cost||profile.garage[type]>=5)return;profile.credits-=cost;profile.garage[type]++;profile.garage.carLevels[profile.garage.carId]=(profile.garage.carLevels[profile.garage.carId]||1)+1;updateUI();renderCarSelect();refreshGarageCar();saveProfile();};
   $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));
   document.querySelectorAll('.swatch').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(b=>b.classList.remove('active'));btn.classList.add('active');profile.garage.paint=btn.dataset.color;refreshGarageCar();saveProfile();}));
@@ -999,15 +1184,17 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('storyStartBtn').addEventListener('click',()=>{if(profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='1';document.body.dataset.returnView='storyPanel';startStory(-1);});
   $('sideStoryList').addEventListener('click',e=>{const b=e.target.closest('button[data-side]');if(!b)return;const n=Number(b.dataset.side);if(!profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='0';document.body.dataset.returnView='storyPanel';startStory(n);});
   $('mpCasualBtn').addEventListener('click',()=>findOnlineMatch('casual'));
-  $('createRoomBtn').addEventListener('click',()=>findOnlineMatch('casual'));
-  $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){alert('Enter a six-character room code.');return;}findOnlineMatch('casual',code);});
-  $('mpRankedBtn').addEventListener('click',()=>{if(profile.level<10){alert('Ranked races unlock at Street Rep level 10.');return;}if(profile.tickets<1){alert('You need a tournament/ranked ticket.');return;}profile.tickets--;updateUI();saveProfile();findOnlineMatch('ranked');});
-  $('mmCancelBtn').addEventListener('click',()=>{$('matchmakingModal').classList.add('hidden');if(lobbyChannel&&supabaseReady)supabase.removeChannel(lobbyChannel);lobbyChannel=null;onlineRaceStarted=false;remoteOpponentState=null;if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}});
+  $('createRoomBtn').addEventListener('click',()=>{const code=Math.random().toString(36).slice(2,8).toUpperCase();connectPrivateRoom('casual',code,true);});
+  $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){alert('Enter a six-character room code.');return;}connectPrivateRoom('casual',code,false);});
+  $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
+  $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
+  $('mmCancelBtn').addEventListener('click',async()=>{$('matchmakingModal').classList.add('hidden');await leaveOnlineRoom();$('mmStatus').innerText='Search cancelled.';$('casualQueueStatus').innerText='Not currently searching.';$('rankedQueueStatus').innerText='Not currently searching.';});
   $('pauseGraphic').addEventListener('click',pauseRace);$('resumeBtn').addEventListener('click',resumeRace);
-  $('quitBtn').addEventListener('click',()=>{$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';$('menu').classList.remove('hidden');$('hud').classList.remove('live');setView(document.body.dataset.returnView||'homePanel');updateUI();});
-  $('menuBtn').addEventListener('click',()=>{$('finishMenu').classList.add('hidden');$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
+  $('quitBtn').addEventListener('click',async()=>{$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
+  $('menuBtn').addEventListener('click',async()=>{$('finishMenu').classList.add('hidden');$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
   $('againBtn').addEventListener('click',()=>{if(profile.energy<10){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');beginRace();});
-  $('tournamentBtn').addEventListener('click',()=>{if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';gameMode='street';raceLaps=5;playerMode='solo';beginRace();});
+  $('tournamentBtn').addEventListener('click',()=>{if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';beginRace();});
+  $('specialEventBtn').addEventListener('click',()=>{document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=(gameMode==='time'||gameMode==='ghost')?1:3;playerMode='solo';beginRace();});
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('tutorialBtn').addEventListener('click',()=>{tutorialStep=0;showTutorial();});$('tutorialNext').addEventListener('click',()=>{if(tutorialStep<TUTORIAL_STEPS.length-1){tutorialStep++;showTutorial();}else{$('tutorialModal').classList.add('hidden');}});$('tutorialBack').addEventListener('click',()=>{tutorialStep=Math.max(0,tutorialStep-1);showTutorial();});$('tutorialClose').addEventListener('click',()=>$('tutorialModal').classList.add('hidden'));
   $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;});
@@ -1017,10 +1204,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
   window.addEventListener('keyup',e=>keys[e.code]=false);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
   document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
-  $('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').style.display=$('playerModeSelect').value==='local2'?'block':'none';});
+  $('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').style.display=$('playerModeSelect').value==='local2'?'block':'none';$('p1Touch').style.display='block';document.body.classList.toggle('local-two-player', $('playerModeSelect').value==='local2');});
   const energyTimer=setInterval(()=>{const now=Date.now();let stamp=Number(localStorage.getItem('mr_energy_stamp'))||now;if(profile.energy>=profile.maxEnergy){localStorage.setItem('mr_energy_stamp',String(now));return;}const ticks=Math.floor(Math.max(0,now-stamp)/360000);if(ticks>0){profile.energy=Math.min(profile.maxEnergy,profile.energy+ticks);stamp=profile.energy>=profile.maxEnergy?now:stamp+ticks*360000;localStorage.setItem('mr_energy_stamp',String(stamp));updateUI();saveProfile();}},30000);
   window.addEventListener('beforeunload',saveProfile);
-  if(profile.level>=10)$('mpRankedBtn').disabled=false;else $('mpRankedBtn').title='Unlocks at Street Rep level 10';
+  $('mpRankedBtn').disabled=profile.level<10||(profile.rankedTickets||0)<1||!supabaseReady||!authUser;
+  if(profile.level<10)$('mpRankedBtn').title='Unlocks at Street Rep level 10';
+  if(!supabaseReady||!authUser){$('rankedQueueStatus').innerText='Requires a configured Supabase project and signed-in account.';$('casualQueueStatus').innerText='Requires a configured Supabase project and signed-in account.';}
   if($('playerModeSelect').value==='local2')$('p2Touch').style.display='block';
 });
 
