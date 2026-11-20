@@ -1,3 +1,16 @@
+# November 20 — Stability, Split-Screen and Race Systems Update (v23)
+
+- Fixed normal-mode and Local 2-Player damage pacing: impacts now use per-driver cooldowns and smaller impact damage, so a sustained scrape/overlap cannot drain a vehicle condition bar every frame. Police Pursuit and Traffic Run keep their mode-specific elimination/failure rules; ordinary modes respawn a disabled car with full condition.
+- Added continuous condition bars to both local-player HUD panels, including low-condition warning states. Player 2 has independent live condition and nitro indicators.
+- Local 2-Player now renders two separate left/right camera viewports with independent camera follow, split HUDs and distinct per-player race state. The full-screen solo renderer now uses CSS-pixel viewport sizing so high-DPI displays do not get an oversized viewport.
+- Race pickups now enter the collecting driver's two in-race powerup slots and race-only charge pool. They do not increase permanent Store inventory. Local Player 1 and Player 2 have separate in-race charge pools, and each can select/activate their own slots. P2 uses IJKL to drive, U for nitro, O to activate a powerup and Y to switch slots.
+- Pulse and Jammer interference now also slows Police Pursuit AI. The eight player/AI powerups retain their implemented effects and visual feedback.
+- Smoothed all procedural track centerlines with denser sampling, reduced turn deformation and a circular smoothing pass to soften abrupt transitions.
+- Pause control remains centered at the top of the race screen. Store buy/sell controls from the prior build remain included.
+- Updated the service-worker cache name to v23.
+
+Static validation: JavaScript syntax, duplicate HTML IDs, key local multiplayer/powerup/damage/curve feature hooks and ZIP integrity were checked. Live WebGL rendering, gameplay balance, device split-screen layout and Supabase multi-account racing still require testing in an actual browser.
+
 # MIDNIGHT RACING — Combined Update
 
 # November 20 — Race Start / WebGL Initialization Fix (v21)
@@ -122,3 +135,20 @@ Static JavaScript syntax and structural checks are run on the packaged build. A 
 ## Race-start reliability (v19)
 
 Race energy and Ranked Tickets are charged only after track/racer setup succeeds and the countdown reaches **GO**. If WebGL, track construction, or racer initialization fails, the game returns to the menu and does not deduct either entry resource. The start flow also blocks duplicate launch clicks and reports renderer/setup errors.
+
+
+## v25 finish-line and powerup update
+
+- Rebuilt the start/finish checker stripe in the track's local side/tangent frame so it sits correctly on banked and sloped circuits. Added edge lighting and a larger double-sided gantry banner.
+- Nitro Surge now grants a 4.5-second, up-to-28% temporary speed-cap increase and stronger acceleration for both local drivers, with visible exhaust flames and a colored vehicle aura.
+- Shield, pulse/jammer and other active powerups now have more distinct car-mounted visual effects.
+- Slot 1 and Slot 2 can be selected directly with 1 and 2; Q still activates the selected Slot 1/2 powerup and E cycles slots. Player 2 retains O to activate and Y to cycle.
+- Pickup assignment now prefers empty or depleted slots before replacing an occupied slot.
+
+
+## v26 Time Attack, starting grid, pursuit and local loadout update
+
+- Time Attack now keeps its 30-second countdown visible in the lap HUD throughout each round. The countdown resets to 30 seconds after every elimination, and the last-place decision compares each racer's distance progressed from their own grid slot.
+- Offline races now assign a randomized player starting pod in a two-lane staggered grid. AI and Player 2 are placed on the same pre-race grid and visible before the countdown ends. Online lobbies use a shared seed and sorted participant list so every client assigns the same grid pods to humans and Ranked AI fillers. Police Pursuit keeps patrol cars behind the player and uses a rear-quarter interception/ram behavior instead of allowing patrols to run ahead.
+- Race supply drops are selected only from powerup types with positive owned inventory. No owned powerups means no race powerup drops.
+- Local Player 2 now gets an independent pre-race two-slot loadout picker and independent race charges/UI selection. Both players’ slot HUDs are initialized as the countdown begins. When both players equip the same powerup, existing owned charges are split rather than duplicated. Player 2 can select slots directly with 7/8, activate with O and cycle with Y.
