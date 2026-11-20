@@ -4,22 +4,34 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 
 ## Included
 
-- Existing 12-track procedural Three.js circuits, improved road / scenery pass, 3D garage and shared vehicle model builder.
+- 30 procedural Three.js circuits with distinct turn profiles, improved road / scenery pass, 3D garage and shared vehicle model builder.
 - Rank-banded 140-car catalogue, car levels, upgrades, paint colours, attachments, store and powerup inventory.
 - Responsive desktop / mobile controls, separate local two-player controls, tutorial, intro and original synthesized EDM / techno audio.
-- Eight-chapter Nightshift campaign, three narrative side episodes per chapter, story-path choice, mission objectives, chapter / episode star ratings, and required episode progression.
+- Thirty-chapter Nightshift campaign matched one-to-one with the 30 circuits, three crew episodes per chapter (90 side episodes), story-path decisions, mission objectives, chapter / episode star ratings, and required episode progression.
 - Daily / weekly contracts, longer-term Nightshift crew contracts, rotating events, tournament windows, Street Rep milestones and Ranked Tickets.
 - Casual Quick Match, public casual lobby, private lobbies with ready-up and host start, and a separate online-only Ranked queue. All online rooms are capped at six racers.
 - Shared online race start settings, remote racer positions / speed / lap / damage / nitro, online collision messaging, shared pickup claims, finish notifications and online results display.
-- 50 energy cap, randomized 2–6 lap races, per-race weather and seeded randomized supply-drop placement.
+- 50 Energy cap with automatic +1 Energy every five minutes (including offline time), paid +10 Energy refills, purchasable Ranked Tickets, per-race objective / loadout briefing, randomized 2–6 lap races, per-race weather and seeded randomized supply-drop placement.
 
 
 ## November 19 — UI / 3D Weather / Track Expansion
 
-- Expanded the procedural circuit roster to 30 tracks. The first three are available initially; additional groups unlock after completing a chapter race and all three crew episodes. The final routes unlock after the campaign is complete.
+- Expanded the procedural circuit roster to 30 tracks. Only the first story circuit is available initially. Each following circuit unlocks after its matching previous chapter main race and all three crew episodes are completed; the final circuit unlocks after Chapter 29 and its three episodes are cleared.
 - Replaced the block-based car shell with beveled, tapered body geometry, a separate glass cabin, angled glass panels, detailed wheels, lamps and class-dependent aero. The same vehicle builder is used in the garage and race world.
 - Replaced the fixed-screen weather graphic with 3D rain streaks, drifting snow, animated fog layers, wet-road materials and occasional storm lightning. Weather is identified in the race HUD.
 - Reorganized Race Hub track selection and pre-race preferences into collapsible setup groups, improved menu scrolling and responsive layouts, and refreshed touch-control surfaces.
+
+
+## November 20 — Story, Garage, Track Layout and Economy Expansion
+
+- Expanded the Nightshift campaign to 30 main chapters and 90 side episodes. The ordered track list follows the story chapter order; completing a chapter race and earning at least one star in all three side episodes unlocks the next chapter and its matching circuit.
+- Added two chapter decisions (Back the Crew / Chase the Lead) with different win rewards, and chapter-specific mission briefings with story dialogue, objectives and reward information.
+- Added a pre-race briefing to solo, story, side-story, tournament and rotating special-event starts. Players can equip up to two owned powerups; an empty loadout is allowed.
+- Added Drift Trial, Checkpoint Rush, Survival Gauntlet and Traffic Run as original modes alongside Street, Police, Time Elimination, Ghost, Infected and Random Circuit.
+- Expanded powerups to eight types. Added credit purchases for powerups, +10 Energy refills, Ranked Tickets, 40 paint finishes and nine visual attachments.
+- Rebuilt garage car choice as visible vehicle cards with rank filters. Upgrade prices scale with vehicle rank and upgrade level, while engine / handling gains remain small and capped within each vehicle's class range. Upgrade records are stored per car.
+- Added turn-profile geometry to the 30 circuits: hairpins, chicanes, esses, kinks, double-apex corners, banked sections and varying-radius bends. Each track card lists its turn profile.
+- Energy automatically regenerates by one point every five minutes, up to 50, while the game is open or closed. The partial recharge timer is retained when energy is spent. A deliberately empty pre-race powerup loadout remains empty after saving and reloading.
 
 ## Install
 

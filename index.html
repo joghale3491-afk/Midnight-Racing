@@ -344,6 +344,42 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
 }
 @media(max-width:385px){.hubLogo{font-size:19px}.hubTop>div:last-child{max-width:62%}.creditsPill{font-size:6px;padding:5px 6px}.modeCard strong{font-size:9px}}
 
+
+/* STORY, LOADOUT, SHOP AND GARAGE PASS */
+.storyChoiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+.storyChoice{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;border:1px solid #72eaff3b;background:linear-gradient(145deg,#0d2030,#07111d);padding:12px;border-radius:11px;color:#e6f8ff;cursor:pointer;min-height:88px}
+.storyChoice small{font-size:9px;line-height:1.45;color:#8eabba}
+.storyChoice.active{border-color:#65f2ff;box-shadow:inset 0 0 0 1px #65f2ff44,0 8px 22px #0004;background:linear-gradient(145deg,#12374a,#0a1928)}
+.carPickerTools{display:flex;gap:8px;align-items:center;margin:8px 0}
+.carPickerTools>*{flex:1}
+.carSelectionGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:210px;overflow:auto;padding:2px}
+.carPickCard{min-width:0;text-align:left;padding:10px;border-radius:10px;border:1px solid #79eaff2e;background:linear-gradient(145deg,#0d1c2b,#07111b);color:#eafaff;cursor:pointer}
+.carPickCard b{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carPickCard small{display:block;color:#8eaabd;font-size:8px;line-height:1.4;margin-top:4px}
+.carPickCard.active{border-color:#63f3ff;box-shadow:0 0 0 1px #63f3ff44}
+.briefingOverlay{z-index:18}
+.briefingCard{width:min(720px,96vw);max-height:92vh;overflow:auto;text-align:left;padding:clamp(18px,3vw,30px);border:1px solid #76edff66;border-radius:18px;background:linear-gradient(145deg,#0b1d2bfa,#050a13fa);box-shadow:0 28px 100px #000d}
+.briefingCard h2{font-size:clamp(27px,4vw,42px);line-height:1;margin:7px 0}
+.briefingMeta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+.briefingMeta>div{padding:10px;border:1px solid #7deaff24;background:#071522;border-radius:9px}
+.briefingMeta small{display:block;font-size:8px;color:#8ba8bb;letter-spacing:.13em;margin-bottom:5px}
+.briefingMeta b{font-size:11px}
+.briefingObjective{border-left:3px solid var(--gold);background:#201b10;padding:12px;border-radius:8px;font-size:12px;line-height:1.55;color:#fff0c9}
+.raceLoadoutGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}
+.loadoutSlot{padding:10px;border:1px solid #7ceaff2e;background:#071522;border-radius:10px}
+.loadoutSlot label{display:block;font-size:8px;letter-spacing:.13em;color:#92adbf;margin-bottom:7px}
+.loadoutSlot select{width:100%}
+.briefingStory{color:#aac1d0;font-size:11px;line-height:1.65;margin:12px 0}
+.shopTile{padding:10px;border-radius:10px;border:1px solid #7ceaff24;background:#071522}
+.shopTile b{display:block;font-size:10px}
+.shopTile small{display:block;color:#8eaabd;font-size:8px;line-height:1.4;margin:4px 0 8px}
+.shopTile button{width:100%}
+.shopTiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.attachmentGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.attachmentTile{border:1px solid #79eaff25;background:#071522;border-radius:9px;padding:9px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9px}
+.attachmentTile small{display:block;color:#87a2b5;font-size:8px;margin-top:3px}
+.energyStatus{font-size:9px;color:#9bc5d6;margin-top:5px}
+@media(max-width:600px){.storyChoiceGrid,.raceLoadoutGrid,.briefingMeta,.shopTiles{grid-template-columns:1fr}.carSelectionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.briefingCard{padding:16px}.attachmentGrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -363,7 +399,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
   </div>
   <div class="bottom">
     <div class="nitroPanel">
-      <div class="rowLabel"><span>RACE ENERGY</span><span id="energyHudText">50 / 50</span></div><div class="bar" style="margin-bottom:10px"><div id="energyFill" style="height:100%;width:100%"></div></div>
+      <div class="rowLabel"><span>RACE ENERGY</span><span id="energyHudText">50 / 50</span></div><div class="energyStatus" id="energyHudRegen">FULL · READY</div><div class="bar" style="margin-bottom:10px"><div id="energyFill" style="height:100%;width:100%"></div></div>
       <div class="rowLabel"><span>NITRO SYSTEM · SPACE</span><span id="nitroText">100%</span></div>
       <div class="bar"><div id="nitroFill"></div></div>
     </div>
@@ -444,7 +480,11 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
             <button class="modeCard" data-mode="police"><strong>03 / POLICE PURSUIT</strong><small>Escape an adaptive pursuit</small></button>
             <button class="modeCard" data-mode="ghost"><strong>04 / GHOST RUN</strong><small>Race against your personal best</small></button>
             <button class="modeCard" data-mode="infected"><strong>05 / INFECTED</strong><small>Stay untagged or spread the status</small></button>
-            <button class="modeCard" data-mode="random"><strong>06 / RANDOM CIRCUIT</strong><small>Random track, weather, laps and race type</small></button>
+            <button class="modeCard" data-mode="drift"><strong>06 / DRIFT TRIAL</strong><small>Build a score with long, clean slides</small></button>
+            <button class="modeCard" data-mode="checkpoint"><strong>07 / CHECKPOINT RUSH</strong><small>Hit every checkpoint before the clock runs out</small></button>
+            <button class="modeCard" data-mode="survival"><strong>08 / SURVIVAL GAUNTLET</strong><small>Outlast traffic and adaptive rivals</small></button>
+            <button class="modeCard" data-mode="traffic"><strong>09 / TRAFFIC RUN</strong><small>Complete the route with minimal damage</small></button>
+            <button class="modeCard" data-mode="random"><strong>10 / RANDOM CIRCUIT</strong><small>Random unlocked track, weather, laps and race type</small></button>
           </div>
           <div class="panelTitle">RACE SETUP</div>
           <details class="menuGroup" id="trackPickerGroup">
@@ -469,7 +509,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
           <div class="featureGrid" style="margin-top:10px">
             <div class="featureCard"><label class="eyebrow" for="lapSelect">RACE LENGTH</label><select class="mrSelect" id="lapSelect"><option value="random" selected>Random 2–6 laps each race</option></select><p class="mutedText">30 evolving circuits · unlock new routes through the Nightshift campaign.</p></div>
             <div class="featureCard"><label class="eyebrow" for="playerModeSelect">PLAYER MODE</label><select class="mrSelect" id="playerModeSelect"><option value="solo">Solo race</option><option value="local2">Local 2-player</option></select></div>
-            <div class="featureCard"><label class="eyebrow" for="powerupSelect">PRE-RACE POWERUP</label><select class="mrSelect" id="powerupSelect"><option value="boost">Nitro Surge</option><option value="repair">Quick Repair</option><option value="shield">Impact Shield</option><option value="scanner">Traffic Scanner</option></select></div>
+            <div class="featureCard"><label class="eyebrow" for="powerupSelect">PRE-RACE POWERUP</label><select class="mrSelect" id="powerupSelect"><option value="boost">Nitro Surge</option><option value="repair">Quick Repair</option><option value="shield">Impact Shield</option><option value="scanner">Traffic Scanner</option><option value="grip">Grip Compound</option><option value="pulse">Slipstream Pulse</option><option value="jammer">Signal Jammer</option><option value="overdrive">Overdrive Cell</option></select></div>
             <div class="featureCard"><label class="eyebrow">CURRENT LOADOUT</label><div id="loadoutSummary" class="mutedText">Nitro Surge · Q to activate</div><div class="mutedText">Owned: <span id="inventoryCount">Boost 2 · Repair 1 · Shield 1</span></div></div>
           </div>
           </details>
@@ -507,6 +547,8 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
               <div class="featureCard" style="margin:10px 0 14px"><div class="eyebrow">CREW TRANSMISSION</div><p id="storyDialogue" style="margin:7px 0 0">Your crew is waiting for your decision.</p></div>
               <div class="panelTitle">CHOOSE YOUR STORY PATH</div>
               <div class="formRow"><button class="smallBtn pathChoice active" data-path="crew">JOIN THE CREW</button><button class="smallBtn pathChoice" data-path="solo">GO SOLO</button></div>
+              <div class="panelTitle">YOUR DECISION · THIS CHAPTER</div>
+              <div id="storyChoiceOptions" class="storyChoiceGrid"></div>
               <div class="panelTitle">REQUIRED SIDE STORIES</div>
               <div id="sideStoryList" class="dataList"></div>
               <button class="primaryBtn" id="storyStartBtn" style="margin-top:17px">START CHAPTER ↗</button>
@@ -531,7 +573,9 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
                 <div id="garageCanvasContainer" style="width:100%;height:100%;position:absolute;inset:0;"></div>
               </div>
               <div class="panelTitle">SELECTED VEHICLE</div>
-              <select class="mrSelect" id="carSelect"></select>
+              <div class="carPickerTools"><select class="mrSelect" id="garageRankFilter"><option value="ALL">ALL OWNED RANKS</option><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><span id="ownedCarCount" class="mutedText">1 owned</span></div>
+              <div id="carSelectionGrid" class="carSelectionGrid" aria-label="Owned vehicle selection"></div>
+              <select class="mrSelect hidden" id="carSelect" aria-hidden="true" tabindex="-1"></select>
               <div class="mutedText" id="carStats" style="margin:8px 0">D-Class starter · Level 1</div>
               <div class="panelTitle">PAINT FINISH</div>
               <div class="swatches" id="paintSwatches">                <button class="swatch active" data-color="176de0" style="background:#176de0" aria-label="Paint color 1"></button>
@@ -563,9 +607,8 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
               <div class="upgradeRow"><div><b>HANDLING</b><small id="handlingLevel">LVL 0</small></div><button class="upgradeBtn" id="handlingBuy">BUY 400</button></div>
               <div class="upgradeRow"><div><b>NITRO</b><small id="nitroLevel">LVL 0</small></div><button class="upgradeBtn" id="nitroBuy">BUY 350</button></div>
               <div class="panelTitle">VISUAL ATTACHMENTS</div>
-              <label class="checkLine"><input type="checkbox" id="spoilerToggle"> Rear spoiler · 180 credits</label>
-              <label class="checkLine"><input type="checkbox" id="underglowToggle"> Neon floor lights · 250 credits</label>
-              <label class="checkLine"><input type="checkbox" id="rimsToggle"> Performance rims · 150 credits</label>
+              <div id="garageAttachments" class="attachmentGrid"></div>
+              <div class="mutedText" style="margin-top:8px">Buy new visual parts in Store → Styling & Paint. Equip owned parts here.</div>
             </div>
           </div>
         </section>
@@ -579,8 +622,16 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
               <div class="featureCard"><label class="eyebrow" for="storeRank">CAR RANK</label><select class="mrSelect" id="storeRank"><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><div id="carStoreList" class="dataList" style="margin-top:10px"></div></div>
             </details>
             <details class="menuGroup">
-              <summary><span>POWERUP SUPPLIES & INVENTORY</span><small>shop items · track owned supplies</small></summary>
-              <div class="featureCard"><div id="powerupStoreList" class="dataList"></div><div class="panelTitle">YOUR INVENTORY</div><div id="inventoryList" class="dataList"></div></div>
+              <summary><span>POWERUP SUPPLIES & INVENTORY</span><small>buy supplies · manage race inventory</small></summary>
+              <div class="featureCard"><div id="powerupStoreList" class="shopTiles"></div><div class="panelTitle">YOUR INVENTORY</div><div id="inventoryList" class="dataList"></div></div>
+            </details>
+            <details class="menuGroup">
+              <summary><span>ENERGY & RANKED TICKETS</span><small>recharge supplies with credits</small></summary>
+              <div class="featureCard"><p id="energyShopStatus" class="energyStatus">Energy regenerates automatically over time. Maximum 50.</p><div id="utilityShopList" class="shopTiles"></div></div>
+            </details>
+            <details class="menuGroup">
+              <summary><span>STYLING & PAINT</span><small>body attachments · paints · decorative pieces</small></summary>
+              <div class="featureCard"><div id="paintStoreList" class="shopTiles"></div><div class="panelTitle">VISUAL ATTACHMENTS</div><div id="decorStoreList" class="shopTiles"></div></div>
             </details>
           </div>
         </section>
@@ -658,7 +709,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
   <div id="p2Touch">
     <div class="touchCluster"><div class="touchLabel">PLAYER 2</div><button data-control="p2left">◀</button><button data-control="p2brake">▼</button><button data-control="p2right">▶</button><button data-control="p2nitro">N₂</button><button data-control="p2gas" style="grid-column:2/4">GAS</button></div>
   </div>
-  <div class="touchCluster touchRight"><div class="touchLabel">BOOST / POWERUP</div><button data-control="p1boost">N₂</button><button data-control="p1power">Q</button><button data-control="p1gas">▲</button><button data-control="p1brake">▼</button></div>
+  <div class="touchCluster touchRight"><div class="touchLabel">BOOST / POWERUP</div><button data-control="p1boost">N₂</button><button data-control="p1power">Q</button><button data-control="p1swap">E</button><button data-control="p1gas">▲</button><button data-control="p1brake">▼</button></div>
 </div>
 <div id="mobileControlsHint">SOLO: KEYBOARD OR TOUCH · LOCAL 2P: P1 + P2 CONTROL CLUSTERS · P PAUSE</div>
 <div class="overlay hidden" id="tutorialModal">
@@ -673,6 +724,19 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
   </div>
 </div>
 
+<div class="overlay hidden briefingOverlay" id="raceBriefingModal">
+  <div class="briefingCard">
+    <div class="eyebrow">NIGHTSHIFT RACE CONTROL · PRE-RACE CHECK</div>
+    <h2 id="briefingTitle">RACE BRIEFING</h2>
+    <p id="briefingStory" class="briefingStory">Check your mission, conditions and equipment before you roll out.</p>
+    <div class="briefingMeta"><div><small>EVENT / MODE</small><b id="briefingMode">STREET RACE</b></div><div><small>TRACK</small><b id="briefingTrack">NEON DISTRICT</b></div><div><small>CONDITIONS</small><b id="briefingWeather">CLEAR · 3 LAPS</b></div></div>
+    <div class="eyebrow" style="margin:13px 0 7px">MISSION OBJECTIVE</div><div id="briefingObjective" class="briefingObjective">Finish in the top three.</div>
+    <div class="panelTitle">RACE LOADOUT · CHOOSE TWO SLOTS</div>
+    <div class="raceLoadoutGrid"><div class="loadoutSlot"><label for="briefingPowerupA">SLOT 1 · PRIMARY · Q</label><select class="mrSelect" id="briefingPowerupA"></select></div><div class="loadoutSlot"><label for="briefingPowerupB">SLOT 2 · SWITCH · E</label><select class="mrSelect" id="briefingPowerupB"></select></div></div>
+    <p class="mutedText" id="briefingInventory">Only owned powerups can be equipped. Buy more in the Store.</p>
+    <div class="overlayButtons" style="justify-content:flex-end;margin-top:14px"><button class="secondaryBtn" id="briefingCancel">BACK</button><button class="primaryBtn" id="briefingConfirm">CONFIRM LOADOUT · START RACE ↗</button></div>
+  </div>
+</div>
 <div class="overlay hidden" id="pauseMenu"><div class="overlayCard"><h2>PAUSED</h2><button class="primaryBtn" id="resumeBtn">RESUME</button><button class="secondaryBtn" id="quitBtn">QUIT</button></div></div>
 <div class="overlay hidden" id="finishMenu"><div class="overlayCard"><h2 id="finishTitle">FINISH</h2><p id="finishSummary"></p><button class="primaryBtn" id="againBtn">RACE AGAIN</button><button class="secondaryBtn" id="menuBtn">MENU</button></div></div>
 
@@ -707,6 +771,7 @@ let authUser = null;
 let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
 let playerMode = 'solo', selectedStoryPath = 'crew', selectedChapter = 0, storySideIndex = -1;
+let raceBriefingConfirmed=false, raceLapsPrepared=false, activePowerupSlot=0, driftScore=0, checkpointProgress=0, selectedStoryChoice='crew';
 let raceLapsCompleted = 0, raceAwarded = false, powerupCooldown = false, powerupPickups = [], activeEffects = {}, policeHeat = 0;
 let currentWeather = 'CLEAR', forcedRaceWeather = null, forcedRaceLaps = null, forcedRaceSeed = null, worldSeed = 1, eliminationActive = false, eliminationCountdown = 30, eliminationOrder = [], eliminationChampion = null, playerEliminated = false, p2Eliminated = false, eliminationRound = 0;
 let weatherFx={mesh:null,positions:null,velocities:null,count:0,type:'CLEAR',light:null,flashTimer:0,fogSheets:[]};
@@ -738,7 +803,33 @@ const CAR_CATALOG = CAR_RANKS.flatMap((rank,ri)=>Array.from({length:20},(_,i)=>(
  handling:Math.round(rank.handlingMin+(rank.handlingMax-rank.handlingMin)*((i*7)%20)/19),
  body:1+(i%4),color:parseInt(PAINT_COLORS[(i*3+ri*2)%PAINT_COLORS.length],16)
 })));
-const POWERUPS = [{id:'boost',name:'Nitro Surge',price:180,desc:'Instant acceleration burst'},{id:'repair',name:'Quick Repair',price:220,desc:'Restore 35% vehicle condition'},{id:'shield',name:'Impact Shield',price:260,desc:'Reduce collision damage briefly'},{id:'scanner',name:'Traffic Scanner',price:160,desc:'Highlights traffic and pickups'}];
+const POWERUPS = [
+ {id:'boost',name:'Nitro Surge',price:180,desc:'Instant acceleration burst'},
+ {id:'repair',name:'Quick Repair',price:220,desc:'Restore 35% vehicle condition'},
+ {id:'shield',name:'Impact Shield',price:260,desc:'Reduce collision damage briefly'},
+ {id:'scanner',name:'Traffic Scanner',price:160,desc:'Highlights traffic and pickups'},
+ {id:'grip',name:'Grip Compound',price:240,desc:'Improves cornering control for 12 seconds'},
+ {id:'pulse',name:'Slipstream Pulse',price:340,desc:'Temporarily unsettles nearby rivals'},
+ {id:'jammer',name:'Signal Jammer',price:300,desc:'Delays police pressure for 10 seconds'},
+ {id:'overdrive',name:'Overdrive Cell',price:420,desc:'Sustained speed boost for 6 seconds'}
+];
+const DECOR_ITEMS = [
+ {id:'spoiler',name:'GT Rear Wing',price:520,desc:'A sculpted rear aero wing'},
+ {id:'underglow',name:'Neon Underbody',price:680,desc:'Glowing floor lights matched to paint'},
+ {id:'rims',name:'Forged Sport Rims',price:460,desc:'Metallic performance wheel finish'},
+ {id:'splitter',name:'Front Splitter',price:580,desc:'Low-profile front aero'},
+ {id:'widebody',name:'Widebody Fenders',price:1150,desc:'Wider wheel arches and stance'},
+ {id:'hoodVents',name:'Hood Vents',price:390,desc:'Dark vent details on the bonnet'},
+ {id:'neonTrim',name:'Neon Trim Kit',price:740,desc:'Colored accent lighting'},
+ {id:'exhaust',name:'Dual Exhaust',price:620,desc:'Twin polished rear exhaust tips'},
+ {id:'roofScoop',name:'Roof Air Scoop',price:540,desc:'Compact roof-mounted intake'}
+];
+const PAINT_CATALOG = [
+ ...PAINT_COLORS.map((hex,i)=>({hex,name:['Electric Blue','Crimson Pulse','Solar Gold','Mint Circuit','Violet Shift','Burnt Orange','Pearl White','Graphite Black','Laser Pink','Lime Rush','Royal Purple','Teal Current','Silver Alloy','Racing Red','Champagne Gold','Ice Blue','Acid Green','Copper Brown','Frost Silver','Deep Violet','Ivory','Ocean Blue','Volt Green','Merlot','Amber','Lavender','Sky Blue','Rose Red','Slate','Blush'][i]||`Paint ${i+1}`})),
+ ...['00e5ff','ff00aa','8cff00','f7ff00','7a00ff','ff6b35','263238','c8fffb'].map((hex,i)=>({hex,name:['Arctic Neon','Ultraviolet','Hyper Lime','Voltage','Deep Plasma','Tangerine','Midnight Slate','Frosted Mint'][i]}))
+];
+const ENERGY_RECHARGE_MS = 300000; // one energy every five minutes, up to 50
+const RACE_ENTRY_ENERGY = 10;
 const STORY_THREADS = [
  [
   {title:'Vex’s First Test',body:'Before the qualifier, Vex quietly checks the old car you brought to the meet. He notices the mismatched panels and worn steering wheel, but does not make a joke. He tells you that the best drivers learn to feel every weakness in a machine. The crew has seen expensive cars lose because their drivers panic. Your first test is not about money; it is about keeping your head when the whole street is watching.',dialogue:'“A fast car gets attention. A steady driver earns respect.” — VEX'},
@@ -799,17 +890,35 @@ STORY_CHAPTERS.forEach((ch,i)=>{ch.sides=(STORY_THREADS[i]||[]).map(x=>x.title);
 let profile = {
     username: 'RACER_' + Math.floor(Math.random()*999),
     level: 1, xp: 0, credits: 1200, energy: 50, maxEnergy: 50, tickets: 1, rankedTickets: 1,
-    garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, attachments:{spoiler:false,underglow:false,rims:false} },
-    ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0}, completedSides:{}, storyMain:{}, storyPath:'crew', selectedPowerup:'boost', daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
+    garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, carUpgrades:{}, attachments:{spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false} },
+    ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0}, completedSides:{}, storyMain:{}, storyPath:'crew', storyChoices:{}, selectedPowerup:'boost', raceLoadout:['boost','repair'], ownedPaints:['176de0','e83e63','f0b52d','31b89c'], ownedAttachments:[], daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
 };
-try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];
-// Restore energy earned while the game was closed, preserving partial six-minute intervals.
-try{
-  const now=Date.now();let stamp=Number(localStorage.getItem('mr_energy_stamp'));
-  if(!Number.isFinite(stamp)||stamp<=0){localStorage.setItem('mr_energy_stamp',String(now));}
-  else if(profile.energy<profile.maxEnergy){const ticks=Math.floor(Math.max(0,now-stamp)/360000);if(ticks>0){profile.energy=Math.min(profile.maxEnergy,profile.energy+ticks);stamp=profile.energy>=profile.maxEnergy?now:stamp+ticks*360000;localStorage.setItem('mr_energy_stamp',String(stamp));localStorage.setItem('midnight_racing_profile',JSON.stringify(profile));}}
-  else localStorage.setItem('mr_energy_stamp',String(now));
-}catch(e){console.warn('Energy timer could not be restored',e);}
+try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.storyChoices=profile.storyChoices||{};profile.ownedPaints=Array.isArray(profile.ownedPaints)?profile.ownedPaints:[profile.garage.paint||'176de0','e83e63','f0b52d','31b89c'];profile.ownedAttachments=Array.isArray(profile.ownedAttachments)?profile.ownedAttachments:[];profile.raceLoadout=Array.isArray(profile.raceLoadout)?profile.raceLoadout:['boost','repair'];profile.garage.carUpgrades=profile.garage.carUpgrades||{};profile.garage.attachments={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(profile.garage.attachments||{})};profile.inventory={boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0,...(profile.inventory||{})};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];if(profile.garage.paint&&!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);profile.raceLoadout=profile.raceLoadout.filter((id,i,a)=>POWERUPS.some(p=>p.id===id)&&a.indexOf(id)===i).slice(0,2);
+const LEGACY_UPGRADE_CAR_ID=profile.garage.carId||'D-01';
+DECOR_ITEMS.forEach(item=>{if(profile.garage.attachments[item.id]&&!profile.ownedAttachments.includes(item.id))profile.ownedAttachments.push(item.id);});
+// Energy restores by one point every five minutes, both online and while the game is closed.
+function applyEnergyRegen(now=Date.now()){
+  try{
+    let stamp=Number(localStorage.getItem('mr_energy_stamp'));
+    if(!Number.isFinite(stamp)||stamp<=0||stamp>now){stamp=now;localStorage.setItem('mr_energy_stamp',String(stamp));}
+    if(profile.energy>=profile.maxEnergy){localStorage.setItem('mr_energy_stamp',String(now));return 0;}
+    const elapsed=Math.max(0,now-stamp),ticks=Math.floor(elapsed/ENERGY_RECHARGE_MS);
+    if(ticks<=0)return 0;
+    const gained=Math.min(ticks,profile.maxEnergy-profile.energy);
+    profile.energy+=gained;
+    stamp=profile.energy>=profile.maxEnergy?now:stamp+gained*ENERGY_RECHARGE_MS;
+    localStorage.setItem('mr_energy_stamp',String(stamp));
+    localStorage.setItem('midnight_racing_profile',JSON.stringify(profile));
+    return gained;
+  }catch(e){console.warn('Energy recovery could not be restored',e);return 0;}
+}
+function consumeRaceEnergy(amount=RACE_ENTRY_ENERGY){
+  applyEnergyRegen();
+  if(profile.energy<amount)return false;
+  if(profile.energy>=profile.maxEnergy)localStorage.setItem('mr_energy_stamp',String(Date.now()));
+  profile.energy=Math.max(0,profile.energy-amount);saveProfile();updateUI();return true;
+}
+applyEnergyRegen();
 let audioCtx = null, musicInterval = null, musicEnabled = true, soundEnabled = true, musicVolume = 0.3;
 
 // --- TRACK CONFIG ---
@@ -854,7 +963,39 @@ for(let i=0;i<EXTRA_TRACK_DEFS.length;i++){
   });
   TRACKS[`track${i+13}`]={name,ground:p[0],road:p[1],fog:p[2],sky:p[3],points,theme};
 }
-const TRACK_ORDER=Object.keys(TRACKS);
+const STORY_TRACKS=STORY_CHAPTERS.map(ch=>ch.track);
+const TRACK_ORDER=[...STORY_TRACKS,...Object.keys(TRACKS).filter(id=>id.startsWith('track')),...Object.keys(TRACKS).filter(id=>!STORY_TRACKS.includes(id)&&!id.startsWith('track'))];
+// Expand the campaign to one main chapter per circuit. Every new arc has three playable crew episodes.
+const EXTRA_STORY_ARCS = [
+ ['Glassline Pressure','A rival crew challenges Nightshift on the elevated city loop.'],['Copper Deal','A broker offers a shortcut to a new sponsor, but the route data looks suspicious.'],
+ ['Whiteout Signal','A mountain relay goes silent during a snowstorm.'],['The Tunnel Code','A coded message is hidden inside an industrial tunnel timing board.'],
+ ['Pacific Promise','A coastal team asks Nightshift to protect its independent racing meet.'],['Cloudbreak','A storm closes the upper highway and forces a risky route choice.'],
+ ['Ashen Contract','A canyon mechanic knows who is funding the syndicate.'],['Mosslight','A forest night run reveals a forgotten crew workshop.'],
+ ['Orbit Protocol','A private test facility offers a record attempt with unusual conditions.'],['Dockside Ghosts','A cargo terminal camera captures a familiar car at the scene of the leak.'],
+ ['Violet Hour','A new driver claims the city sprint record was deliberately altered.'],['Serpent’s Bargain','A desert route is offered in exchange for the crew’s championship entry.'],
+ ['Glacier Witness','A courier agrees to share evidence if Nightshift can escort them through the pass.'],['Furnace Line','The syndicate’s repair network is hiding a second set of race ledgers.'],
+ ['Tide Turn','A harbor crew votes on whether to join Nightshift or stay independent.'],['Above the Clouds','A high-speed invitational tests the new car builds and the crew’s trust.'],
+ ['Cinder Crown','The syndicate announces a knockout event on the volcanic ridge.'],['Old Growth','A lost route archive points to the person who first leaked Nightshift’s locations.'],
+ ['The Long Pursuit','The patrol unit changes tactics and forces Nightshift to rethink its escape routes.'],['Mirror Match','A rival driver has copied your setup and adapted to your racing style.'],
+ ['Open Circuit','The city’s independent crews join forces to reject fixed race results.'],['Last Light','Nightshift faces the syndicate’s final qualifier before the championship.']
+];
+const EXTRA_STORY_CONTACTS=['Juno · Data analyst','Mara · Chief mechanic','Vex · Crew scout','Rook · Former champion'];
+for(let i=STORY_CHAPTERS.length;i<TRACK_ORDER.length;i++){
+  const trackId=TRACK_ORDER[i],track=TRACKS[trackId],arc=EXTRA_STORY_ARCS[i-8]||[`Nightshift ${i+1}`,`A new rival threatens the crew’s place on the circuit.`];
+  const modes=['street','checkpoint','police','drift','survival','traffic','time','infected'];
+  const mode=modes[(i-8)%modes.length],contact=EXTRA_STORY_CONTACTS[(i-8)%EXTRA_STORY_CONTACTS.length];
+  const objectiveByMode={street:'Win the circuit and finish ahead of the crew rival.',checkpoint:'Hit every route checkpoint and finish before the deadline.',police:'Escape the pursuing patrol fleet without being disabled.',drift:'Build a clean drift score and complete the route.',survival:'Survive the full event while keeping your vehicle operational.',traffic:'Complete the route with less than 40% vehicle damage.',time:'Survive the elimination rounds and be the last driver standing.',infected:'Avoid the infected rival and finish the event clean.'};
+  STORY_CHAPTERS.push({title:arc[0],tag:`NIGHTSHIFT FILE ${String(i+1).padStart(2,'0')}`,track:trackId,mode,objective:objectiveByMode[mode],reward:900+i*55,unlock:i+1<TRACK_ORDER.length?TRACKS[TRACK_ORDER[i+1]].name:'CAMPAIGN COMPLETE',contact,dialogue:`“${arc[1]} We need your call before the next run.” — ${contact.split(' ·')[0].toUpperCase()}`,story:`${arc[1]} ${track.name} becomes the next chapter in the Nightshift campaign. The crew has gathered around the route map. Mara checks the build, Juno studies the timing data, Vex scouts the rival lineup, and Rook warns that the syndicate is changing its tactics. Your decision will shape the crew’s next move.`,desc:''});
+  const names=['The Crew Room','Signal Check','After Hours Debrief'];
+  STORY_THREADS.push(names.map((name,j)=>({title:`${name} · ${arc[0]}`,body:[`Before the event, ${contact.split(' ·')[0]} brings you into the workshop. The crew compares notes and explains what is at stake. A small detail in the route map suggests the rival knows more than they should. You can take time to listen or go straight to the starting grid.`,`The first run exposes a clue that changes the crew’s theory. Juno wants to preserve the evidence, Mara wants to protect the cars, and Vex believes the rival is trying to provoke a mistake. You have to prove you can stay composed when the pressure rises.`,`After the race, the team reviews the result together. The episode closes one lead and opens another, with a new route marked on the campaign board. Your progress here is required before the next chapter can begin.`][j],dialogue:[`“We’re not just racing a route. We’re finding out who keeps moving the finish line.” — ${contact.split(' ·')[0].toUpperCase()}`,`“Watch the next corner. The obvious line is not always the safe one.” — JUNO`,`“Every decision has a result. Make yours count.” — NIGHTSHIFT`][j]})));
+}
+STORY_CHAPTERS.forEach((ch,i)=>{ch.track=TRACK_ORDER[i];ch.sides=(STORY_THREADS[i]||[]).map(x=>x.title);ch.desc=ch.story;});
+const STORY_CHOICE_PAIRS=[
+ {id:'crew',title:'Back the crew',desc:'Take the safer team route. Gain a small repair reserve after the event.'},
+ {id:'lead',title:'Chase the lead',desc:'Take the risky route. Earn a larger credit bonus for winning.'}
+];
+const TURN_TYPES=['HAIRPIN','CHICANE','ESSES','KINK','DOUBLE-APEX','BANKED CORNER','VARYING-RADIUS'];
+TRACK_ORDER.forEach((id,i)=>{const cfg=TRACKS[id];cfg.turns=[TURN_TYPES[i%7],TURN_TYPES[(i*3+2)%7],TURN_TYPES[(i*5+4)%7]];cfg.layoutIndex=i;});
 
 // --- UTILS ---
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -977,18 +1118,22 @@ function onResize(){
 }
 
 // --- WORLD BUILDING ---
+function trackBankAt(t){
+  const cfg=TRACKS[currentTrack];if(!cfg?.turns?.includes('BANKED CORNER'))return 0;
+  const index=cfg.turns.indexOf('BANKED CORNER'),center=[.17,.50,.82][index]??.5;let d=Math.abs(t-center);d=Math.min(d,1-d);return .20*Math.exp(-Math.pow(d/.105,2));
+}
 function frameAt(distance){
   const t = mod(distance,trackLength)/trackLength;
   const p = trackCurve.getPointAt(t);
   const tangent = trackCurve.getTangentAt(t).normalize();
-  const side = new THREE.Vector3(-tangent.z,0,tangent.x).normalize();
+  const side = new THREE.Vector3(-tangent.z,Math.sin(trackBankAt(t)),tangent.x).normalize();
   return {p,tangent,side,t};
 }
 
 function ribbonGeometry(curve,width,y=0,offset=0,segments=500){
   const verts=[],uv=[],idx=[];
   for(let i=0;i<=segments;i++){
-    const t=i/segments,p=curve.getPointAt(t),tan=curve.getTangentAt(t).normalize(),side=new THREE.Vector3(-tan.z,0,tan.x).normalize();
+    const t=i/segments,p=curve.getPointAt(t),tan=curve.getTangentAt(t).normalize(),side=new THREE.Vector3(-tan.z,Math.sin(trackBankAt(t)),tan.x).normalize();
     p.add(new THREE.Vector3(0,y,0)).addScaledVector(side,offset);
     const a=p.clone().addScaledVector(side,width/2),b=p.clone().addScaledVector(side,-width/2);
     verts.push(a.x,a.y,a.z,b.x,b.y,b.z);uv.push(0,t*20,1,t*20);
@@ -1020,7 +1165,24 @@ function buildWorld(id,startRace=true){
   const isWet=currentWeather==='RAIN'||currentWeather==='STORM'||currentWeather==='SNOW';
   scene.background=new THREE.Color(currentWeather==='FOG'?0x7d8c92:currentWeather==='STORM'?0x263442:cfg.sky);
   scene.fog=new THREE.Fog(currentWeather==='FOG'?0xb7c4c8:currentWeather==='STORM'?0x465765:currentWeather==='SNOW'?0xaabac7:cfg.fog,currentWeather==='FOG'?48:currentWeather==='STORM'?72:currentWeather==='SNOW'?95:125,currentWeather==='FOG'?245:currentWeather==='STORM'?345:currentWeather==='SNOW'?430:510);
-  const pts=cfg.points.map(([x,z])=>new THREE.Vector3(x,0,z));
+  const basePts=cfg.points.map(([x,z])=>new THREE.Vector3(x,0,z));
+  const baseCurve=new THREE.CatmullRomCurve3(basePts,true,'catmullrom',.34);
+  const turnCenters=[.17,.50,.82];
+  const pts=Array.from({length:72},(_,i)=>{
+    const t=i/72,p=baseCurve.getPointAt(t),tan=baseCurve.getTangentAt(t).normalize();
+    const side=new THREE.Vector3(-tan.z,0,tan.x).normalize();let lateral=0,height=0;
+    (cfg.turns||[]).forEach((turn,j)=>{
+      const q=(t-turnCenters[j])/.085,envelope=Math.exp(-q*q*1.7);
+      if(turn==='HAIRPIN')lateral+=14*Math.sin(Math.PI*q)*envelope;
+      else if(turn==='CHICANE')lateral+=10*Math.sin(2*Math.PI*q)*envelope;
+      else if(turn==='ESSES')lateral+=8.5*Math.sin(3*Math.PI*q)*envelope;
+      else if(turn==='KINK')lateral+=6*Math.sin(Math.PI*q)*envelope;
+      else if(turn==='DOUBLE-APEX')lateral+=10.5*Math.sin(2*Math.PI*q)*envelope;
+      else if(turn==='VARYING-RADIUS')lateral+=11*Math.sin(Math.PI*q)*envelope;
+      else if(turn==='BANKED CORNER')height+=1.35*Math.sin(Math.PI*q)*envelope;
+    });
+    return new THREE.Vector3(p.x+side.x*lateral,p.y+height,p.z+side.z*lateral);
+  });
   if(['city','industrial','skyway','harbor','volcanic','lunar'].includes(cfg.theme)||cfg.name==='NEON PORT'){
     const starPositions=[];for(let i=0;i<260;i++){starPositions.push((Math.random()-.5)*900,90+Math.random()*180,(Math.random()-.5)*900);}
     const starGeo=new THREE.BufferGeometry();starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
@@ -1219,6 +1381,12 @@ function createCar(color, isPlayer=false, bodyStyle=null){
   if(isPlayer&&profile.garage.attachments?.spoiler){add(new THREE.BoxGeometry(2.05,.1,.34),darkMat,[0,1.7,-1.82*lengthScale]);for(const x of [-.68,.68])add(new THREE.CylinderGeometry(.04,.05,.38,8),darkMat,[x,1.48,-1.8*lengthScale]);}
   if(isPlayer&&profile.garage.attachments?.underglow){add(new THREE.BoxGeometry(1.7,.025,3.55),new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.75}),[0,.28,0]);}
   if(isPlayer&&profile.garage.attachments?.rims){root.children.filter(o=>o.geometry?.type==='CylinderGeometry').forEach(w=>{w.material=makeMat(0x63eaff,.2,.95);});}
+  if(isPlayer&&profile.garage.attachments?.splitter)add(new THREE.BoxGeometry(2.12,.09,.42),darkMat,[0,.48,2.26*lengthScale]);
+  if(isPlayer&&profile.garage.attachments?.widebody){for(const side of [-1,1])for(const z of [-1.38,1.38])add(new THREE.SphereGeometry(.47,18,12),bodyMat,[side*1.02*widthScale,.58,z*lengthScale],null,[.18,.36,.72]);}
+  if(isPlayer&&profile.garage.attachments?.hoodVents){for(const x of [-.38,.38])add(new THREE.BoxGeometry(.25,.025,.52),darkMat,[x,.93,1.18*lengthScale]);}
+  if(isPlayer&&profile.garage.attachments?.neonTrim){const glow=new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.9});for(const side of [-1,1])add(new THREE.BoxGeometry(.035,.045,3.3*lengthScale),glow,[side*1.02*widthScale,.42,0]);}
+  if(isPlayer&&profile.garage.attachments?.exhaust){for(const x of [-.48,.48])add(new THREE.CylinderGeometry(.085,.095,.28,12),makeMat(0xb7c7cf,.2,.92),[x,.48,-2.2*lengthScale],[Math.PI/2,0,0]);}
+  if(isPlayer&&profile.garage.attachments?.roofScoop)add(new THREE.BoxGeometry(.44,.18,.62),darkMat,[0,2.0,-.18*lengthScale]);
   // Individual body styles alter proportions for AI variety as well as player cars.
   if(style===2)root.scale.set(1.02,1,1.06);
   else if(style===3)root.scale.set(.95,.99,.97);
@@ -1257,7 +1425,7 @@ function createRacers(){
     scene.add(rMesh);
     rivals.push({mesh:rMesh,index:i,dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:.92+Math.random()*.16,adapt:playerPace,isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0,active:true});
   }
-  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;powerupCooldown=false;activeEffects={};
+  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;powerupCooldown=false;activeEffects={};driftScore=0;checkpointProgress=0;activePowerupSlot=0;
   eliminationActive=gameMode==='time';eliminationCountdown=30;eliminationOrder=[];eliminationChampion=null;playerEliminated=false;p2Eliminated=false;eliminationRound=0;
   $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${rivals.length+1+(localPlayer2?1:0)+(remotePlayers.size||0)}/6`;
   gameState='countdown';$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
@@ -1269,17 +1437,19 @@ function update(dt){
   // Civilian vehicles circulate around the track so traffic is a moving hazard, not just static scenery.
   trafficCars.forEach(t=>{if(!t.active)return;t.dist=mod(t.dist+t.speed*dt,trackLength);const tf=frameAt(t.dist);t.mesh.position.copy(tf.p).addScaledVector(tf.side,t.offset);t.mesh.position.y=.18;t.mesh.lookAt(frameAt(t.dist+5).p.clone().addScaledVector(tf.side,t.offset));});
   const spec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];
-  const carLevel=profile.garage.carLevels?.[spec.id]||1;const weatherGrip=currentWeather==='SNOW'?0.82:((currentWeather==='RAIN'||currentWeather==='STORM')?0.91:1);
-  const accel=(36+spec.speed*.095+profile.garage.engine*3.2)*weatherGrip;
-  const maxSpeed=(112+spec.speed*.64+profile.garage.engine*2.8+(carLevel-1)*1.15)*weatherGrip;
+  const effective=carStatsWithUpgrades(spec),carLevel=effective.level,up=effective.upgrades;const weatherGrip=currentWeather==='SNOW'?0.82:((currentWeather==='RAIN'||currentWeather==='STORM')?0.91:1);
+  const accel=(36+effective.speed*.095+up.engine*1.05)*weatherGrip;
+  const maxSpeed=(112+effective.speed*.64+(carLevel-1)*.12)*weatherGrip;
   const left=keys.KeyA||keys.ArrowLeft||mobilePressed.has('p1left');
   const right=keys.KeyD||keys.ArrowRight||mobilePressed.has('p1right');
   const gas=keys.KeyW||keys.ArrowUp||mobilePressed.has('p1gas');
   const brake=keys.KeyS||keys.ArrowDown||mobilePressed.has('p1brake');
   const boost=keys.Space||mobilePressed.has('p1nitro')||mobilePressed.has('p1boost');
   if(playerEliminated){playerSpeed=0;}else if(gas)playerSpeed+=accel*dt;else if(brake)playerSpeed-=accel*1.45*dt;else playerSpeed*=Math.pow(.986,dt*60);
-  if(!playerEliminated&&boost&&nitro>0){playerSpeed+=(82+profile.garage.nitro*9)*dt;nitro=Math.max(0,nitro-(28-profile.garage.nitro*2.5)*dt);}else if(!playerEliminated)nitro=Math.min(100,nitro+5.5*dt);
-  const steer=(10+spec.handling*.085+profile.garage.handling*1.05)*weatherGrip;
+  if(!playerEliminated&&boost&&nitro>0){playerSpeed+=(82+up.nitro*2.2+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(28-up.nitro*1.2)*dt);}else if(!playerEliminated)nitro=Math.min(100,nitro+5.5*dt);
+  if(gameMode==='drift'&&Math.abs(playerOffset)>1.35&&playerSpeed>65&&(left||right))driftScore+=Math.abs(playerOffset)*playerSpeed*dt*1.3;
+  if(gameMode==='checkpoint')checkpointProgress=Math.min(4,Math.floor((playerDistance/Math.max(1,trackLength))*4));
+  const steer=(10+effective.handling*.085+up.handling*.4+(activeEffects.grip>0?2.2:0))*weatherGrip;
   if(!playerEliminated){if(left)playerOffset-=steer*dt;if(right)playerOffset+=steer*dt;}
   playerOffset=clamp(playerOffset,-8,8);playerSpeed=clamp(playerSpeed,-35,maxSpeed);
   if(!playerEliminated)playerDistance+=Math.max(0,playerSpeed)*dt;
@@ -1288,11 +1458,12 @@ function update(dt){
   rivals.forEach(r=>{
     if(!r.active)return;
     if(r.respawn>0){r.respawn-=dt;return;}
-    const playerPace=Math.max(95,playerSpeed*.91+profile.garage.engine*5+spec.speed*.35);
-    const target=clamp(playerPace*r.ability*(r.adapt||1),105,maxSpeed*1.12);
-    r.speed+=(target-r.speed)*Math.min(1,dt*(r.isPolice?1.25:.8));
+    const playerPace=Math.max(95,playerSpeed*.91+up.engine*1.1+effective.speed*.35);
+    const learnedPace=playerPace*(r.adapt||1);const gapToPlayer=playerDistance-r.dist;const catchup=clamp(gapToPlayer*.012,-8,11);const target=clamp(learnedPace*r.ability+catchup+(raceTime>18?Math.sin(raceTime*.11+r.index)*3:0),105,maxSpeed*1.12)*(activeEffects.pulse>0&&!r.isPolice ? .72 : 1);
+    r.speed+=(target-r.speed)*Math.min(1,dt*(r.isPolice?1.45:1.02));
+    if(!r.isPolice&&raceTime>12){const relative=playerDistance-r.dist;r.ability=clamp((r.ability||1)+clamp(relative/1200,-.0006,.0006)*dt,.88,1.18);}
     if(r.isPolice){
-      policeHeat=clamp(policeHeat+dt*.055,0,1);
+      policeHeat=clamp(policeHeat+dt*(activeEffects.jammer>0 ? .012 : .055),0,1);
       // Patrol cars try to cut across the player's line rather than following a passive lane.
       const sideBias=(r.index%2===0?-1:1)*(1.25+policeHeat*.65);
       const desiredOffset=clamp(playerOffset+sideBias,-6.8,6.8);
@@ -1380,7 +1551,7 @@ function update(dt){
   }
 
   if(ghostCar&&bestTimes[currentTrack]){const ghostProgress=clamp(raceTime/bestTimes[currentTrack],0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
-  if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=90){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText='CLEAN · AVOID THE INFECTED RACER';}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
+  if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=90){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText='CLEAN · AVOID THE INFECTED RACER';}else if(gameMode==='drift'){$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / 3,000`;}else if(gameMode==='checkpoint'){$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4`;}else if(gameMode==='survival'&&raceTime>=90){finishRace();return;}else if(gameMode==='traffic'&&damage>=40){finishRace();return;}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
   if(lobbyChannel&&onlineRaceStarted&&gameState==='racing'&&(raceTime-lastNetworkSync)>.08){
     lastNetworkSync=raceTime;const carSpec=getSelectedCar();
     lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{user_id:authUser?.id,race_id:onlineRaceId,dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:getDisplayUsername(),eliminated:playerEliminated,damage,nitro,lap:Math.floor(playerDistance/Math.max(1,trackLength)),race_time:raceTime,paint:profile.garage.paint,bodyStyle:carSpec.body,finished:false}}).catch(()=>{});
@@ -1416,7 +1587,7 @@ function update(dt){
   const pips=$('damagePips').children;for(let i=0;i<5;i++){if(damage>(i+1)*20)pips[i].classList.add('off');else pips[i].classList.remove('off');}
   const sorted=[{dist:playerDistance,active:!playerEliminated},...(localPlayer2?[{dist:p2State.dist,active:!p2Eliminated}]:[]),...Array.from(remotePlayers.values()).map(v=>({dist:v.dist,active:!v.eliminated})),...rivals.filter(r=>r.active).map(r=>({dist:r.dist,active:true}))].filter(x=>x.active).sort((a,b)=>b.dist-a.dist);$('position').innerHTML=`${Math.max(1,sorted.findIndex(x=>x.dist===playerDistance)+1)}<span style="font-size:.5em">/${sorted.length}</span>`;
   if(isPoliceMode&&rivals.length&&rivals.every(r=>!r.active)){finishRace();return;}
-  if(gameMode!=='time'&&(playerDistance>=trackLength*raceLaps||(localPlayer2&&!p2Eliminated&&p2State.dist>=trackLength*raceLaps)))finishRace();
+  if(gameMode!=='time'&&gameMode!=='survival'&&gameMode!=='traffic'&&(playerDistance>=trackLength*raceLaps||(localPlayer2&&!p2Eliminated&&p2State.dist>=trackLength*raceLaps)))finishRace();else if(gameMode==='traffic'&&playerDistance>=trackLength*2)finishRace();
 }
 function loop() {
   requestAnimationFrame(loop);
@@ -1433,18 +1604,27 @@ async function syncPublicUsername(){
   try{const {data,error}=await supabase.from('player_profiles').select('username').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.username){profile.username=String(data.username).slice(0,18);saveProfile();}}
   catch(e){console.warn('Public racer username lookup:',e.message);}
 }
+function energyRegenLabel(){
+  if(profile.energy>=profile.maxEnergy)return 'FULL · READY';
+  const stamp=Number(localStorage.getItem('mr_energy_stamp'))||Date.now();
+  const remain=Math.max(0,ENERGY_RECHARGE_MS-(Date.now()-stamp)%ENERGY_RECHARGE_MS),m=Math.floor(remain/60000),sec=Math.floor(remain%60000/1000);
+  return `+1 ENERGY IN ${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
 function updateUI(){
+  applyEnergyRegen();
+  const energyText=energyRegenLabel();
   $('energyHudText').innerText=`${profile.energy} / ${profile.maxEnergy}`;$('energyFill').style.width=`${100*profile.energy/profile.maxEnergy}%`;
-  $('usernamePill').innerText=getDisplayUsername();$('repPill').innerText=`LVL ${profile.level} · ${profile.xp}/${XP_PER_LEVEL} REP`;$('energyPill').innerText=`⚡ ${profile.energy}/${profile.maxEnergy}`;$('creditsValue').innerText=profile.credits.toLocaleString();$('ticketPill').innerText=`🎟️ RANKED ${profile.rankedTickets||0}`;
+  if($('energyHudRegen'))$('energyHudRegen').innerText=energyText;
+  $('usernamePill').innerText=getDisplayUsername();$('repPill').innerText=`LVL ${profile.level} · ${profile.xp}/${XP_PER_LEVEL} REP`;$('energyPill').innerText=`⚡ ${profile.energy}/${profile.maxEnergy}`;$('energyPill').title=energyText;$('creditsValue').innerText=profile.credits.toLocaleString();$('ticketPill').innerText=`🎟️ RANKED ${profile.rankedTickets||0}`;
   if($('rankedLevelStatus'))$('rankedLevelStatus').innerText=profile.level>=10?`LVL ${profile.level} · ELIGIBLE`:`LVL ${profile.level} · NEED LVL 10`;
   if($('rankedTicketStatus'))$('rankedTicketStatus').innerText=`${profile.rankedTickets||0} AVAILABLE`;
   if($('mpRankedBtn'))$('mpRankedBtn').disabled=profile.level<10||(profile.rankedTickets||0)<1||!supabaseReady||!authUser;
-  $('engineLevel').innerText=`LEVEL ${profile.garage.engine} / 5`;$('handlingLevel').innerText=`LEVEL ${profile.garage.handling} / 5`;$('nitroLevel').innerText=`LEVEL ${profile.garage.nitro} / 5`;
-  $('engineBuy').innerText=`BUY ${500+profile.garage.engine*250}`;$('handlingBuy').innerText=`BUY ${420+profile.garage.handling*220}`;$('nitroBuy').innerText=`BUY ${380+profile.garage.nitro*200}`;
-  $('engineBuy').disabled=profile.garage.engine>=5||profile.credits<500+profile.garage.engine*250;$('handlingBuy').disabled=profile.garage.handling>=5||profile.credits<420+profile.garage.handling*220;$('nitroBuy').disabled=profile.garage.nitro>=5||profile.credits<380+profile.garage.nitro*200;
-  $('loadoutSummary').innerText=`${POWERUPS.find(x=>x.id===profile.selectedPowerup)?.name||'Nitro Surge'} · Q to activate`;$('inventoryCount').innerText=POWERUPS.map(p=>`${p.name.split(' ')[0]} ${profile.inventory[p.id]||0}`).join(' · ');
+  const car=getSelectedCar(),stats=carStatsWithUpgrades(car),u=stats.upgrades;
+  $('engineLevel').innerText=`LEVEL ${u.engine} / 5 · +${(stats.speed-car.speed).toFixed(1)} SPEED`;$('handlingLevel').innerText=`LEVEL ${u.handling} / 5 · +${(stats.handling-car.handling).toFixed(1)} HANDLING`;$('nitroLevel').innerText=`LEVEL ${u.nitro} / 5 · ${stats.nitro}% CAPACITY`;
+  $('engineBuy').innerText=`BUY ${upgradePrice('engine',car)}`;$('handlingBuy').innerText=`BUY ${upgradePrice('handling',car)}`;$('nitroBuy').innerText=`BUY ${upgradePrice('nitro',car)}`;
+  $('engineBuy').disabled=u.engine>=5||profile.credits<upgradePrice('engine',car);$('handlingBuy').disabled=u.handling>=5||profile.credits<upgradePrice('handling',car);$('nitroBuy').disabled=u.nitro>=5||profile.credits<upgradePrice('nitro',car);
+  const loadout=(profile.raceLoadout||[]).map(id=>POWERUPS.find(x=>x.id===id)?.name).filter(Boolean);$('loadoutSummary').innerText=`${loadout.join(' + ')||'Choose powerups'} · Q USES SLOT 1 · E SWITCHES`;$('inventoryCount').innerText=POWERUPS.map(p=>`${p.name.split(' ')[0]} ${profile.inventory[p.id]||0}`).join(' · ');
   if($('usernameInput'))$('usernameInput').value=profile.username;
-  if($('spoilerToggle'))$('spoilerToggle').checked=!!profile.garage.attachments.spoiler;if($('underglowToggle'))$('underglowToggle').checked=!!profile.garage.attachments.underglow;if($('rimsToggle'))$('rimsToggle').checked=!!profile.garage.attachments.rims;
 }
 function refreshGarageCar(){
   if(!garageScene)return;
@@ -1474,21 +1654,34 @@ function addXP(amount){
 }
 function carUnlockRank(rank){const r=CAR_RANKS.find(x=>x.name===rank);return !!r&&profile.level>=r.level;}
 function getSelectedCar(){return CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];}
+function getCarUpgrades(carId=profile.garage.carId){
+  profile.garage.carUpgrades=profile.garage.carUpgrades||{};
+  if(!profile.garage.carUpgrades[carId])profile.garage.carUpgrades[carId]={engine:carId===LEGACY_UPGRADE_CAR_ID?(profile.garage.engine||0):0,handling:carId===LEGACY_UPGRADE_CAR_ID?(profile.garage.handling||0):0,nitro:carId===LEGACY_UPGRADE_CAR_ID?(profile.garage.nitro||0):0};
+  const u=profile.garage.carUpgrades[carId];return {engine:clamp(Number(u.engine)||0,0,5),handling:clamp(Number(u.handling)||0,0,5),nitro:clamp(Number(u.nitro)||0,0,5)};
+}
+function carStatsWithUpgrades(car=getSelectedCar()){
+  const u=getCarUpgrades(car.id),rank=CAR_RANKS.find(r=>r.name===car.rank)||CAR_RANKS[0];
+  const level=profile.garage.carLevels?.[car.id]||1;
+  return {speed:Math.min(rank.speedMax+1,car.speed+u.engine*1.15+(level-1)*.12),handling:Math.min(rank.handlingMax+1,car.handling+u.handling*.9),nitro:Math.min(100,72+u.nitro*5+Math.floor(level/3)),level,upgrades:u,rank};
+}
+function upgradePrice(type,car=getSelectedCar()){
+  const u=getCarUpgrades(car.id),rank=CAR_RANKS.find(r=>r.name===car.rank)||CAR_RANKS[0];
+  const base={engine:210,handling:185,nitro:170}[type]||200;
+  const rankFactor=1+rank.price/65000;
+  return Math.round((base+u[type]*base*.72)*rankFactor/10)*10;
+}
 function setView(view){document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));if(view==='garagePanel'){setTimeout(()=>{if(garageRenderer&&garageCamera){const c=$('garageCanvasContainer');garageRenderer.setSize(c.clientWidth||340,c.clientHeight||250);garageCamera.aspect=(c.clientWidth||340)/(c.clientHeight||250);garageCamera.updateProjectionMatrix();}},50);}}
 function storyKey(ch){return `chapter${ch+1}`;}
 function storyChapterComplete(ch){
   return !!profile.storyMain[storyKey(ch)]&&STORY_CHAPTERS[ch].sides.every((_,j)=>storySideComplete(ch,j));
 }
 function isTrackUnlocked(id){
-  const index=TRACK_ORDER.indexOf(id);if(index<0)return false;if(index<3)return true;
-  const stage=Math.floor((index-3)/3);
-  if(stage>=STORY_CHAPTERS.length)return STORY_CHAPTERS.every((_,i)=>storyChapterComplete(i));
-  return storyChapterComplete(stage);
+  const index=TRACK_ORDER.indexOf(id);if(index<0)return false;if(index===0)return true;
+  return storyChapterComplete(index-1);
 }
 function trackUnlockLabel(id){
-  const index=TRACK_ORDER.indexOf(id);if(index<3)return 'AVAILABLE';
-  const stage=Math.floor((index-3)/3);
-  return stage>=STORY_CHAPTERS.length?'COMPLETE ALL 8 CHAPTERS':`CLEAR CHAPTER ${stage+1} + ALL SIDE EPISODES`;
+  const index=TRACK_ORDER.indexOf(id);if(index===0)return 'AVAILABLE';
+  return `CLEAR CHAPTER ${String(index).padStart(2,'0')} + ALL THREE SIDE EPISODES`;
 }
 function renderTrackGrid(){
   const host=$('trackGrid');if(!host)return;
@@ -1501,7 +1694,7 @@ function renderTrackGrid(){
     const no=document.createElement('span');no.className='trackNo';no.textContent=String(i+1).padStart(2,'0');
     const meta=document.createElement('div');meta.className='meta';
     const title=document.createElement('b');title.textContent=t.name;
-    const sub=document.createElement('small');sub.textContent=unlocked?`${t.theme.toUpperCase()} CIRCUIT · AVAILABLE`:`🔒 ${trackUnlockLabel(id)}`;
+    const sub=document.createElement('small');sub.textContent=unlocked?`${t.theme.toUpperCase()} · ${(t.turns||[]).join(' / ')}`:`🔒 ${trackUnlockLabel(id)}`;
     meta.append(title,sub);card.append(art,no,meta);host.appendChild(card);
   });
   const unlockedCount=TRACK_ORDER.filter(isTrackUnlocked).length;
@@ -1525,17 +1718,20 @@ function renderStory(){
   selectedStoryPath=profile.storyPath||selectedStoryPath;
   const ch=STORY_CHAPTERS[selectedChapter];
   if(!ch)return;
-  const chapterUnlocked=selectedChapter===0||(!!profile.storyMain[storyKey(selectedChapter-1)]&&STORY_CHAPTERS[selectedChapter-1].sides.every((_,j)=>storySideComplete(selectedChapter-1,j)));
-  $('storyChapterTag').innerText=`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${profile.storyPath.toUpperCase()} PATH`;
+  const chapterUnlocked=selectedChapter===0||storyChapterComplete(selectedChapter-1);
+  $('storyChapterTag').innerText=`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} / 30 · ${profile.storyPath.toUpperCase()} PATH`;
   $('storyChapterTitle').innerText=ch.title;
   $('storyChapterDesc').innerText=ch.desc+(profile.storyPath==='solo'?' Your solo decisions favor high-risk routes and self-reliance.':' Your crew choices open team-based opportunities and support.');
   $('storyObjective').innerText=ch.objective;
   $('storyReward').innerText=`${Number(ch.reward||500).toLocaleString()} CREDITS · STREET REP · ${ch.unlock||'NEXT CHAPTER'}`;
   $('storyMissionBrief').innerText=`MISSION OBJECTIVE: ${ch.objective} Track: ${TRACKS[ch.track]?.name||ch.track}. Complete this main race first, then finish all three required crew episodes with at least one star each. The next chapter stays locked until every episode is complete.`;
   $('storyContact').innerText=ch.contact||'NIGHTSHIFT CREW';
-  $('storyDialogue').innerText=ch.dialogue||ch.desc;
+  selectedStoryChoice=profile.storyChoices?.[storyKey(selectedChapter)]||'crew';
+  $('storyDialogue').innerText=(ch.dialogue||ch.desc)+(selectedStoryChoice==='lead'?' Your current decision: chase the lead and take the risk for a bigger winning bonus.':' Your current decision: back the crew and earn a repair supply when you succeed.');
   $('chapterStarRating').innerText=`${starText(storyStarsForChapter(selectedChapter))} · ${storyStarsForChapter(selectedChapter)?'BEST RESULT':'NOT COMPLETED'}`;
   document.querySelectorAll('.pathChoice').forEach(b=>b.classList.toggle('active',b.dataset.path===profile.storyPath));
+  const choiceHost=$('storyChoiceOptions');choiceHost.innerHTML='';
+  STORY_CHOICE_PAIRS.forEach(choice=>{const b=document.createElement('button');b.type='button';b.className='storyChoice'+(selectedStoryChoice===choice.id?' active':'');const title=document.createElement('b');title.textContent=choice.title;const desc=document.createElement('small');desc.textContent=choice.desc;b.append(title,desc);b.addEventListener('click',()=>{selectedStoryChoice=choice.id;profile.storyChoices=profile.storyChoices||{};profile.storyChoices[storyKey(selectedChapter)]=choice.id;renderStory();saveProfile();});choiceHost.appendChild(b);});
   const sideHost=$('sideStoryList');sideHost.innerHTML='';
   const episodeRows=STORY_THREADS[selectedChapter]||[];
   const doneCount=episodeRows.filter((_,i)=>storySideComplete(selectedChapter,i)).length;
@@ -1556,7 +1752,7 @@ function renderStory(){
   });
   const list=$('chapterList');list.innerHTML='';
   STORY_CHAPTERS.forEach((c,i)=>{
-    const unlocked=i===0||(!!profile.storyMain[storyKey(i-1)]&&STORY_CHAPTERS[i-1].sides.every((_,j)=>storySideComplete(i-1,j)));
+    const unlocked=i===0||storyChapterComplete(i-1);
     const completed=!!profile.storyMain[storyKey(i)];
     const doneCount=(STORY_THREADS[i]||[]).filter((_,j)=>storySideComplete(i,j)).length;
     const el=document.createElement('button');el.type='button';el.className='questRow'+(i===selectedChapter?' active':'');el.disabled=!unlocked;
@@ -1580,16 +1776,42 @@ function startStory(sideIndex=-1){
   }else{storySideIndex=-1;gameMode=profile.storyPath==='solo'?(ch.mode==='street'?'ghost':ch.mode):ch.mode;}
   currentTrack=ch.track==='skyline'?'skyway':ch.track;
   profile.storyPath=selectedStoryPath;document.body.dataset.returnView='storyPanel';document.body.dataset.storyRace=sideIndex<0?'1':'0';
+  if(sideIndex<0){selectedStoryChoice=profile.storyChoices?.[storyKey(selectedChapter)]||'crew';if(profile.storyPath==='solo'&&gameMode==='street')gameMode='drift';}
   playerMode='solo';$('playerModeSelect').value='solo';$('modeGrid').querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===gameMode));
-  isPoliceMode=gameMode==='police';raceLaps=gameMode==='ghost'?1:(gameMode==='time'?999:3);beginRace();
+  isPoliceMode=gameMode==='police';raceLaps=gameMode==='ghost'?1:(gameMode==='time'?999:3);openRaceBriefing();
 }
-function renderCarSelect(){const sel=$('carSelect');if(!sel)return;sel.innerHTML='';CAR_CATALOG.filter(c=>profile.ownedCars?.includes(c.id)||c.id==='D-01').forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});if(!profile.ownedCars)profile.ownedCars=['D-01'];sel.value=profile.garage.carId;if(!sel.value)sel.value='D-01';const c=getSelectedCar();$('carStats').innerText=`${c.rank}-Class · Top speed ${c.speed} · Handling ${c.handling} · Level ${profile.garage.carLevels?.[c.id]||1}`;$('carLevelText').innerText=`CAR LEVEL ${profile.garage.carLevels?.[c.id]||1} · ${c.rank} CLASS`;
+function renderCarSelect(){
+  const sel=$('carSelect'),host=$('carSelectionGrid');if(!sel||!host)return;
+  const owned=CAR_CATALOG.filter(c=>(profile.ownedCars||['D-01']).includes(c.id));
+  const filter=$('garageRankFilter')?.value||'ALL';const visible=filter==='ALL'?owned:owned.filter(c=>c.rank===filter);
+  sel.innerHTML='';host.innerHTML='';
+  owned.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});
+  if(!owned.some(c=>c.id===profile.garage.carId))profile.garage.carId='D-01';sel.value=profile.garage.carId;
+  visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.rank)} CLASS · ${Math.round(st.speed)} SPD · ${Math.round(st.handling)} HND · LVL ${st.level}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarUpgrades(c.id);renderCarSelect();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
+  if(!visible.length)host.innerHTML='<div class="mutedText">No owned vehicles in this rank yet. Visit the Store to buy one.</div>';
+  if($('ownedCarCount'))$('ownedCarCount').textContent=`${owned.length} owned`;
+  const c=getSelectedCar(),st=carStatsWithUpgrades(c);$('carStats').innerText=`${c.rank}-Class · Top speed ${st.speed.toFixed(1)} · Handling ${st.handling.toFixed(1)} · Level ${st.level}`;$('carLevelText').innerText=`CAR LEVEL ${st.level} · ${c.rank} CLASS`;
 }
 function renderStore(){
-  const rank=$('storeRank')?.value||'D',host=$('carStoreList');if(!host)return;host.innerHTML='';CAR_CATALOG.filter(c=>c.rank===rank).slice(0,20).forEach(c=>{const owned=(profile.ownedCars||['D-01']).includes(c.id),unlocked=carUnlockRank(c.rank);const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${c.name}</b><small>${c.rank} CLASS · SPEED ${c.speed} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small></div><button class="smallBtn" ${owned||!unlocked||profile.credits<c.price?'disabled':''}>${owned?'OWNED':`BUY ${Math.floor(c.price).toLocaleString()}`}</button>`;row.querySelector('button').addEventListener('click',()=>{if(owned||!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;profile.garage.paint=c.color.toString(16).padStart(6,'0');renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});host.appendChild(row);});
-  const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${p.name}</b><small>${p.desc} · OWNED ${profile.inventory[p.id]||0}</small></div><button class="smallBtn" ${profile.credits<p.price?'disabled':''}>BUY ${p.price}</button>`;row.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;renderStore();updateUI();saveProfile();});powers.appendChild(row);});
-  $('inventoryList').innerHTML=POWERUPS.map(p=>`<div class="dataRow"><span>${p.name}</span><b>${profile.inventory[p.id]||0}</b></div>`).join('');
+  const rank=$('storeRank')?.value||'D',host=$('carStoreList');if(!host)return;host.innerHTML='';
+  CAR_CATALOG.filter(c=>c.rank===rank).forEach(c=>{const owned=(profile.ownedCars||['D-01']).includes(c.id),unlocked=carUnlockRank(c.rank),row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${escapeHtml(c.name)}</b><small>${c.rank} CLASS · SPEED ${c.speed} · HANDLING ${c.handling} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small></div><button class="smallBtn" ${owned||!unlocked||profile.credits<c.price?'disabled':''}>${owned?'OWNED':`BUY ${Math.floor(c.price).toLocaleString()}`}</button>`;row.querySelector('button').addEventListener('click',()=>{if(owned||!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;profile.garage.paint=c.color.toString(16).padStart(6,'0');if(!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);getCarUpgrades(c.id);renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});host.appendChild(row);});
+  const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.desc)} · OWNED ${profile.inventory[p.id]||0}</small><button class="smallBtn" ${profile.credits<p.price?'disabled':''}>BUY ${p.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;renderStore();updateUI();saveProfile();});powers.appendChild(tile);});
+  $('inventoryList').innerHTML=POWERUPS.map(p=>`<div class="dataRow"><span>${escapeHtml(p.name)}</span><b>${profile.inventory[p.id]||0}</b></div>`).join('');
+  const utility=$('utilityShopList');utility.innerHTML='';
+  [{id:'energy',name:'Energy Refill +10',desc:'Restore ten energy instantly. Maximum capacity is 50.',price:650,disabled:profile.energy>=profile.maxEnergy},{id:'ticket',name:'Ranked Ticket',desc:'One entry ticket for an online Ranked race.',price:1800,disabled:false}].forEach(item=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${item.name}</b><small>${item.desc}</small><button class="smallBtn" ${profile.credits<item.price||item.disabled?'disabled':''}>BUY ${item.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<item.price||item.disabled)return;profile.credits-=item.price;if(item.id==='energy'){applyEnergyRegen();profile.energy=Math.min(profile.maxEnergy,profile.energy+10);if(profile.energy>=profile.maxEnergy)localStorage.setItem('mr_energy_stamp',String(Date.now()));}else profile.rankedTickets=(profile.rankedTickets||0)+1;renderStore();updateUI();saveProfile();});utility.appendChild(tile);});
+  if($('energyShopStatus'))$('energyShopStatus').textContent=`ENERGY ${profile.energy}/${profile.maxEnergy} · ${energyRegenLabel()} · +1 energy every 5 minutes, up to 50.`;
+  const ownedPaints=profile.ownedPaints||['176de0'];const paintHost=$('paintStoreList');paintHost.innerHTML='';PAINT_CATALOG.forEach((paint,i)=>{const owned=ownedPaints.includes(paint.hex),price=320+Math.floor(i/4)*80,tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b><span style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#${paint.hex};vertical-align:-2px;margin-right:5px;border:1px solid #fff6"></span>${escapeHtml(paint.name)}</b><small>${owned?'OWNED':`CUSTOM PAINT FINISH · ${price} CREDITS`}</small><button class="smallBtn" ${owned||profile.credits<price?'disabled':''}>${owned?'OWNED':`BUY ${price}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned||profile.credits<price)return;profile.credits-=price;profile.ownedPaints.push(paint.hex);renderStore();renderPaintSwatches();updateUI();saveProfile();});paintHost.appendChild(tile);});
+  const decor=$('decorStoreList');decor.innerHTML='';DECOR_ITEMS.forEach(item=>{const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.desc)} · ${owned?(equipped?'EQUIPPED':'OWNED'):`${item.price.toLocaleString()} CREDITS`}</small><button class="smallBtn" ${!owned&&profile.credits<item.price?'disabled':''}>${owned?(equipped?'UNEQUIP':'EQUIP'):`BUY ${item.price.toLocaleString()}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned){profile.garage.attachments[item.id]=!equipped;}else{if(profile.credits<item.price)return;profile.credits-=item.price;profile.ownedAttachments.push(item.id);profile.garage.attachments[item.id]=true;}renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();});decor.appendChild(tile);});
 }
+function renderGarageAttachments(){
+ const host=$('garageAttachments');if(!host)return;host.innerHTML='';
+ DECOR_ITEMS.forEach(item=>{const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],row=document.createElement('div');row.className='attachmentTile';const info=document.createElement('div');info.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${owned?(equipped?'EQUIPPED':'OWNED'):'LOCKED · BUY IN STORE'}</small>`;const btn=document.createElement('button');btn.className='smallBtn';btn.textContent=owned?(equipped?'ON':'OFF'):'STORE';btn.disabled=!owned;btn.addEventListener('click',()=>{if(!owned)return;profile.garage.attachments[item.id]=!equipped;renderGarageAttachments();refreshGarageCar();renderStore();saveProfile();});row.append(info,btn);host.appendChild(row);});
+}
+function renderPaintSwatches(){
+ const host=$('paintSwatches');if(!host)return;host.innerHTML='';
+ const owned=profile.ownedPaints||['176de0'];owned.forEach(hex=>{const paint=PAINT_CATALOG.find(x=>x.hex===hex)||{hex,name:'Custom'};const b=document.createElement('button');b.type='button';b.className='swatch'+(profile.garage.paint===hex?' active':'');b.dataset.color=hex;b.style.background=`#${hex}`;b.title=paint.name;b.setAttribute('aria-label',paint.name);b.addEventListener('click',()=>{profile.garage.paint=hex;renderPaintSwatches();refreshGarageCar();saveProfile();});host.appendChild(b);});
+}
+
 function renderQuestBoard(){
   const host=$('questBoard');if(!host)return;
   const q=profile.questStats||(profile.questStats={races:0,podiums:0,storyWins:0,claimed:[]});
@@ -1618,27 +1840,79 @@ function refreshQuests(){
   profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.weekly.progress=profile.weekly.progress&&typeof profile.weekly.progress==='object'?profile.weekly.progress:{};render(daily,$('dailyQuestList'),profile.daily);render(weekly,$('weeklyQuestList'),profile.weekly);renderQuestBoard();
   const next=(Math.floor(profile.level/5)+1)*5;$('milestoneStatus').innerText=`Level ${next} reward: credits, a tournament ticket and a shield powerup.`;
   const now=new Date(),dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);$('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · Top finish earns 3,000 Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. A limited event is selected at random on event days.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
-  const specialModes=['infected','police','time','random'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT'};$('specialEventStatus').innerText=`TODAY'S ROTATING EVENT: ${eventNames[specialEventMode]}. Complete the event for bonus Credits and Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
+  const specialModes=['infected','police','time','random','drift','checkpoint','survival','traffic'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT',drift:'DRIFT SCORE ATTACK',checkpoint:'CHECKPOINT RUSH',survival:'SURVIVAL GAUNTLET',traffic:'TRAFFIC RUN'};$('specialEventStatus').innerText=`TODAY'S ROTATING EVENT: ${eventNames[specialEventMode]}. Complete the event for bonus Credits and Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
   saveProfile();
 }
 function renderLocalLeaderboard(){const host=$('localLeaderboard');if(!host)return;host.innerHTML='';const rows=leaderboardLocal.slice().sort((a,b)=>a.time-b.time).slice(0,10);if(!rows.length)host.innerHTML='<div class="mutedText">Finish a time trial to set your first record.</div>';rows.forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${r.username}</b><span>${formatTime(r.time)}</span>`;host.appendChild(el);});}
 function showTutorial(){const step=TUTORIAL_STEPS[tutorialStep];$('tutorialTitle').innerText=step[0];$('tutorialText').innerText=step[1];$('tutorialBack').disabled=tutorialStep===0;$('tutorialNext').innerText=tutorialStep===TUTORIAL_STEPS.length-1?'FINISH':'NEXT ↗';$('tutorialModal').classList.remove('hidden');}
-function renderAll(){updateUI();renderCarSelect();renderStore();renderStory();renderTrackGrid();refreshQuests();renderLocalLeaderboard();}
-function activatePowerup(){if(powerupCooldown)return;powerupCooldown=true;setTimeout(()=>powerupCooldown=false,350);const id=profile.selectedPowerup||'boost';if((profile.inventory[id]||0)<=0){$('powerStatus')&&($('powerStatus').innerText='NO POWERUP IN INVENTORY');return;}profile.inventory[id]--;
+function renderAll(){updateUI();renderCarSelect();renderStore();renderPaintSwatches();renderGarageAttachments();renderStory();renderTrackGrid();refreshQuests();renderLocalLeaderboard();}
+function activatePowerup(){if(powerupCooldown)return;powerupCooldown=true;setTimeout(()=>powerupCooldown=false,350);const id=profile.selectedPowerup||profile.raceLoadout?.[0]||'';if(!id||(profile.inventory[id]||0)<=0){$('powerStatus').innerText='NO POWERUP IN SELECTED SLOT';return;}profile.inventory[id]--;
  if(id==='boost'){playerSpeed=Math.min(playerSpeed+95,330);activeEffects.boost=2;}
- if(id==='repair'){damage=Math.max(0,damage-35);}
+ if(id==='repair'){damage=Math.max(0,damage-35);if(localPlayer2&&playerMode==='local2')p2State.damage=Math.max(0,p2State.damage-35);}
  if(id==='shield'){activeEffects.shield=5;}
  if(id==='scanner'){activeEffects.scanner=8;trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=true;});}
- const status=$('powerStatus');if(status)status.innerText=`${POWERUPS.find(p=>p.id===id).name.toUpperCase()} ACTIVATED`;
+ if(id==='grip'){activeEffects.grip=12;}
+ if(id==='pulse'){activeEffects.pulse=3;rivals.forEach(r=>{if(!r.isPolice&&trackGap(r.dist,playerDistance)<42)r.speed*=.55;});}
+ if(id==='jammer'){activeEffects.jammer=10;}
+ if(id==='overdrive'){activeEffects.overdrive=6;}
+ $('powerStatus').innerText=`${POWERUPS.find(p=>p.id===id)?.name.toUpperCase()||id} ACTIVATED`;
  updateUI();saveProfile();}
-function beginRace(){
-  if(profile.energy<10){alert('Not enough energy. Energy regenerates over time.');return;}
-  profile.energy-=10;localStorage.setItem('mr_energy_stamp',String(Date.now()));saveProfile();updateUI();initAudio();document.body.classList.add('race-active');
+
+function currentRaceObjective(){
+ if(document.body.dataset.storyRace==='1')return STORY_CHAPTERS[selectedChapter]?.objective||'Complete the chapter objective.';
+ if(storySideIndex>=0)return sideMissionBrief(selectedChapter,storySideIndex);
+ const objectives={street:'Finish in the top three. Win for the full reward.',time:'Survive each timed elimination. Last place is removed every 30 seconds until one racer remains.',police:'Escape the active patrol fleet. Police vehicles will try to box you in. No respawns.',ghost:'Beat your personal best lap time.',infected:'Avoid the infected driver for 90 seconds. Touching the infected driver spreads the status.',drift:'Build at least 3,000 clean drift points and complete the route.',checkpoint:'Pass every checkpoint in order and finish before the countdown expires.',survival:'Survive the full 90-second gauntlet with your vehicle operational.',traffic:'Finish the circuit with less than 40% vehicle damage.',random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
+ if(document.body.dataset.tournament==='1')return 'Tournament final: finish as high as possible. First place earns the champion reward.';
+ if(document.body.dataset.specialEvent==='1')return `Rotating special event: ${objectives[gameMode]||'Complete the event objective.'}`;
+ return objectives[gameMode]||'Finish the race and earn Street Rep.';
+}
+function fillBriefingPowerupSelects(){
+ const slots=[$('briefingPowerupA'),$('briefingPowerupB')];
+ slots.forEach(sel=>{sel.innerHTML='';const none=document.createElement('option');none.value='';none.textContent='EMPTY SLOT · NO POWERUP';sel.appendChild(none);POWERUPS.forEach(p=>{const qty=profile.inventory[p.id]||0;const op=document.createElement('option');op.value=p.id;op.textContent=`${p.name} · ${qty} owned`;op.disabled=qty<=0;sel.appendChild(op);});});
+ const owned=POWERUPS.filter(p=>(profile.inventory[p.id]||0)>0).map(p=>p.id);
+ const load=(profile.raceLoadout||[]).filter(id=>owned.includes(id));
+ slots[0].value=load[0]||'';
+ slots[1].value=load.find(id=>id!==slots[0].value)||'';
+ $('briefingInventory').innerText=POWERUPS.map(p=>`${p.name}: ${profile.inventory[p.id]||0}`).join(' · ');
+}
+function openRaceBriefing(){
+ if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}; energy restores one point every five minutes.`);return;}
+ if(!TRACKS[currentTrack]||!isTrackUnlocked(currentTrack)){currentTrack=TRACK_ORDER.find(isTrackUnlocked)||TRACK_ORDER[0];}
+ if(gameMode==='random'){
+  const unlocked=TRACK_ORDER.filter(isTrackUnlocked);currentTrack=unlocked[Math.floor(Math.random()*unlocked.length)]||'neon';
+  const pool=['street','time','police','ghost','infected','drift','checkpoint','survival','traffic'];gameMode=pool[Math.floor(Math.random()*pool.length)];
+ }
+ if(gameMode==='time'||gameMode==='ghost')raceLaps=gameMode==='time'?999:1;else if(!Number.isFinite(Number(forcedRaceLaps))||Number(forcedRaceLaps)<2)raceLaps=2+Math.floor(Math.random()*5);else raceLaps=clamp(Math.floor(forcedRaceLaps),2,6);
+ raceLapsPrepared=true;
+ if(forcedRaceWeather){currentWeather=forcedRaceWeather;}else setRaceWeather();
+ $('briefingTitle').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?`SIDE STORY ${storySideIndex+1} · ${STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'CREW EPISODE'}`:`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${STORY_CHAPTERS[selectedChapter]?.title||'NIGHTSHIFT'}`):`${gameMode.toUpperCase().replaceAll('_',' ')} BRIEFING`;
+ $('briefingStory').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?STORY_THREADS[selectedChapter]?.[storySideIndex]?.body:STORY_CHAPTERS[selectedChapter]?.story)||'The crew is waiting on your call.':'The crew has checked the route, weather and vehicle. Review the mission and select your equipment before the start.';
+ $('briefingMode').innerText=gameMode.toUpperCase();$('briefingTrack').innerText=TRACKS[currentTrack]?.name||'NEON DISTRICT';$('briefingWeather').innerText=`${currentWeather} · ${gameMode==='time'?'ELIMINATION':raceLaps===999?'SURVIVAL':`${raceLaps} LAPS`}`;$('briefingObjective').innerText=currentRaceObjective();
+ fillBriefingPowerupSelects();$('raceBriefingModal').classList.remove('hidden');
+}
+function confirmRaceBriefing(){
+ const a=$('briefingPowerupA').value,b=$('briefingPowerupB').value;
+ const choose=[a,b].filter((id,i,arr)=>id&&arr.indexOf(id)===i&&(profile.inventory[id]||0)>0).slice(0,2);
+ profile.raceLoadout=choose;profile.selectedPowerup=choose[0]||'';activePowerupSlot=0;
+ forcedRaceWeather=currentWeather;forcedRaceLaps=raceLaps===999?null:raceLaps;
+ raceBriefingConfirmed=true;$('raceBriefingModal').classList.add('hidden');saveProfile();beginRace(true);
+}
+function switchPowerupSlot(){
+ const slots=(profile.raceLoadout||[]).filter(id=>(profile.inventory[id]||0)>0);
+ if(slots.length<2){showToast('EQUIP TWO POWERUPS BEFORE THE RACE');return;}
+ activePowerupSlot=(activePowerupSlot+1)%slots.length;profile.selectedPowerup=slots[activePowerupSlot];
+ $('powerStatus').innerText=`SELECTED · ${POWERUPS.find(p=>p.id===profile.selectedPowerup)?.name||profile.selectedPowerup} · PRESS Q`;
+}
+function beginRace(skipBriefing=false){
+  if(!skipBriefing&&!raceBriefingConfirmed){openRaceBriefing();return;}
+  raceBriefingConfirmed=false;
+  if(!consumeRaceEnergy(RACE_ENTRY_ENERGY)){alert('Not enough energy. Energy restores one point every five minutes, and you can buy a refill in the Store.');return;}
+  initAudio();document.body.classList.add('race-active');
   lastNetworkSync=0;if(lobbyChannel){onlineLocalFinishSent=false;onlineFinishers.clear();$('finishSummary').dataset.baseSummary='';}
-  if(gameMode==='random'){const tracks=TRACK_ORDER.filter(isTrackUnlocked);currentTrack=tracks[Math.floor(Math.random()*tracks.length)]||'neon';const modes=['street','time','police','ghost','infected'];gameMode=modes[Math.floor(Math.random()*modes.length)];}
   if(!TRACKS[currentTrack])currentTrack='neon';
   isPoliceMode=gameMode==='police';
-  raceLaps=gameMode==='time'?999:(gameMode==='ghost'?1:2+Math.floor(Math.random()*5));
+  if(!raceLapsPrepared)raceLaps=gameMode==='time'?999:(gameMode==='ghost'?1:2+Math.floor(Math.random()*5));
+  raceLapsPrepared=false;
   if(Number.isFinite(Number(forcedRaceLaps))&&forcedRaceLaps>=2){raceLaps=clamp(Math.floor(forcedRaceLaps),2,6);forcedRaceLaps=null;}
   setRaceWeather(forcedRaceWeather);forcedRaceWeather=null;
   worldSeed=(Number(forcedRaceSeed)>>>0)||Math.floor(Math.random()*4294967295);forcedRaceSeed=null;
@@ -1649,9 +1923,11 @@ function finishRace(){
   if(raceAwarded)return;raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
   let place=1,p2Place=0,won=false;
   if(gameMode==='time'&&eliminationChampion){const finalOrder=[eliminationChampion,...eliminationOrder.slice().reverse()];place=finalOrder.indexOf('player')+1;if(place<1)place=finalOrder.length+1;p2Place=localPlayer2?finalOrder.indexOf('player2')+1:0;won=eliminationChampion==='player';}
-  else{const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...Array.from(remotePlayers.values()).map(r=>({name:r.username||'ONLINE RACER',dist:r.dist,online:true})),...rivals.map(r=>({name:r.isPolice?'PATROL':`RIVAL`,dist:r.dist}))].sort((a,b)=>b.dist-a.dist);place=sorted.findIndex(r=>r.player)+1;p2Place=sorted.findIndex(r=>r.player2)+1;won=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected&&place===1:place===1);}
+  else{const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...Array.from(remotePlayers.values()).map(r=>({name:r.username||'ONLINE RACER',dist:r.dist,online:true})),...rivals.map(r=>({name:r.isPolice?'PATROL':`RIVAL`,dist:r.dist}))].sort((a,b)=>b.dist-a.dist);place=sorted.findIndex(r=>r.player)+1;p2Place=sorted.findIndex(r=>r.player2)+1;won=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected&&place===1:gameMode==='drift'?driftScore>=3000:gameMode==='checkpoint'?checkpointProgress>=4&&place<=3:gameMode==='survival'?damage<100:gameMode==='traffic'?damage<40:place===1);}
   if(localPlayer2)$('finishSummary').dataset.p2=`Player 2: place ${p2Place}.`;
   const reward=won?850:Math.max(250,650-place*70);
+  if(document.body.dataset.storyRace==='1'&&selectedStoryChoice==='lead'&&won)addCredits(250);
+  if(document.body.dataset.storyRace==='1'&&selectedStoryChoice==='crew'&&won)profile.inventory.repair=(profile.inventory.repair||0)+1;
   const isRanked=onlineRoomMode==='ranked'&&!!lobbyChannel;
   const isSpecialEvent=document.body.dataset.specialEvent==='1';
   const xpBase=isRanked?210:(isSpecialEvent?170:(gameMode==='street'?130:gameMode==='police'?150:gameMode==='time'?120:115));
@@ -1687,8 +1963,8 @@ function finishRace(){
   const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(3000);profile.rankedTickets=(profile.rankedTickets||0)+2;}document.body.dataset.tournament='0';
   if(lobbyChannel&&onlineRaceStarted&&authUser&&!onlineLocalFinishSent){onlineLocalFinishSent=true;onlineFinishers.set(authUser.id,{user_id:authUser.id,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),place});lobbyChannel.send({type:'broadcast',event:'race_finish',payload:{user_id:authUser.id,race_id:onlineRaceId,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),distance:playerDistance,place}}).catch(()=>{});}
   if(authUser&&supabaseReady)submitServerResult(raceTime,place,reward).catch(e=>console.warn(e));
-  $('finishTitle').innerText=gameMode==='time'?(won?'ELIMINATION CHAMPION':'ELIMINATED · #'+place):isPoliceMode?(policeFailed?'BUSTED · PURSUIT FAILED':'PURSUIT ESCAPED'):gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);
-  $('finishSummary').innerText=(localPlayer2?`PLAYER 1 #${place} · PLAYER 2 #${p2Place}. `:'')+`${formatTime(raceTime)} · ${gameMode==='time'?(won?'You survived every elimination and were the last racer standing.':`You were eliminated in position ${place}.`):isPoliceMode?(policeFailed?'Vehicle disabled. Police chase ended with no respawn.':'You escaped the patrol fleet.'):place===1?'1st place':`Place ${place}`} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion: +3,000 Credits and 2 Ranked Tickets.':` Tournament placement: #${place}.`):'')+(isSpecialEvent? ' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
+  $('finishTitle').innerText=gameMode==='time'?(won?'ELIMINATION CHAMPION':'ELIMINATED · #'+place):gameMode==='drift'?(won?'DRIFT MASTER':'DRIFT RUN COMPLETE'):gameMode==='checkpoint'?(won?'CHECKPOINT CLEAR':'CHECKPOINT MISSED'):gameMode==='survival'?(won?'SURVIVAL COMPLETE':'SURVIVAL FAILED'):gameMode==='traffic'?(won?'CLEAN RUN':'DAMAGE LIMIT EXCEEDED'):isPoliceMode?(policeFailed?'BUSTED · PURSUIT FAILED':'PURSUIT ESCAPED'):gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);
+  $('finishSummary').innerText=(localPlayer2?`PLAYER 1 #${place} · PLAYER 2 #${p2Place}. `:'')+`${formatTime(raceTime)} · ${gameMode==='time'?(won?'You survived every elimination and were the last racer standing.':`You were eliminated in position ${place}.`):isPoliceMode?(policeFailed?'Vehicle disabled. Police chase ended with no respawn.':'You escaped the patrol fleet.'):place===1?'1st place':`Place ${place}`} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion: +3,000 Credits and 2 Ranked Tickets.':` Tournament placement: #${place}.`):'')+(isSpecialEvent? ' Special event bonus applied.':'')+(gameMode==='drift'?` Drift score: ${Math.floor(driftScore).toLocaleString()}.`:gameMode==='checkpoint'?` Checkpoints: ${checkpointProgress}/4.`:gameMode==='traffic'?` Vehicle damage: ${Math.floor(damage)}%.`:'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
   $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText= lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
   $('finishMenu').classList.remove('hidden');if(lobbyChannel&&onlineRaceStarted)updateOnlineFinishSummary();saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
@@ -1754,7 +2030,7 @@ function launchOnlineRace(payload){
   const startAt=Number(payload.start_at)||Date.now()+3500;
   const delay=Math.max(0,startAt-Date.now()-3150);
   $('mmStatus').innerText=`Matched ${onlineParticipants.length||2} drivers. Synchronizing race start…`;
-  onlineStartTimer=setTimeout(()=>{onlineStartTimer=null;if(!lobbyChannel)return;beginRace();},delay);
+  onlineStartTimer=setTimeout(()=>{onlineStartTimer=null;if(!lobbyChannel)return;beginRace(true);},delay);
 }
 async function sendOnlineRaceStart(mode,hostRecord){
   if(!lobbyChannel||!authUser)return;
@@ -1913,12 +2189,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
   updateUI();renderAll();$('gateUsername').value=profile.username;
   if(supabaseReady){await refreshAuth();if(authUser)$('authGate').classList.add('hidden');}
-  // Energy recovery: one point every six minutes, capped at the profile maximum.
-  const last=Number(localStorage.getItem('mr_energy_stamp')||Date.now());localStorage.setItem('mr_energy_stamp',String(last));const recovered=Math.floor(Math.max(0,Date.now()-last)/360000);if(recovered>0){profile.energy=Math.min(profile.maxEnergy,profile.energy+recovered);localStorage.setItem('mr_energy_stamp',String(Date.now()));saveProfile();updateUI();}
+  // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
+  applyEnergyRegen();updateUI();
   document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
-  $('startBtn').addEventListener('click',()=>{document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';initAudio();beginRace();});
+  $('startBtn').addEventListener('click',()=>{document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
   $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
   $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
   $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
@@ -1926,13 +2202,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('signUpBtn').addEventListener('click',async()=>{if(await handleAuth(true,$('accountEmail').value,$('accountPassword').value,profile.username))$('cloudSaveStatus').innerText='Account created. Check your email if verification is required.';});
   $('signOutBtn').addEventListener('click',async()=>{if(supabaseReady)await supabase.auth.signOut();authUser=null;$('accountStatus').innerText='Signed out. Guest progress remains on this device.';});
   $('saveUsernameBtn').addEventListener('click',async()=>{const v=$('usernameInput').value.trim();if(!/^[a-zA-Z0-9_ -]{3,18}$/.test(v)){alert('Use 3–18 letters, numbers, spaces or underscores.');return;}profile.username=v;updateUI();saveProfile();if(authUser&&supabaseReady){try{const meta=await supabase.auth.updateUser({data:{username:v}});if(meta.error)throw meta.error;const {error}=await supabase.from('player_profiles').upsert({user_id:authUser.id,username:v,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('accountStatus').innerText=`Public racer username saved: ${v}`;}catch(e){$('accountStatus').innerText=`Username saved on this device; cloud update failed: ${e.message}`;}}});
-  const buyUpgrade=(type)=>{const cost=type==='engine'?500+profile.garage.engine*250:type==='handling'?420+profile.garage.handling*220:380+profile.garage.nitro*200;if(profile.credits<cost||profile.garage[type]>=5)return;profile.credits-=cost;profile.garage[type]++;profile.garage.carLevels[profile.garage.carId]=(profile.garage.carLevels[profile.garage.carId]||1)+1;updateUI();renderCarSelect();refreshGarageCar();saveProfile();};
+  const buyUpgrade=(type)=>{const car=getSelectedCar(),u=getCarUpgrades(car.id),cost=upgradePrice(type,car);if(profile.credits<cost||u[type]>=5)return;profile.credits-=cost;u[type]++;profile.garage.carUpgrades[car.id]=u;profile.garage.carLevels[car.id]=(profile.garage.carLevels[car.id]||1)+1;profile.garage.engine=u.engine;profile.garage.handling=u.handling;profile.garage.nitro=u.nitro;updateUI();renderCarSelect();refreshGarageCar();saveProfile();};
   $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));
-  document.querySelectorAll('.swatch').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(b=>b.classList.remove('active'));btn.classList.add('active');profile.garage.paint=btn.dataset.color;refreshGarageCar();saveProfile();}));
-  $('carSelect').addEventListener('change',()=>{profile.garage.carId=$('carSelect').value;profile.garage.carLevels[profile.garage.carId]=profile.garage.carLevels[profile.garage.carId]||1;renderCarSelect();refreshGarageCar();saveProfile();});
+  renderPaintSwatches();
+  $('carSelect').addEventListener('change',()=>{profile.garage.carId=$('carSelect').value;profile.garage.carLevels[profile.garage.carId]=profile.garage.carLevels[profile.garage.carId]||1;renderCarSelect();refreshGarageCar();saveProfile();});$('garageRankFilter').addEventListener('change',renderCarSelect);
   $('storeRank').addEventListener('change',renderStore);
-  [['spoilerToggle','spoiler',180],['underglowToggle','underglow',250],['rimsToggle','rims',150]].forEach(([id,key,cost])=>$(id).addEventListener('change',e=>{if(e.target.checked&&!profile.garage.attachments[key]){if(profile.credits<cost){e.target.checked=false;alert('Not enough credits.');return;}profile.credits-=cost;}profile.garage.attachments[key]=e.target.checked;updateUI();refreshGarageCar();saveProfile();}));
-  $('powerupSelect').addEventListener('change',()=>{profile.selectedPowerup=$('powerupSelect').value;updateUI();saveProfile();});
+  renderGarageAttachments();
+  $('powerupSelect').addEventListener('change',()=>{profile.selectedPowerup=$('powerupSelect').value;profile.raceLoadout=[profile.selectedPowerup,...(profile.raceLoadout||[]).filter(x=>x!==profile.selectedPowerup)].slice(0,2);updateUI();saveProfile();});
   document.querySelectorAll('.pathChoice').forEach(b=>b.addEventListener('click',()=>{selectedStoryPath=b.dataset.path;profile.storyPath=selectedStoryPath;renderStory();saveProfile();}));
   $('storyStartBtn').addEventListener('click',()=>{document.body.dataset.storyRace='1';document.body.dataset.returnView='storyPanel';startStory(-1);});
   $('sideStoryList').addEventListener('click',e=>{const b=e.target.closest('button[data-side]');if(!b)return;const n=Number(b.dataset.side);if(!profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='0';document.body.dataset.returnView='storyPanel';startStory(n);});
@@ -1943,23 +2219,24 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
   $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('mmCancelBtn').addEventListener('click',async()=>{$('matchmakingModal').classList.add('hidden');await leaveOnlineRoom();$('mmStatus').innerText='Search cancelled.';$('casualQueueStatus').innerText='Not currently searching.';$('rankedQueueStatus').innerText='Not currently searching.';});
+  $('briefingConfirm').addEventListener('click',confirmRaceBriefing);$('briefingCancel').addEventListener('click',()=>{$('raceBriefingModal').classList.add('hidden');raceLapsPrepared=false;});$('briefingPowerupA').addEventListener('change',()=>{if($('briefingPowerupA').value===$('briefingPowerupB').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupA').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupB').value=next.id;}});$('briefingPowerupB').addEventListener('change',()=>{if($('briefingPowerupB').value===$('briefingPowerupA').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupB').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupA').value=next.id;}});
   $('pauseGraphic').addEventListener('click',pauseRace);$('resumeBtn').addEventListener('click',resumeRace);
   $('quitBtn').addEventListener('click',async()=>{$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
   $('menuBtn').addEventListener('click',async()=>{$('finishMenu').classList.add('hidden');$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
-  $('againBtn').addEventListener('click',()=>{if(profile.energy<10){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');beginRace();});
-  $('tournamentBtn').addEventListener('click',()=>{if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';beginRace();});
-  $('specialEventBtn').addEventListener('click',()=>{document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=(gameMode==='time'||gameMode==='ghost')?1:3;playerMode='solo';beginRace();});
+  $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<10){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
+  $('tournamentBtn').addEventListener('click',()=>{storySideIndex=-1;if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';openRaceBriefing();});
+  $('specialEventBtn').addEventListener('click',()=>{storySideIndex=-1;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=(gameMode==='time'||gameMode==='ghost')?1:3;playerMode='solo';openRaceBriefing();});
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('tutorialBtn').addEventListener('click',()=>{tutorialStep=0;showTutorial();});$('tutorialNext').addEventListener('click',()=>{if(tutorialStep<TUTORIAL_STEPS.length-1){tutorialStep++;showTutorial();}else{$('tutorialModal').classList.add('hidden');}});$('tutorialBack').addEventListener('click',()=>{tutorialStep=Math.max(0,tutorialStep-1);showTutorial();});$('tutorialClose').addEventListener('click',()=>$('tutorialModal').classList.add('hidden'));
   $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;});
   $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}});$('soundToggle').addEventListener('change',e=>soundEnabled=e.target.checked);
   $('touchStyle').addEventListener('change',e=>document.body.dataset.touchStyle=e.target.value);
-  window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}});
+  window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(e.code==='KeyE'&&gameState==='racing'&&!e.repeat)switchPowerupSlot();});
   window.addEventListener('keyup',e=>keys[e.code]=false);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
-  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
+  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
   $('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').style.display=$('playerModeSelect').value==='local2'?'block':'none';$('p1Touch').style.display='block';document.body.classList.toggle('local-two-player', $('playerModeSelect').value==='local2');});
-  const energyTimer=setInterval(()=>{const now=Date.now();let stamp=Number(localStorage.getItem('mr_energy_stamp'))||now;if(profile.energy>=profile.maxEnergy){localStorage.setItem('mr_energy_stamp',String(now));return;}const ticks=Math.floor(Math.max(0,now-stamp)/360000);if(ticks>0){profile.energy=Math.min(profile.maxEnergy,profile.energy+ticks);stamp=profile.energy>=profile.maxEnergy?now:stamp+ticks*360000;localStorage.setItem('mr_energy_stamp',String(stamp));updateUI();saveProfile();}},30000);
+  const energyTimer=setInterval(()=>{const gained=applyEnergyRegen();updateUI();if(gained)saveProfile();},10000);
   window.addEventListener('beforeunload',saveProfile);
   $('mpRankedBtn').disabled=profile.level<10||(profile.rankedTickets||0)<1||!supabaseReady||!authUser;
   if(profile.level<10)$('mpRankedBtn').title='Unlocks at Street Rep level 10';
