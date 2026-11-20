@@ -380,6 +380,23 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
 .attachmentTile small{display:block;color:#87a2b5;font-size:8px;margin-top:3px}
 .energyStatus{font-size:9px;color:#9bc5d6;margin-top:5px}
 @media(max-width:600px){.storyChoiceGrid,.raceLoadoutGrid,.briefingMeta,.shopTiles{grid-template-columns:1fr}.carSelectionGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.briefingCard{padding:16px}.attachmentGrid{grid-template-columns:1fr}}
+
+/* Notification centre and clearer selection feedback */
+.notificationBell{position:relative;min-width:42px;height:38px;border:1px solid #78eaff45;border-radius:11px;background:linear-gradient(145deg,#153047,#091522);color:#ecfbff;font-size:17px;cursor:pointer;box-shadow:inset 0 1px #ffffff12,0 5px 14px #0004}
+.notificationBell:hover{border-color:#7af3ff;transform:translateY(-1px)}
+.notificationCount{position:absolute;right:-6px;top:-7px;min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:#ff4b91;color:white;font-size:10px;font-weight:900;display:grid;place-items:center;box-shadow:0 0 12px #ff4b9188}
+.notificationMenu{position:fixed;top:76px;right:16px;width:min(390px,calc(100vw - 24px));max-height:min(70vh,560px);z-index:160;border:1px solid #70e9ff88;border-radius:16px;background:linear-gradient(145deg,#0b1c2cf7,#050a13fa);box-shadow:0 25px 90px #000d,0 0 28px #31dfff17;overflow:hidden;backdrop-filter:blur(18px)}
+.notificationHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;border-bottom:1px solid #79eaff25;background:#0c2031}
+.notificationHead b{display:block;font-size:11px;letter-spacing:.15em;color:#e9fbff}.notificationHead small{display:block;margin-top:4px;font-size:9px;color:#89a9bb}
+.notificationActions{display:flex;gap:6px;align-items:center}.notificationActions button{border:1px solid #79eaff35;border-radius:7px;background:#102638;color:#a8d9e9;padding:6px 8px;font-size:8px;font-weight:900;cursor:pointer}.notificationActions #closeNotifications{font-size:17px;line-height:1;padding:4px 8px}
+.notificationList{padding:7px;overflow:auto;max-height:calc(min(70vh,560px) - 62px)}
+.notificationItem{padding:11px 12px;margin:5px 0;border:1px solid #78eaff22;border-radius:10px;background:#091827;color:#dff6ff}.notificationItem.unread{border-color:#64eaff77;background:linear-gradient(100deg,#0e2a3c,#091827);box-shadow:inset 3px 0 #62edff}.notificationItem b{display:block;font-size:10px;letter-spacing:.04em}.notificationItem p{margin:5px 0 0;color:#9db8c8;font-size:9px;line-height:1.5}.notificationItem time{display:block;color:#638397;font-size:8px;margin-top:6px}.notificationEmpty{padding:24px 12px;text-align:center;color:#83a4b8;font-size:10px}
+.toastMessage{position:fixed;left:50%;top:16px;transform:translate(-50%,-16px);opacity:0;pointer-events:none;z-index:170;max-width:min(90vw,500px);padding:10px 16px;border:1px solid #6ceaff80;border-radius:10px;background:#071827ee;color:#e8fbff;font-size:10px;font-weight:900;letter-spacing:.08em;text-align:center;box-shadow:0 12px 32px #0009;transition:opacity .2s,transform .2s}.toastMessage.visible{opacity:1;transform:translate(-50%,0)}
+.selectionSummary{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0;padding:9px 11px;border:1px solid #6ceaff44;border-radius:10px;background:linear-gradient(100deg,#0d2b3b,#091725);color:#dffaff;font-size:9px;font-weight:900;letter-spacing:.08em}
+.rankChipRow{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.rankChip{border:1px solid #71dffb35;border-radius:999px;background:#0a1b2a;color:#93b5c8;padding:7px 11px;font-size:8px;font-weight:900;letter-spacing:.08em;cursor:pointer}.rankChip.active{border-color:#63f1ff;background:linear-gradient(135deg,#17475a,#123043);color:#e9fdff;box-shadow:0 0 0 1px #60eaff30,0 0 16px #23dbff20}.rankChip:focus-visible{outline:2px solid #7af3ff;outline-offset:2px}
+.carPickCard.active{background:linear-gradient(135deg,#174259,#0c1f2d);border-color:#71f3ff;box-shadow:0 0 0 1px #65eaff55,0 0 18px #1ddfff22}.carPickCard:focus-visible,.loadoutSlot select:focus-visible,.mrSelect:focus-visible{outline:2px solid #64edff;outline-offset:2px}
+.eventTierBadge{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:8px 0 12px;padding:10px 12px;border:1px solid #e5bb5b5c;border-radius:10px;background:linear-gradient(100deg,#2b2111,#101722);color:#ffe2a0;font-size:9px;font-weight:900;letter-spacing:.08em}
+@media(max-width:720px){.hubTop>div:last-child{gap:5px!important;flex-wrap:wrap;justify-content:flex-end}.notificationBell{height:34px;min-width:36px}.notificationMenu{top:70px;right:8px}.creditsPill{font-size:8px!important;padding:7px 8px!important}}
 </style>
 </head>
 <body>
@@ -399,7 +416,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
   </div>
   <div class="bottom">
     <div class="nitroPanel">
-      <div class="rowLabel"><span>RACE ENERGY</span><span id="energyHudText">50 / 50</span></div><div class="energyStatus" id="energyHudRegen">FULL · READY</div><div class="bar" style="margin-bottom:10px"><div id="energyFill" style="height:100%;width:100%"></div></div>
+      <div class="rowLabel"><span>RACE ENERGY</span><span id="energyHudText">100 / 100</span></div><div class="energyStatus" id="energyHudRegen">FULL · READY</div><div class="bar" style="margin-bottom:10px"><div id="energyFill" style="height:100%;width:100%"></div></div>
       <div class="rowLabel"><span>NITRO SYSTEM · SPACE</span><span id="nitroText">100%</span></div>
       <div class="bar"><div id="nitroFill"></div></div>
     </div>
@@ -447,7 +464,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
         <div class="creditsPill" id="repPill">LVL 1</div>
         <div class="creditsPill" id="energyPill">⚡ 50/50</div>
         <div class="creditsPill">✦ <span id="creditsValue">1,200</span></div>
-        <div class="creditsPill" id="ticketPill">🎟️ 1</div>
+        <div class="creditsPill" id="ticketPill">🎟️ 1</div><button class="notificationBell" id="notificationBell" type="button" aria-label="Open notifications" title="Notifications">🔔<span id="notificationCount" class="notificationCount hidden">0</span></button>
       </div>
     </div>
     
@@ -515,7 +532,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
           </details>
           <div class="menuFooter">
             <button class="secondaryBtn" id="tutorialBtn">HOW TO PLAY / TUTORIAL</button>
-            <span class="mutedText" id="raceGateHint">10 energy per race · earn Street Rep and Credits</span>
+            <span class="mutedText" id="raceGateHint">5 energy per race · earn Street Rep and Credits</span>
             <button class="primaryBtn" id="startBtn">PLAY RACE ↗</button>
           </div>
         </section>
@@ -573,7 +590,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
                 <div id="garageCanvasContainer" style="width:100%;height:100%;position:absolute;inset:0;"></div>
               </div>
               <div class="panelTitle">SELECTED VEHICLE</div>
-              <div class="carPickerTools"><select class="mrSelect" id="garageRankFilter"><option value="ALL">ALL OWNED RANKS</option><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><span id="ownedCarCount" class="mutedText">1 owned</span></div>
+              <div id="garageRankChips" class="rankChipRow" aria-label="Filter owned cars by rank"></div><div id="garageSelectionSummary" class="selectionSummary">SELECT A VEHICLE TO VIEW ITS CLASS AND STATS</div><div class="carPickerTools"><select class="mrSelect" id="garageRankFilter"><option value="ALL">ALL OWNED RANKS</option><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><span id="ownedCarCount" class="mutedText">1 owned</span></div>
               <div id="carSelectionGrid" class="carSelectionGrid" aria-label="Owned vehicle selection"></div>
               <select class="mrSelect hidden" id="carSelect" aria-hidden="true" tabindex="-1"></select>
               <div class="mutedText" id="carStats" style="margin:8px 0">D-Class starter · Level 1</div>
@@ -619,7 +636,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
           <div class="storeSubgrid">
             <details class="menuGroup" open>
               <summary><span>VEHICLE DEALERSHIP</span><small>browse by rank · buy and equip cars</small></summary>
-              <div class="featureCard"><label class="eyebrow" for="storeRank">CAR RANK</label><select class="mrSelect" id="storeRank"><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><div id="carStoreList" class="dataList" style="margin-top:10px"></div></div>
+              <div class="featureCard"><label class="eyebrow" for="storeRank">CAR RANK</label><div id="storeRankChips" class="rankChipRow" aria-label="Filter cars in store by rank"></div><div id="storeRankSummary" class="selectionSummary">SELECT A RANK TO VIEW AVAILABLE CARS</div><select class="mrSelect" id="storeRank"><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><div id="carStoreList" class="dataList" style="margin-top:10px"></div></div>
             </details>
             <details class="menuGroup">
               <summary><span>POWERUP SUPPLIES & INVENTORY</span><small>buy supplies · manage race inventory</small></summary>
@@ -640,7 +657,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
           <div class="eventsSubgrid">
             <details class="menuGroup" open>
               <summary><span>DAILY & WEEKLY CHALLENGES</span><small>short contracts · long-term objectives</small></summary>
-              <div class="featureGrid"><div class="featureCard"><h3>DAILY CONTRACTS</h3><div id="dailyQuestList" class="dataList"></div></div><div class="featureCard"><h3>WEEKLY CHALLENGES</h3><div id="weeklyQuestList" class="dataList"></div></div></div>
+              <div id="eventTierBadge" class="eventTierBadge">EVENT DIFFICULTY · STREET REP D</div><div class="featureGrid"><div class="featureCard"><h3>DAILY CONTRACTS</h3><div id="dailyQuestList" class="dataList"></div></div><div class="featureCard"><h3>WEEKLY CHALLENGES</h3><div id="weeklyQuestList" class="dataList"></div></div></div>
             </details>
             <details class="menuGroup">
               <summary><span>TOURNAMENTS & SPECIAL EVENTS</span><small>rotating race types · scheduled windows</small></summary>
@@ -691,8 +708,8 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
         <section id="rankedPanel" class="viewPanel hidden">
           <div class="heroStrip"><div><div class="eyebrow">COMPETITIVE CIRCUIT · ONLINE ONLY</div><h2>RANKED <span style="color:var(--pink)">SERIES</span></h2><p>Ranked races only match signed-in players who are searching for Ranked at the same time. There is no solo Ranked option.</p></div></div>
           <div class="featureGrid">
-            <div class="featureCard"><div class="eyebrow">ENTRY REQUIREMENTS</div><h3>STREET REP LEVEL 10+</h3><p>Each Ranked race costs one Ranked Ticket and 10 energy. Ranked Tickets are separate from Credits and are consumed only after a valid opponent is found.</p><div class="dataRow"><b>YOUR STREET REP</b><span id="rankedLevelStatus">LVL 1 · LOCKED</span></div><div class="dataRow"><b>RANKED TICKETS</b><span id="rankedTicketStatus">1 AVAILABLE</span></div><button class="goldBtn" id="mpRankedBtn" style="width:100%;margin-top:12px">SEARCH FOR RANKED OPPONENT</button><div class="mpStatus" id="rankedQueueStatus">Not currently searching.</div></div>
-            <div class="featureCard"><div class="eyebrow">RANKED RULES</div><h3>ONLINE HEAD-TO-HEAD</h3><p>Ranked requires a configured online account, an eligible level, a Ranked Ticket, and another player queued for Ranked. Private rooms and local two-player do not count as Ranked.</p><div class="dataRow"><b>RACE TYPE</b><span>3-LAP CIRCUIT</span></div><div class="dataRow"><b>REWARDS</b><span>CREDITS + STREET REP</span></div><div class="dataRow"><b>LEADERBOARD</b><span>SERVER RANKINGS</span></div></div>
+            <div class="featureCard"><div class="eyebrow">ENTRY REQUIREMENTS</div><h3>STREET REP LEVEL 10+</h3><p>Each Ranked race costs one Ranked Ticket and 5 energy. Ranked Tickets are separate from Credits and are consumed only after a valid opponent is found.</p><div class="dataRow"><b>YOUR STREET REP</b><span id="rankedLevelStatus">LVL 1 · LOCKED</span></div><div class="dataRow"><b>RANKED TICKETS</b><span id="rankedTicketStatus">1 AVAILABLE</span></div><button class="goldBtn" id="mpRankedBtn" style="width:100%;margin-top:12px">SEARCH FOR RANKED OPPONENT</button><div class="mpStatus" id="rankedQueueStatus">Not currently searching.</div></div>
+            <div class="featureCard"><div class="eyebrow">RANKED RULES</div><h3>ONLINE HEAD-TO-HEAD</h3><p>Ranked requires a configured online account, an eligible level, a Ranked Ticket, and the Ranked queue. If fewer than six humans are found, AI racers fill the remaining grid slots after a short search. Private rooms and local two-player do not count as Ranked.</p><div class="dataRow"><b>RACE TYPE</b><span>3-LAP CIRCUIT</span></div><div class="dataRow"><b>REWARDS</b><span>CREDITS + STREET REP</span></div><div class="dataRow"><b>LEADERBOARD</b><span>SERVER RANKINGS</span></div></div>
           </div>
           <div class="featureCard" style="margin-top:12px"><div class="panelTitle">RANKED SERVER STANDINGS</div><div id="rankedLeaderboard" class="dataList"><div class="mutedText">Connect to Supabase to load Ranked standings.</div></div><button class="smallBtn" id="refreshRankedLeaderboard">REFRESH RANKED</button></div>
         </section>
@@ -700,6 +717,12 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
     </div>
   </div>
 </div>
+
+<div id="notificationMenu" class="notificationMenu hidden" aria-live="polite" aria-label="Notifications">
+  <div class="notificationHead"><div><b>NOTIFICATIONS</b><small id="notificationSummary">You're all caught up.</small></div><div class="notificationActions"><button id="markNotificationsRead" type="button">READ ALL</button><button id="closeNotifications" type="button" aria-label="Close notifications">×</button></div></div>
+  <div id="notificationList" class="notificationList"><div class="notificationEmpty">No notifications yet.</div></div>
+</div>
+<div id="toastMessage" class="toastMessage" role="status" aria-live="polite"></div>
 
 <button id="pauseGraphic" aria-label="Pause race" title="Pause race">Ⅱ</button>
 <div id="touchControls">
@@ -733,7 +756,7 @@ body[data-weather="fog"] #weatherLabel{border-color:#becbd2;color:#e7eef1}
     <div class="eyebrow" style="margin:13px 0 7px">MISSION OBJECTIVE</div><div id="briefingObjective" class="briefingObjective">Finish in the top three.</div>
     <div class="panelTitle">RACE LOADOUT · CHOOSE TWO SLOTS</div>
     <div class="raceLoadoutGrid"><div class="loadoutSlot"><label for="briefingPowerupA">SLOT 1 · PRIMARY · Q</label><select class="mrSelect" id="briefingPowerupA"></select></div><div class="loadoutSlot"><label for="briefingPowerupB">SLOT 2 · SWITCH · E</label><select class="mrSelect" id="briefingPowerupB"></select></div></div>
-    <p class="mutedText" id="briefingInventory">Only owned powerups can be equipped. Buy more in the Store.</p>
+    <p class="mutedText" id="briefingInventory">Only owned powerups can be equipped. Buy more in the Store.</p><div id="briefingLoadoutPreview" class="selectionSummary">POWERUP LOADOUT · CHOOSE UP TO TWO ITEMS</div>
     <div class="overlayButtons" style="justify-content:flex-end;margin-top:14px"><button class="secondaryBtn" id="briefingCancel">BACK</button><button class="primaryBtn" id="briefingConfirm">CONFIRM LOADOUT · START RACE ↗</button></div>
   </div>
 </div>
@@ -764,7 +787,8 @@ const clock = new THREE.Clock();
 
 let lobbyChannel = null, matchmakingChannel = null, queueMode = null, onlineRoomMode = 'casual', onlineRaceStarted = false, remoteOpponentMesh = null, remoteOpponentState = null;
 const remotePlayers = new Map(), remotePlayerMeshes = new Map(), onlineFinishers = new Map();
-let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onlineRaceId = null, onlineLocalFinishSent = false, onlineCollisionCooldown = 0;
+let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onlineRaceId = null, onlineLocalFinishSent = false, onlineCollisionCooldown = 0, rankedFallbackTimer = null, rankedBotRoster = [];
+let notificationAutoCloseTimer=null, toastCloseTimer=null;
 let privateLobby = false, publicLobby = false, privateLobbyReady = false, isRoomHost = false, roomMetadata = null, onlineParticipants = [];
 let policeFailed = false, specialEventMode = 'infected', queuePairing = false;
 let authUser = null;
@@ -828,8 +852,8 @@ const PAINT_CATALOG = [
  ...PAINT_COLORS.map((hex,i)=>({hex,name:['Electric Blue','Crimson Pulse','Solar Gold','Mint Circuit','Violet Shift','Burnt Orange','Pearl White','Graphite Black','Laser Pink','Lime Rush','Royal Purple','Teal Current','Silver Alloy','Racing Red','Champagne Gold','Ice Blue','Acid Green','Copper Brown','Frost Silver','Deep Violet','Ivory','Ocean Blue','Volt Green','Merlot','Amber','Lavender','Sky Blue','Rose Red','Slate','Blush'][i]||`Paint ${i+1}`})),
  ...['00e5ff','ff00aa','8cff00','f7ff00','7a00ff','ff6b35','263238','c8fffb'].map((hex,i)=>({hex,name:['Arctic Neon','Ultraviolet','Hyper Lime','Voltage','Deep Plasma','Tangerine','Midnight Slate','Frosted Mint'][i]}))
 ];
-const ENERGY_RECHARGE_MS = 300000; // one energy every five minutes, up to 50
-const RACE_ENTRY_ENERGY = 10;
+const ENERGY_RECHARGE_MS = 300000; // one energy every five minutes, up to 100
+const RACE_ENTRY_ENERGY = 5;
 const STORY_THREADS = [
  [
   {title:'Vex’s First Test',body:'Before the qualifier, Vex quietly checks the old car you brought to the meet. He notices the mismatched panels and worn steering wheel, but does not make a joke. He tells you that the best drivers learn to feel every weakness in a machine. The crew has seen expensive cars lose because their drivers panic. Your first test is not about money; it is about keeping your head when the whole street is watching.',dialogue:'“A fast car gets attention. A steady driver earns respect.” — VEX'},
@@ -889,11 +913,11 @@ STORY_CHAPTERS.forEach((ch,i)=>{ch.sides=(STORY_THREADS[i]||[]).map(x=>x.title);
 // --- PROFILE & AUDIO ---
 let profile = {
     username: 'RACER_' + Math.floor(Math.random()*999),
-    level: 1, xp: 0, credits: 1200, energy: 50, maxEnergy: 50, tickets: 1, rankedTickets: 1,
+    level: 1, xp: 0, credits: 1200, energy: 100, maxEnergy: 100, tickets: 1, rankedTickets: 1, notifications: [],
     garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, carUpgrades:{}, attachments:{spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false} },
     ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0}, completedSides:{}, storyMain:{}, storyPath:'crew', storyChoices:{}, selectedPowerup:'boost', raceLoadout:['boost','repair'], ownedPaints:['176de0','e83e63','f0b52d','31b89c'], ownedAttachments:[], daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
 };
-try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.storyChoices=profile.storyChoices||{};profile.ownedPaints=Array.isArray(profile.ownedPaints)?profile.ownedPaints:[profile.garage.paint||'176de0','e83e63','f0b52d','31b89c'];profile.ownedAttachments=Array.isArray(profile.ownedAttachments)?profile.ownedAttachments:[];profile.raceLoadout=Array.isArray(profile.raceLoadout)?profile.raceLoadout:['boost','repair'];profile.garage.carUpgrades=profile.garage.carUpgrades||{};profile.garage.attachments={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(profile.garage.attachments||{})};profile.inventory={boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0,...(profile.inventory||{})};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];if(profile.garage.paint&&!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);profile.raceLoadout=profile.raceLoadout.filter((id,i,a)=>POWERUPS.some(p=>p.id===id)&&a.indexOf(id)===i).slice(0,2);
+try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.storyChoices=profile.storyChoices||{};profile.ownedPaints=Array.isArray(profile.ownedPaints)?profile.ownedPaints:[profile.garage.paint||'176de0','e83e63','f0b52d','31b89c'];profile.ownedAttachments=Array.isArray(profile.ownedAttachments)?profile.ownedAttachments:[];profile.raceLoadout=Array.isArray(profile.raceLoadout)?profile.raceLoadout:['boost','repair'];profile.garage.carUpgrades=profile.garage.carUpgrades||{};profile.garage.attachments={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(profile.garage.attachments||{})};profile.inventory={boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0,...(profile.inventory||{})};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=100;profile.energy=Math.min(100,Math.max(0,Number(profile.energy)||0));profile.notifications=Array.isArray(profile.notifications)?profile.notifications.slice(0,30):[];selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];if(profile.garage.paint&&!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);profile.raceLoadout=profile.raceLoadout.filter((id,i,a)=>POWERUPS.some(p=>p.id===id)&&a.indexOf(id)===i).slice(0,2);
 const LEGACY_UPGRADE_CAR_ID=profile.garage.carId||'D-01';
 DECOR_ITEMS.forEach(item=>{if(profile.garage.attachments[item.id]&&!profile.ownedAttachments.includes(item.id))profile.ownedAttachments.push(item.id);});
 // Energy restores by one point every five minutes, both online and while the game is closed.
@@ -904,11 +928,13 @@ function applyEnergyRegen(now=Date.now()){
     if(profile.energy>=profile.maxEnergy){localStorage.setItem('mr_energy_stamp',String(now));return 0;}
     const elapsed=Math.max(0,now-stamp),ticks=Math.floor(elapsed/ENERGY_RECHARGE_MS);
     if(ticks<=0)return 0;
+    const wasBelowMax=profile.energy<profile.maxEnergy;
     const gained=Math.min(ticks,profile.maxEnergy-profile.energy);
     profile.energy+=gained;
     stamp=profile.energy>=profile.maxEnergy?now:stamp+gained*ENERGY_RECHARGE_MS;
     localStorage.setItem('mr_energy_stamp',String(stamp));
     localStorage.setItem('midnight_racing_profile',JSON.stringify(profile));
+    if(wasBelowMax&&profile.energy>=profile.maxEnergy)pushNotification('ENERGY FULL','Your energy has recharged to 100. You are ready to race.','energy');
     return gained;
   }catch(e){console.warn('Energy recovery could not be restored',e);return 0;}
 }
@@ -1417,17 +1443,18 @@ function createRacers(){
   const colors=Array.from({length:12},()=>new THREE.Color().setHSL(Math.random(),.78,.55).getHex());
   const playerSpec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];
   const playerPace=1+(profile.garage.engine*.045)+(playerSpec.speed/1000);
-  const rivalCount=lobbyChannel?0:(gameMode==='ghost'?0:(playerMode==='local2'?4:5));
+  const isTierEvent=document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1';const eventAiBoost=isTierEvent?getEventTierIndex()*.024:0;
+  const rankedBots=(lobbyChannel&&onlineRoomMode==='ranked')?rankedBotRoster:[];const rivalCount=lobbyChannel?rankedBots.length:(gameMode==='ghost'?0:(playerMode==='local2'?4:5));
   for(let i=0;i<rivalCount;i++){
-    const isCop=isPoliceMode;
-    const rMesh=createCar(isCop?0x9bb8d0:colors[Math.floor(Math.random()*colors.length)],false,1+Math.floor(Math.random()*4));
+    const bot=rankedBots[i]||null;const isCop=isPoliceMode;
+    const rMesh=createCar(isCop?0x9bb8d0:(bot?parseInt(bot.paint,16):colors[Math.floor(Math.random()*colors.length)]),false,bot?.bodyStyle||1+Math.floor(Math.random()*4));
     if(isCop){const lightBlue=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0x1d88ff}));lightBlue.position.set(-.2,1.55,-.2);rMesh.add(lightBlue);const lightRed=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0xff254b}));lightRed.position.set(.2,1.55,-.2);rMesh.add(lightRed);}
     scene.add(rMesh);
-    rivals.push({mesh:rMesh,index:i,dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:.92+Math.random()*.16,adapt:playerPace,isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0,active:true});
+    rivals.push({mesh:rMesh,index:i,username:bot?.username||`RIVAL ${i+1}`,isBot:!!bot,dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:bot?.ability||clamp(.92+Math.random()*.16+eventAiBoost,.92,1.24),adapt:playerPace*(bot?.adapt||1)*(1+eventAiBoost*.22),isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0,active:true});
   }
   playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;powerupCooldown=false;activeEffects={};driftScore=0;checkpointProgress=0;activePowerupSlot=0;
   eliminationActive=gameMode==='time';eliminationCountdown=30;eliminationOrder=[];eliminationChampion=null;playerEliminated=false;p2Eliminated=false;eliminationRound=0;
-  $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${rivals.length+1+(localPlayer2?1:0)+(remotePlayers.size||0)}/6`;
+  $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${Math.min(6,rivals.length+1+(localPlayer2?1:0)+Math.max(remotePlayers.size||0,onlineParticipants.length?onlineParticipants.length-1:0))}/6`;
   gameState='countdown';$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
   const cdInterval=setInterval(()=>{cd--;if(cd>0)$('countdown').innerText=cd;else if(cd===0)$('countdown').innerText='GO!';else{clearInterval(cdInterval);$('countdown').classList.remove('show');gameState='racing';$('pauseGraphic').classList.add('visible');}},1000);
 }
@@ -1551,7 +1578,8 @@ function update(dt){
   }
 
   if(ghostCar&&bestTimes[currentTrack]){const ghostProgress=clamp(raceTime/bestTimes[currentTrack],0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
-  if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=90){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText='CLEAN · AVOID THE INFECTED RACER';}else if(gameMode==='drift'){$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / 3,000`;}else if(gameMode==='checkpoint'){$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4`;}else if(gameMode==='survival'&&raceTime>=90){finishRace();return;}else if(gameMode==='traffic'&&damage>=40){finishRace();return;}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
+  const tierChallengeBoost=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const infectedTarget=90+tierChallengeBoost*8,survivalTarget=90+tierChallengeBoost*10,driftTarget=3000+tierChallengeBoost*650,trafficLimit=Math.max(20,40-tierChallengeBoost*3);
+  if(gameMode==='infected'){infectedElapsed+=dt;if(infectedElapsed>=infectedTarget){finishRace();return;}if(playerInfected)$('powerStatus').innerText='INFECTED · SURVIVE THE TIMER';else $('powerStatus').innerText=`CLEAN · ${Math.ceil(infectedTarget-infectedElapsed)}s LEFT`;}else if(gameMode==='drift'){$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()}`;}else if(gameMode==='checkpoint'){$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4`;}else if(gameMode==='survival'&&raceTime>=survivalTarget){finishRace();return;}else if(gameMode==='traffic'&&damage>=trafficLimit){finishRace();return;}else if(isPoliceMode){$('powerStatus').innerText=`POLICE HEAT · ${Math.floor(policeHeat*100)}% · EVADE THE PATROL`;}else if(gameMode==='ghost'&&!ghostCar){$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';}
   if(lobbyChannel&&onlineRaceStarted&&gameState==='racing'&&(raceTime-lastNetworkSync)>.08){
     lastNetworkSync=raceTime;const carSpec=getSelectedCar();
     lobbyChannel.send({type:'broadcast',event:'player_pos',payload:{user_id:authUser?.id,race_id:onlineRaceId,dist:playerDistance,offset:playerOffset,speed:playerSpeed,username:getDisplayUsername(),eliminated:playerEliminated,damage,nitro,lap:Math.floor(playerDistance/Math.max(1,trackLength)),race_time:raceTime,paint:profile.garage.paint,bodyStyle:carSpec.body,finished:false}}).catch(()=>{});
@@ -1605,7 +1633,7 @@ async function syncPublicUsername(){
   catch(e){console.warn('Public racer username lookup:',e.message);}
 }
 function energyRegenLabel(){
-  if(profile.energy>=profile.maxEnergy)return 'FULL · READY';
+  if(profile.energy>=profile.maxEnergy)return 'FULL · 100 / 100 READY';
   const stamp=Number(localStorage.getItem('mr_energy_stamp'))||Date.now();
   const remain=Math.max(0,ENERGY_RECHARGE_MS-(Date.now()-stamp)%ENERGY_RECHARGE_MS),m=Math.floor(remain/60000),sec=Math.floor(remain%60000/1000);
   return `+1 ENERGY IN ${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
@@ -1624,7 +1652,7 @@ function updateUI(){
   $('engineBuy').innerText=`BUY ${upgradePrice('engine',car)}`;$('handlingBuy').innerText=`BUY ${upgradePrice('handling',car)}`;$('nitroBuy').innerText=`BUY ${upgradePrice('nitro',car)}`;
   $('engineBuy').disabled=u.engine>=5||profile.credits<upgradePrice('engine',car);$('handlingBuy').disabled=u.handling>=5||profile.credits<upgradePrice('handling',car);$('nitroBuy').disabled=u.nitro>=5||profile.credits<upgradePrice('nitro',car);
   const loadout=(profile.raceLoadout||[]).map(id=>POWERUPS.find(x=>x.id===id)?.name).filter(Boolean);$('loadoutSummary').innerText=`${loadout.join(' + ')||'Choose powerups'} · Q USES SLOT 1 · E SWITCHES`;$('inventoryCount').innerText=POWERUPS.map(p=>`${p.name.split(' ')[0]} ${profile.inventory[p.id]||0}`).join(' · ');
-  if($('usernameInput'))$('usernameInput').value=profile.username;
+  if($('usernameInput'))$('usernameInput').value=profile.username;renderNotificationCenter();
 }
 function refreshGarageCar(){
   if(!garageScene)return;
@@ -1640,6 +1668,40 @@ function initGarage(){
   function renderGarage(){requestAnimationFrame(renderGarage);if(!$('garagePanel').classList.contains('hidden')){if(garageCarObject){garageCarObject.rotation.y+=.0045;garageCarObject.position.y=.04+Math.sin(performance.now()*.0012)*.025;}garageRenderer.render(garageScene,garageCamera);}}
   renderGarage();window.addEventListener('resize',()=>{const w=container.clientWidth||340,h=container.clientHeight||250;garageRenderer.setSize(w,h);garageCamera.aspect=w/h;garageCamera.updateProjectionMatrix();});
 }
+// Notification centre. Every incoming item opens a compact inbox so rewards and unlocks are visible.
+function renderNotificationCenter(){
+  const list=$('notificationList'),count=$('notificationCount'),summary=$('notificationSummary');
+  if(!list)return;
+  profile.notifications=Array.isArray(profile.notifications)?profile.notifications:[];
+  const unread=profile.notifications.filter(n=>!n.read).length;
+  if(count){count.textContent=String(unread);count.classList.toggle('hidden',unread===0);}
+  if(summary)summary.textContent=unread?`${unread} unread notification${unread===1?'':'s'}`:"You're all caught up.";
+  list.innerHTML='';
+  if(!profile.notifications.length){list.innerHTML='<div class="notificationEmpty">No notifications yet.</div>';return;}
+  profile.notifications.slice().reverse().forEach(n=>{
+    const item=document.createElement('article');item.className='notificationItem'+(n.read?'':' unread');
+    const title=document.createElement('b');title.textContent=String(n.title||'MIDNIGHT RACING');
+    const body=document.createElement('p');body.textContent=String(n.body||'');
+    const time=document.createElement('time');time.textContent=new Date(Number(n.createdAt)||Date.now()).toLocaleString();
+    item.append(title,body,time);list.appendChild(item);
+  });
+}
+function pushNotification(title,body,type='info'){
+  profile.notifications=Array.isArray(profile.notifications)?profile.notifications:[];
+  profile.notifications.push({id:`${Date.now()}-${Math.random().toString(36).slice(2,7)}`,title:String(title),body:String(body),type,createdAt:Date.now(),read:false});
+  profile.notifications=profile.notifications.slice(-30);renderNotificationCenter();saveProfile();
+  const panel=$('notificationMenu');if(panel){panel.classList.remove('hidden');if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>{if(panel.dataset.pinned!=='1')panel.classList.add('hidden');},8500);}
+}
+function showToast(message){const node=$('toastMessage');if(!node)return;node.textContent=String(message);node.classList.add('visible');if(toastCloseTimer)clearTimeout(toastCloseTimer);toastCloseTimer=setTimeout(()=>node.classList.remove('visible'),2300);}
+function toggleNotificationMenu(force){const panel=$('notificationMenu');if(!panel)return;const open=typeof force==='boolean'?force:panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);panel.dataset.pinned=open?'1':'0';if(open&&notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);if(open)renderNotificationCenter();}
+function markNotificationsRead(){(profile.notifications||[]).forEach(n=>n.read=true);saveProfile();renderNotificationCenter();}
+function getEventTierIndex(){
+  const levelTier=CAR_RANKS.reduce((best,r,i)=>profile.level>=r.level?i:best,0);
+  const chosen=CAR_RANKS.findIndex(r=>r.name===getSelectedCar().rank);
+  return clamp(Math.max(levelTier,chosen<0?0:chosen),0,CAR_RANKS.length-1);
+}
+function eventTierLabel(){return CAR_RANKS[getEventTierIndex()]?.name||'D';}
+
 // --- PROFILE, PROGRESSION, STORY, STORE AND EVENT SYSTEMS ---
 function saveProfile(){
   try{localStorage.setItem('midnight_racing_profile',JSON.stringify(profile));}catch(e){console.warn('Save failed',e);}
@@ -1650,7 +1712,7 @@ function addCredits(amount){profile.credits=Math.max(0,profile.credits+amount);}
 function addXP(amount){
   profile.xp+=amount;let leveled=false;
   while(profile.xp>=XP_PER_LEVEL){profile.xp-=XP_PER_LEVEL;profile.level++;leveled=true;if(profile.level%5===0){addCredits(1200+profile.level*80);profile.rankedTickets=(profile.rankedTickets||0)+1;profile.inventory.shield=(profile.inventory.shield||0)+1;}}
-  if(leveled)alert(`Street Rep increased! You reached level ${profile.level}.`);
+  if(leveled){pushNotification('STREET REP INCREASED',`You reached Level ${profile.level} and are now in the ${eventTierLabel()} event tier.`,'level');refreshQuests();updateUI();}
 }
 function carUnlockRank(rank){const r=CAR_RANKS.find(x=>x.name===rank);return !!r&&profile.level>=r.level;}
 function getSelectedCar(){return CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];}
@@ -1769,7 +1831,7 @@ function renderStory(){
 }
 function startStory(sideIndex=-1){
   const ch=STORY_CHAPTERS[selectedChapter];if(!ch)return;
-  if(profile.energy<10){alert('Not enough energy.');return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){alert('Not enough energy.');return;}
   if(sideIndex>=0){
     if(!profile.storyMain[storyKey(selectedChapter)]){alert('Complete the main chapter race before playing its side stories.');return;}
     storySideIndex=sideIndex;gameMode=sideIndex===2?'police':(sideIndex===1?'time':'street');
@@ -1780,28 +1842,38 @@ function startStory(sideIndex=-1){
   playerMode='solo';$('playerModeSelect').value='solo';$('modeGrid').querySelectorAll('.modeCard').forEach(b=>b.classList.toggle('active',b.dataset.mode===gameMode));
   isPoliceMode=gameMode==='police';raceLaps=gameMode==='ghost'?1:(gameMode==='time'?999:3);openRaceBriefing();
 }
+function renderRankChipGroup(hostId,active,onPick,includeAll=true){
+  const host=$(hostId);if(!host)return;host.innerHTML='';
+  const ranks=[...(includeAll?['ALL']:[]),...CAR_RANKS.map(r=>r.name)];
+  ranks.forEach(rank=>{const b=document.createElement('button');b.type='button';b.className='rankChip'+(rank===active?' active':'');b.textContent=rank.toUpperCase();b.setAttribute('aria-pressed',rank===active?'true':'false');b.addEventListener('click',()=>onPick(rank));host.appendChild(b);});
+}
+function updateBriefingLoadoutPreview(){
+  const host=$('briefingLoadoutPreview');if(!host)return;const a=$('briefingPowerupA')?.value||'',b=$('briefingPowerupB')?.value||'';
+  const label=id=>id?(POWERUPS.find(p=>p.id===id)?.name||id):'EMPTY SLOT';
+  host.textContent=`SELECTED LOADOUT · 1: ${label(a)} · 2: ${label(b)}`;
+}
 function renderCarSelect(){
   const sel=$('carSelect'),host=$('carSelectionGrid');if(!sel||!host)return;
   const owned=CAR_CATALOG.filter(c=>(profile.ownedCars||['D-01']).includes(c.id));
-  const filter=$('garageRankFilter')?.value||'ALL';const visible=filter==='ALL'?owned:owned.filter(c=>c.rank===filter);
+  const filter=$('garageRankFilter')?.value||'ALL';const visible=filter==='ALL'?owned:owned.filter(c=>c.rank===filter);renderRankChipGroup('garageRankChips',filter,rank=>{$('garageRankFilter').value=rank;renderCarSelect();});
   sel.innerHTML='';host.innerHTML='';
   owned.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});
   if(!owned.some(c=>c.id===profile.garage.carId))profile.garage.carId='D-01';sel.value=profile.garage.carId;
   visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.rank)} CLASS · ${Math.round(st.speed)} SPD · ${Math.round(st.handling)} HND · LVL ${st.level}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarUpgrades(c.id);renderCarSelect();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
   if(!visible.length)host.innerHTML='<div class="mutedText">No owned vehicles in this rank yet. Visit the Store to buy one.</div>';
   if($('ownedCarCount'))$('ownedCarCount').textContent=`${owned.length} owned`;
-  const c=getSelectedCar(),st=carStatsWithUpgrades(c);$('carStats').innerText=`${c.rank}-Class · Top speed ${st.speed.toFixed(1)} · Handling ${st.handling.toFixed(1)} · Level ${st.level}`;$('carLevelText').innerText=`CAR LEVEL ${st.level} · ${c.rank} CLASS`;
+  const c=getSelectedCar(),st=carStatsWithUpgrades(c);$('carStats').innerText=`${c.rank}-Class · Top speed ${st.speed.toFixed(1)} · Handling ${st.handling.toFixed(1)} · Level ${st.level}`;$('carLevelText').innerText=`CAR LEVEL ${st.level} · ${c.rank} CLASS`;if($('garageSelectionSummary'))$('garageSelectionSummary').textContent=`SELECTED · ${c.name} · ${c.rank} CLASS · ${st.speed.toFixed(1)} SPEED · ${st.handling.toFixed(1)} HANDLING`;
 }
 function renderStore(){
-  const rank=$('storeRank')?.value||'D',host=$('carStoreList');if(!host)return;host.innerHTML='';
-  CAR_CATALOG.filter(c=>c.rank===rank).forEach(c=>{const owned=(profile.ownedCars||['D-01']).includes(c.id),unlocked=carUnlockRank(c.rank),row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${escapeHtml(c.name)}</b><small>${c.rank} CLASS · SPEED ${c.speed} · HANDLING ${c.handling} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small></div><button class="smallBtn" ${owned||!unlocked||profile.credits<c.price?'disabled':''}>${owned?'OWNED':`BUY ${Math.floor(c.price).toLocaleString()}`}</button>`;row.querySelector('button').addEventListener('click',()=>{if(owned||!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;profile.garage.paint=c.color.toString(16).padStart(6,'0');if(!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);getCarUpgrades(c.id);renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});host.appendChild(row);});
-  const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.desc)} · OWNED ${profile.inventory[p.id]||0}</small><button class="smallBtn" ${profile.credits<p.price?'disabled':''}>BUY ${p.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;renderStore();updateUI();saveProfile();});powers.appendChild(tile);});
+  const rank=$('storeRank')?.value||'D',host=$('carStoreList');if(!host)return;host.innerHTML='';renderRankChipGroup('storeRankChips',rank,r=>{$('storeRank').value=r;renderStore();},false);if($('storeRankSummary'))$('storeRankSummary').textContent=`BROWSING ${rank} CLASS · ${CAR_CATALOG.filter(c=>c.rank===rank).length} MODELS · LEVEL ${CAR_RANKS.find(r=>r.name===rank)?.level||1}+`; 
+  CAR_CATALOG.filter(c=>c.rank===rank).forEach(c=>{const owned=(profile.ownedCars||['D-01']).includes(c.id),unlocked=carUnlockRank(c.rank),row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${escapeHtml(c.name)}</b><small>${c.rank} CLASS · SPEED ${c.speed} · HANDLING ${c.handling} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small></div><button class="smallBtn" ${owned||!unlocked||profile.credits<c.price?'disabled':''}>${owned?'OWNED':`BUY ${Math.floor(c.price).toLocaleString()}`}</button>`;row.querySelector('button').addEventListener('click',()=>{if(owned||!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;profile.garage.paint=c.color.toString(16).padStart(6,'0');if(!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);pushNotification('NEW CAR ACQUIRED',`${c.name} · ${c.rank} class added to your garage.`,'store');getCarUpgrades(c.id);renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});host.appendChild(row);});
+  const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.desc)} · OWNED ${profile.inventory[p.id]||0}</small><button class="smallBtn" ${profile.credits<p.price?'disabled':''}>BUY ${p.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;pushNotification('STORE PURCHASE',`${p.name} added to your inventory.`,'store');renderStore();updateUI();saveProfile();});powers.appendChild(tile);});
   $('inventoryList').innerHTML=POWERUPS.map(p=>`<div class="dataRow"><span>${escapeHtml(p.name)}</span><b>${profile.inventory[p.id]||0}</b></div>`).join('');
   const utility=$('utilityShopList');utility.innerHTML='';
-  [{id:'energy',name:'Energy Refill +10',desc:'Restore ten energy instantly. Maximum capacity is 50.',price:650,disabled:profile.energy>=profile.maxEnergy},{id:'ticket',name:'Ranked Ticket',desc:'One entry ticket for an online Ranked race.',price:1800,disabled:false}].forEach(item=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${item.name}</b><small>${item.desc}</small><button class="smallBtn" ${profile.credits<item.price||item.disabled?'disabled':''}>BUY ${item.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<item.price||item.disabled)return;profile.credits-=item.price;if(item.id==='energy'){applyEnergyRegen();profile.energy=Math.min(profile.maxEnergy,profile.energy+10);if(profile.energy>=profile.maxEnergy)localStorage.setItem('mr_energy_stamp',String(Date.now()));}else profile.rankedTickets=(profile.rankedTickets||0)+1;renderStore();updateUI();saveProfile();});utility.appendChild(tile);});
-  if($('energyShopStatus'))$('energyShopStatus').textContent=`ENERGY ${profile.energy}/${profile.maxEnergy} · ${energyRegenLabel()} · +1 energy every 5 minutes, up to 50.`;
-  const ownedPaints=profile.ownedPaints||['176de0'];const paintHost=$('paintStoreList');paintHost.innerHTML='';PAINT_CATALOG.forEach((paint,i)=>{const owned=ownedPaints.includes(paint.hex),price=320+Math.floor(i/4)*80,tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b><span style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#${paint.hex};vertical-align:-2px;margin-right:5px;border:1px solid #fff6"></span>${escapeHtml(paint.name)}</b><small>${owned?'OWNED':`CUSTOM PAINT FINISH · ${price} CREDITS`}</small><button class="smallBtn" ${owned||profile.credits<price?'disabled':''}>${owned?'OWNED':`BUY ${price}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned||profile.credits<price)return;profile.credits-=price;profile.ownedPaints.push(paint.hex);renderStore();renderPaintSwatches();updateUI();saveProfile();});paintHost.appendChild(tile);});
-  const decor=$('decorStoreList');decor.innerHTML='';DECOR_ITEMS.forEach(item=>{const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.desc)} · ${owned?(equipped?'EQUIPPED':'OWNED'):`${item.price.toLocaleString()} CREDITS`}</small><button class="smallBtn" ${!owned&&profile.credits<item.price?'disabled':''}>${owned?(equipped?'UNEQUIP':'EQUIP'):`BUY ${item.price.toLocaleString()}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned){profile.garage.attachments[item.id]=!equipped;}else{if(profile.credits<item.price)return;profile.credits-=item.price;profile.ownedAttachments.push(item.id);profile.garage.attachments[item.id]=true;}renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();});decor.appendChild(tile);});
+  [{id:'energy',name:'Energy Refill +25',desc:'Restore 25 energy instantly. Maximum capacity is 100.',price:850,disabled:profile.energy>=profile.maxEnergy},{id:'ticket',name:'Ranked Ticket',desc:'One entry ticket for an online Ranked race.',price:1800,disabled:false}].forEach(item=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${item.name}</b><small>${item.desc}</small><button class="smallBtn" ${profile.credits<item.price||item.disabled?'disabled':''}>BUY ${item.price.toLocaleString()} CR</button>`;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<item.price||item.disabled)return;profile.credits-=item.price;if(item.id==='energy'){applyEnergyRegen();profile.energy=Math.min(profile.maxEnergy,profile.energy+25);if(profile.energy>=profile.maxEnergy)localStorage.setItem('mr_energy_stamp',String(Date.now()));}else profile.rankedTickets=(profile.rankedTickets||0)+1;pushNotification('STORE PURCHASE',item.id==='energy'?'Energy refill purchased.': 'One Ranked Ticket added to your balance.','store');renderStore();updateUI();saveProfile();});utility.appendChild(tile);});
+  if($('energyShopStatus'))$('energyShopStatus').textContent=`ENERGY ${profile.energy}/${profile.maxEnergy} · ${energyRegenLabel()} · +1 energy every 5 minutes, up to 100.`;
+  const ownedPaints=profile.ownedPaints||['176de0'];const paintHost=$('paintStoreList');paintHost.innerHTML='';PAINT_CATALOG.forEach((paint,i)=>{const owned=ownedPaints.includes(paint.hex),price=320+Math.floor(i/4)*80,tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b><span style="display:inline-block;width:13px;height:13px;border-radius:50%;background:#${paint.hex};vertical-align:-2px;margin-right:5px;border:1px solid #fff6"></span>${escapeHtml(paint.name)}</b><small>${owned?'OWNED':`CUSTOM PAINT FINISH · ${price} CREDITS`}</small><button class="smallBtn" ${owned||profile.credits<price?'disabled':''}>${owned?'OWNED':`BUY ${price}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned||profile.credits<price)return;profile.credits-=price;profile.ownedPaints.push(paint.hex);pushNotification('NEW PAINT UNLOCKED',`${paint.name} is now available in your garage.`,'store');renderStore();renderPaintSwatches();updateUI();saveProfile();});paintHost.appendChild(tile);});
+  const decor=$('decorStoreList');decor.innerHTML='';DECOR_ITEMS.forEach(item=>{const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.desc)} · ${owned?(equipped?'EQUIPPED':'OWNED'):`${item.price.toLocaleString()} CREDITS`}</small><button class="smallBtn" ${!owned&&profile.credits<item.price?'disabled':''}>${owned?(equipped?'UNEQUIP':'EQUIP'):`BUY ${item.price.toLocaleString()}`}</button>`;tile.querySelector('button').addEventListener('click',()=>{if(owned){profile.garage.attachments[item.id]=!equipped;}else{if(profile.credits<item.price)return;profile.credits-=item.price;profile.ownedAttachments.push(item.id);profile.garage.attachments[item.id]=true;pushNotification('NEW ATTACHMENT UNLOCKED',`${item.name} is now owned and equipped.`,'store');}renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();});decor.appendChild(tile);});
 }
 function renderGarageAttachments(){
  const host=$('garageAttachments');if(!host)return;host.innerHTML='';
@@ -1832,15 +1904,33 @@ function renderQuestBoard(){
 }
 
 function refreshQuests(){
-  const day=new Date().toISOString().slice(0,10),week=(()=>{const d=new Date();d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10);})();
-  if(profile.daily.date!==day)profile.daily={date:day,progress:0,claimed:false};if(profile.weekly.date!==week)profile.weekly={date:week,progress:0,claimed:false};
-  const daily=[{name:'Complete Three Laps',goal:3,reward:450},{name:'Finish Two Events',goal:2,reward:600},{name:'Collect Five Supply Drops',goal:5,reward:500}];
-  const weekly=[{name:'Complete Eight Races',goal:8,reward:2200},{name:'Earn 2,000 Street Rep',goal:2000,reward:3000}];
-  const render=(arr,host,obj)=>{host.innerHTML='';arr.forEach((q,i)=>{const pr=obj.progress?.[i]||0;const done=pr>=q.goal;const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${q.name}</b><small>${Math.min(pr,q.goal)}/${q.goal} · REWARD ${q.reward} CREDITS</small></div><button class="smallBtn" ${!done||obj.claimed?.[i]?'disabled':''}>${obj.claimed?.[i]?'CLAIMED':done?'CLAIM':'IN PROGRESS'}</button>`;row.querySelector('button').addEventListener('click',()=>{if(!done||obj.claimed?.[i])return;obj.claimed=obj.claimed||{};obj.claimed[i]=true;addCredits(q.reward);updateUI();refreshQuests();saveProfile();});host.appendChild(row);});};
-  profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.weekly.progress=profile.weekly.progress&&typeof profile.weekly.progress==='object'?profile.weekly.progress:{};render(daily,$('dailyQuestList'),profile.daily);render(weekly,$('weeklyQuestList'),profile.weekly);renderQuestBoard();
+  const now=new Date(),day=now.toISOString().slice(0,10),week=(()=>{const d=new Date(now);d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10);})();
+  const tier=getEventTierIndex(),tierName=CAR_RANKS[tier]?.name||'D',multiplier=1+tier*.28;
+  const hadDailyRecord=!!profile.daily.date,hadWeeklyRecord=!!profile.weekly.date;const dailyReset=profile.daily.date!==day,weeklyReset=profile.weekly.date!==week;
+  const tierChanged=(!dailyReset&&profile.daily.tier!=null&&profile.daily.tier!==tier)||(!weeklyReset&&profile.weekly.tier!=null&&profile.weekly.tier!==tier);
+  if(dailyReset||tierChanged)profile.daily={date:day,tier,progress:{},claimed:{}};
+  if(weeklyReset||tierChanged)profile.weekly={date:week,tier,progress:{},claimed:{}};
+  profile.daily.tier=tier;profile.weekly.tier=tier;if(dailyReset&&hadDailyRecord)pushNotification('DAILY CONTRACTS REFRESHED','New rank-scaled daily challenges are available.','event');if(weeklyReset&&hadWeeklyRecord)pushNotification('WEEKLY CHALLENGES REFRESHED','Your new weekly objectives and rewards are ready.','event');
+  const daily=[
+    {name:`Complete ${4+tier*2} Race Laps`,goal:4+tier*2,reward:Math.round(420*multiplier)},
+    {name:`Finish ${2+Math.floor(tier*.7)} Races`,goal:2+Math.floor(tier*.7),reward:Math.round(560*multiplier)},
+    {name:`Collect ${3+tier*2} Supply Drops`,goal:3+tier*2,reward:Math.round(480*multiplier)}
+  ];
+  const weekly=[
+    {name:`Complete ${6+tier*2} Races`,goal:6+tier*2,reward:Math.round(2000*multiplier)},
+    {name:`Earn ${1000+tier*650} Street Rep`,goal:1000+tier*650,reward:Math.round(2700*multiplier)},
+    {name:`Finish ${Math.max(2,2+tier)} Races on the Podium`,goal:Math.max(2,2+tier),reward:Math.round(2400*multiplier)}
+  ];
+  const render=(arr,host,obj,kind)=>{host.innerHTML='';arr.forEach((q,i)=>{const pr=Number(obj.progress?.[i])||0,done=pr>=q.goal,claimed=!!obj.claimed?.[i];const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<div><b>${q.name}</b><small>${Math.min(pr,q.goal)}/${q.goal} · REWARD ${q.reward.toLocaleString()} CREDITS</small></div><button class="smallBtn" ${!done||claimed?'disabled':''}>${claimed?'CLAIMED':done?'CLAIM':'IN PROGRESS'}</button>`;row.querySelector('button').addEventListener('click',()=>{if(!done||claimed)return;obj.claimed=obj.claimed||{};obj.claimed[i]=true;addCredits(q.reward);pushNotification(`${kind.toUpperCase()} REWARD CLAIMED`,`You earned ${q.reward.toLocaleString()} Credits for: ${q.name}.`,'reward');updateUI();refreshQuests();saveProfile();});host.appendChild(row);});};
+  profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.weekly.progress=profile.weekly.progress&&typeof profile.weekly.progress==='object'?profile.weekly.progress:{};
+  render(daily,$('dailyQuestList'),profile.daily,'daily');render(weekly,$('weeklyQuestList'),profile.weekly,'weekly');renderQuestBoard();
+  if($('eventTierBadge'))$('eventTierBadge').textContent=`EVENT DIFFICULTY · ${tierName} TIER ${tier+1}/7 · REWARD MULTIPLIER ×${multiplier.toFixed(2)} · AI PACE ADAPTS TO YOUR REP`;
+  if(tierChanged)pushNotification('EVENT DIFFICULTY UPDATED',`Your Street Rep is now ${tierName}. Daily and weekly challenges have scaled to your current rank.`,'event');
   const next=(Math.floor(profile.level/5)+1)*5;$('milestoneStatus').innerText=`Level ${next} reward: credits, a tournament ticket and a shield powerup.`;
-  const now=new Date(),dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);$('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · Top finish earns 3,000 Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. A limited event is selected at random on event days.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
-  const specialModes=['infected','police','time','random','drift','checkpoint','survival','traffic'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT',drift:'DRIFT SCORE ATTACK',checkpoint:'CHECKPOINT RUSH',survival:'SURVIVAL GAUNTLET',traffic:'TRAFFIC RUN'};$('specialEventStatus').innerText=`TODAY'S ROTATING EVENT: ${eventNames[specialEventMode]}. Complete the event for bonus Credits and Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
+  const dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);
+  $('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · ${tierName} tier rewards: ${Math.round(3000*multiplier).toLocaleString()} Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. Today's challenge tier is ${tierName}.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
+  const specialModes=['infected','police','time','random','drift','checkpoint','survival','traffic'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED SURVIVAL',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT',drift:'DRIFT SCORE ATTACK',checkpoint:'CHECKPOINT RUSH',survival:'SURVIVAL GAUNTLET',traffic:'TRAFFIC RUN'};
+  $('specialEventStatus').innerText=`TODAY'S ${tierName}-TIER EVENT: ${eventNames[specialEventMode]}. AI difficulty, objective targets and rewards scale with your Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
   saveProfile();
 }
 function renderLocalLeaderboard(){const host=$('localLeaderboard');if(!host)return;host.innerHTML='';const rows=leaderboardLocal.slice().sort((a,b)=>a.time-b.time).slice(0,10);if(!rows.length)host.innerHTML='<div class="mutedText">Finish a time trial to set your first record.</div>';rows.forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${r.username}</b><span>${formatTime(r.time)}</span>`;host.appendChild(el);});}
@@ -1861,7 +1951,7 @@ function activatePowerup(){if(powerupCooldown)return;powerupCooldown=true;setTim
 function currentRaceObjective(){
  if(document.body.dataset.storyRace==='1')return STORY_CHAPTERS[selectedChapter]?.objective||'Complete the chapter objective.';
  if(storySideIndex>=0)return sideMissionBrief(selectedChapter,storySideIndex);
- const objectives={street:'Finish in the top three. Win for the full reward.',time:'Survive each timed elimination. Last place is removed every 30 seconds until one racer remains.',police:'Escape the active patrol fleet. Police vehicles will try to box you in. No respawns.',ghost:'Beat your personal best lap time.',infected:'Avoid the infected driver for 90 seconds. Touching the infected driver spreads the status.',drift:'Build at least 3,000 clean drift points and complete the route.',checkpoint:'Pass every checkpoint in order and finish before the countdown expires.',survival:'Survive the full 90-second gauntlet with your vehicle operational.',traffic:'Finish the circuit with less than 40% vehicle damage.',random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
+ const tier=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const objectives={street:'Finish in the top three. Win for the full reward.',time:'Survive each timed elimination. Last place is removed every 30 seconds until one racer remains.',police:'Escape the active patrol fleet. Police vehicles will try to box you in. No respawns.',ghost:'Beat your personal best lap time.',infected:`Avoid the infected driver for ${90+tier*8} seconds. Touching the infected driver spreads the status.`,drift:`Build at least ${(3000+tier*650).toLocaleString()} clean drift points and complete the route.`,checkpoint:'Pass every checkpoint in order and finish before the countdown expires.',survival:`Survive the full ${90+tier*10}-second gauntlet with your vehicle operational.`,traffic:`Finish the circuit with less than ${Math.max(20,40-tier*3)}% vehicle damage.`,random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
  if(document.body.dataset.tournament==='1')return 'Tournament final: finish as high as possible. First place earns the champion reward.';
  if(document.body.dataset.specialEvent==='1')return `Rotating special event: ${objectives[gameMode]||'Complete the event objective.'}`;
  return objectives[gameMode]||'Finish the race and earn Street Rep.';
@@ -1873,7 +1963,7 @@ function fillBriefingPowerupSelects(){
  const load=(profile.raceLoadout||[]).filter(id=>owned.includes(id));
  slots[0].value=load[0]||'';
  slots[1].value=load.find(id=>id!==slots[0].value)||'';
- $('briefingInventory').innerText=POWERUPS.map(p=>`${p.name}: ${profile.inventory[p.id]||0}`).join(' · ');
+ $('briefingInventory').innerText=POWERUPS.map(p=>`${p.name}: ${profile.inventory[p.id]||0}`).join(' · ');updateBriefingLoadoutPreview();
 }
 function openRaceBriefing(){
  if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}; energy restores one point every five minutes.`);return;}
@@ -1923,19 +2013,20 @@ function finishRace(){
   if(raceAwarded)return;raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
   let place=1,p2Place=0,won=false;
   if(gameMode==='time'&&eliminationChampion){const finalOrder=[eliminationChampion,...eliminationOrder.slice().reverse()];place=finalOrder.indexOf('player')+1;if(place<1)place=finalOrder.length+1;p2Place=localPlayer2?finalOrder.indexOf('player2')+1:0;won=eliminationChampion==='player';}
-  else{const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...Array.from(remotePlayers.values()).map(r=>({name:r.username||'ONLINE RACER',dist:r.dist,online:true})),...rivals.map(r=>({name:r.isPolice?'PATROL':`RIVAL`,dist:r.dist}))].sort((a,b)=>b.dist-a.dist);place=sorted.findIndex(r=>r.player)+1;p2Place=sorted.findIndex(r=>r.player2)+1;won=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected&&place===1:gameMode==='drift'?driftScore>=3000:gameMode==='checkpoint'?checkpointProgress>=4&&place<=3:gameMode==='survival'?damage<100:gameMode==='traffic'?damage<40:place===1);}
+  else{const sorted=[{name:profile.username,dist:playerDistance,player:true},...(localPlayer2?[{name:'PLAYER 2',dist:p2State.dist,player2:true}]:[]),...Array.from(remotePlayers.values()).map(r=>({name:r.username||'ONLINE RACER',dist:r.dist,online:true})),...rivals.map(r=>({name:r.isPolice?'PATROL':(r.username||'RIVAL'),dist:r.dist}))].sort((a,b)=>b.dist-a.dist);place=sorted.findIndex(r=>r.player)+1;p2Place=sorted.findIndex(r=>r.player2)+1;won=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected&&place===1:gameMode==='drift'?driftScore>=(3000+((document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?eventTier*650:0)):gameMode==='checkpoint'?checkpointProgress>=4&&place<=3:gameMode==='survival'?damage<100:gameMode==='traffic'?damage<Math.max(20,40-((document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?eventTier*3:0)):place===1);}
   if(localPlayer2)$('finishSummary').dataset.p2=`Player 2: place ${p2Place}.`;
-  const reward=won?850:Math.max(250,650-place*70);
+  const eventTier=getEventTierIndex(),eventRewardScale=1+eventTier*.12;const reward=Math.round((won?850:Math.max(250,650-place*70))*((document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?eventRewardScale:1));
   if(document.body.dataset.storyRace==='1'&&selectedStoryChoice==='lead'&&won)addCredits(250);
   if(document.body.dataset.storyRace==='1'&&selectedStoryChoice==='crew'&&won)profile.inventory.repair=(profile.inventory.repair||0)+1;
   const isRanked=onlineRoomMode==='ranked'&&!!lobbyChannel;
   const isSpecialEvent=document.body.dataset.specialEvent==='1';
-  const xpBase=isRanked?210:(isSpecialEvent?170:(gameMode==='street'?130:gameMode==='police'?150:gameMode==='time'?120:115));
+  const xpBase=(isRanked?210:(isSpecialEvent?170:(gameMode==='street'?130:gameMode==='police'?150:gameMode==='time'?120:115)))+((isSpecialEvent||document.body.dataset.tournament==='1')?eventTier*18:0);
   const xp=won?Math.round(xpBase*1.35):xpBase;
   profile.totalRaces++;if(won)profile.wins++;profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.races=(profile.questStats.races||0)+1;if(place<=3)profile.questStats.podiums=(profile.questStats.podiums||0)+1;addCredits(reward);addXP(xp);
-  if(isSpecialEvent&&won){addCredits(900);profile.rankedTickets=(profile.rankedTickets||0)+1;}
+  if(isSpecialEvent&&won){addCredits(Math.round(900*eventRewardScale));profile.rankedTickets=(profile.rankedTickets||0)+1;pushNotification('SPECIAL EVENT WON',`You earned bonus Credits and a Ranked Ticket for winning the ${eventTierLabel()}-tier event.`,'event');}
   if(profile.daily.date===new Date().toISOString().slice(0,10)){profile.daily.progress=profile.daily.progress&&typeof profile.daily.progress==='object'?profile.daily.progress:{};profile.daily.progress[1]=(profile.daily.progress[1]||0)+1;profile.daily.progress[0]=(profile.daily.progress[0]||0)+Math.min(6,Math.max(1,raceLaps));}
-  if(profile.weekly.progress){profile.weekly.progress[0]=(profile.weekly.progress[0]||0)+1;profile.weekly.progress[1]=(profile.weekly.progress[1]||0)+xp;}
+  if(profile.weekly.progress){profile.weekly.progress[0]=(profile.weekly.progress[0]||0)+1;profile.weekly.progress[1]=(profile.weekly.progress[1]||0)+xp;if(place<=3)profile.weekly.progress[2]=(profile.weekly.progress[2]||0)+1;}
+  pushNotification('RACE COMPLETE',`${won?'Victory':'Race finished'} · Place ${place} · +${xp} Street Rep · +${reward} Credits.`,'race');
   if(gameMode==='time'||gameMode==='ghost'){
     const key=currentTrack;const old=bestTimes[key];if(!old||raceTime<old){bestTimes[key]=raceTime;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}
     leaderboardLocal.push({username:profile.username,time:raceTime,track:currentTrack});localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));
@@ -1947,7 +2038,7 @@ function finishRace(){
     const sideSuccess=gameMode==='police'?!policeFailed:gameMode==='time'?won:place<=3;
     const stars=sideSuccess?(gameMode==='police'?(damage<=20?3:2):gameMode==='time'?3:place===1?3:place===2?2:1):0;
     const sideKey=`${selectedChapter}-${storySideIndex}`;profile.sideStoryStars[sideKey]=Math.max(Number(profile.sideStoryStars[sideKey]||0),stars);
-    if(stars>0)profile.completedSides[`${storyKey(selectedChapter)}-${storySideIndex}`]=true;
+    if(stars>0){const completionKey=`${storyKey(selectedChapter)}-${storySideIndex}`;const wasComplete=!!profile.completedSides[completionKey];profile.completedSides[completionKey]=true;if(!wasComplete)pushNotification('CREW EPISODE COMPLETE',`${STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'Side story'} cleared with ${stars} stars.`,'story');const allEpisodes=(STORY_CHAPTERS[selectedChapter]?.sides||[]).every((_,j)=>!!profile.completedSides[`${storyKey(selectedChapter)}-${j}`]||Number(profile.sideStoryStars[`${selectedChapter}-${j}`]||0)>0);if(allEpisodes&&STORY_CHAPTERS[selectedChapter+1])pushNotification('NEXT TRACK UNLOCKED',`${TRACKS[STORY_CHAPTERS[selectedChapter+1].track]?.name||STORY_CHAPTERS[selectedChapter+1].track} is now available.`,'unlock');}
     const sideName=STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'SIDE STORY';
     storyMissionResult=stars>0?`${sideName} COMPLETE · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}.`:`${sideName} OBJECTIVE NOT MET — replay this episode.`;
     storySideIndex=-1;
@@ -1955,12 +2046,12 @@ function finishRace(){
     const mainSuccess=isPoliceMode?!policeFailed:(gameMode==='infected'?!playerInfected:(gameMode==='time'?won:(selectedChapter===0?place<=3:won)));
     const stars=mainSuccess?(isPoliceMode?(damage<=20?3:2):gameMode==='time'?3:place===1?3:place===2?2:1):0;
     profile.chapterStars[selectedChapter]=Math.max(Number(profile.chapterStars[selectedChapter]||0),stars);
-    if(mainSuccess){profile.storyMain[storyKey(selectedChapter)]=true;profile.questStats.storyWins=(profile.questStats.storyWins||0)+1;storyMissionResult=`CHAPTER OBJECTIVE COMPLETE · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}. All three crew episodes are now available.`;}
+    if(mainSuccess){profile.storyMain[storyKey(selectedChapter)]=true;profile.questStats.storyWins=(profile.questStats.storyWins||0)+1;pushNotification('STORY CHAPTER CLEARED',`${STORY_CHAPTERS[selectedChapter]?.title||'Chapter'} completed. Finish all side episodes to unlock the next chapter and track.`,'story');storyMissionResult=`CHAPTER OBJECTIVE COMPLETE · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}. All three crew episodes are now available.`;}
     else storyMissionResult='CHAPTER OBJECTIVE NOT MET — replay the chapter to continue the story.';
     document.body.dataset.storyRace='0';
   }
   if(gameMode==='police'&&won)addCredits(250);
-  const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(3000);profile.rankedTickets=(profile.rankedTickets||0)+2;}document.body.dataset.tournament='0';
+  const isTournament=document.body.dataset.tournament==='1';if(isTournament&&place===1){addCredits(Math.round(3000*eventRewardScale));profile.rankedTickets=(profile.rankedTickets||0)+2;pushNotification('TOURNAMENT CHAMPION',`You won the tournament and earned ${Math.round(3000*eventRewardScale).toLocaleString()} Credits plus 2 Ranked Tickets.`,'tournament');}document.body.dataset.tournament='0';
   if(lobbyChannel&&onlineRaceStarted&&authUser&&!onlineLocalFinishSent){onlineLocalFinishSent=true;onlineFinishers.set(authUser.id,{user_id:authUser.id,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),place});lobbyChannel.send({type:'broadcast',event:'race_finish',payload:{user_id:authUser.id,race_id:onlineRaceId,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),distance:playerDistance,place}}).catch(()=>{});}
   if(authUser&&supabaseReady)submitServerResult(raceTime,place,reward).catch(e=>console.warn(e));
   $('finishTitle').innerText=gameMode==='time'?(won?'ELIMINATION CHAMPION':'ELIMINATED · #'+place):gameMode==='drift'?(won?'DRIFT MASTER':'DRIFT RUN COMPLETE'):gameMode==='checkpoint'?(won?'CHECKPOINT CLEAR':'CHECKPOINT MISSED'):gameMode==='survival'?(won?'SURVIVAL COMPLETE':'SURVIVAL FAILED'):gameMode==='traffic'?(won?'CLEAN RUN':'DAMAGE LIMIT EXCEEDED'):isPoliceMode?(policeFailed?'BUSTED · PURSUIT FAILED':'PURSUIT ESCAPED'):gameMode==='infected'?(playerInfected?'INFECTED RUN OVER':'YOU SURVIVED'):(won?'RACE WON':`FINISHED · #${place}`);
@@ -1976,7 +2067,7 @@ async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.in
 }
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function saveCloudProfile(){if(!supabaseReady||!authUser)return;const {error}=await supabase.from('player_saves').upsert({user_id:authUser.id,save_data:{profile,bestTimes,leaderboardLocal},updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('cloudSaveStatus').innerText='Cloud save synced.';}
-async function loadCloudProfile(){if(!supabaseReady||!authUser)return;const {data,error}=await supabase.from('player_saves').select('save_data').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.save_data?.profile){const local=profile;profile={...local,...data.save_data.profile,garage:{...local.garage,...data.save_data.profile.garage,carLevels:{...local.garage.carLevels,...(data.save_data.profile.garage?.carLevels||{})},attachments:{...local.garage.attachments,...(data.save_data.profile.garage?.attachments||{})}},inventory:{...local.inventory,...data.save_data.profile.inventory}};profile.maxEnergy=50;profile.energy=Math.min(50,Math.max(0,Number(profile.energy)||0));if(data.save_data.bestTimes){bestTimes=data.save_data.bestTimes;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}if(data.save_data.leaderboardLocal){leaderboardLocal=data.save_data.leaderboardLocal;localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));}saveProfile();renderAll();}}
+async function loadCloudProfile(){if(!supabaseReady||!authUser)return;const {data,error}=await supabase.from('player_saves').select('save_data').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data?.save_data?.profile){const local=profile;profile={...local,...data.save_data.profile,garage:{...local.garage,...data.save_data.profile.garage,carLevels:{...local.garage.carLevels,...(data.save_data.profile.garage?.carLevels||{})},attachments:{...local.garage.attachments,...(data.save_data.profile.garage?.attachments||{})}},inventory:{...local.inventory,...data.save_data.profile.inventory}};profile.maxEnergy=100;profile.energy=Math.min(100,Math.max(0,Number(profile.energy)||0));if(data.save_data.bestTimes){bestTimes=data.save_data.bestTimes;localStorage.setItem('mr_best_times',JSON.stringify(bestTimes));}if(data.save_data.leaderboardLocal){leaderboardLocal=data.save_data.leaderboardLocal;localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));}saveProfile();renderAll();if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);}}
 async function handleAuth(signup=false,email=$('gateEmail').value,password=$('gatePassword').value,username=$('gateUsername').value||profile.username){if(!supabaseReady){$('authStatus').innerText='Supabase is not configured. Continue as guest, or add your project URL and public anon key in the game file.';return false;}if(!email||!password){$('authStatus').innerText='Enter an email and password.';return false;}try{let result;if(signup)result=await supabase.auth.signUp({email,password,options:{data:{username}}});else result=await supabase.auth.signInWithPassword({email,password});if(result.error)throw result.error;authUser=result.data.user||result.data.session?.user||null;if(!authUser){$('authStatus').innerText='Check your email to verify the new account, then sign in.';return false;}profile.username=(authUser.user_metadata?.username||username||profile.username).slice(0,18);await loadCloudProfile();await syncPublicUsername();$('authStatus').innerText=`Signed in as ${getDisplayUsername()}`;$('accountStatus').innerText=`Signed in: ${getDisplayUsername()}`;saveProfile();return true;}catch(e){$('authStatus').innerText=e.message;return false;}}
 async function refreshAuth(){if(!supabaseReady)return;try{const {data}=await supabase.auth.getSession();authUser=data.session?.user||null;if(authUser){profile.username=(authUser.user_metadata?.username||profile.username).slice(0,18);$('accountStatus').innerText=`Signed in: ${getDisplayUsername()}`;await loadCloudProfile();await syncPublicUsername();}}catch(e){console.warn(e);}}
 
@@ -1987,6 +2078,7 @@ function stableRoomCode(ids){
   return 'Q'+(h>>>0).toString(36).toUpperCase().padStart(5,'0').slice(-5);
 }
 async function leaveQueue(){
+  if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}
   if(matchmakingChannel&&supabaseReady){try{await supabase.removeChannel(matchmakingChannel);}catch(e){console.warn(e);}}
   matchmakingChannel=null;queueMode=null;queuePairing=false;
 }
@@ -2018,7 +2110,9 @@ function applyRemoteImpact(payload){
 function launchOnlineRace(payload){
   if(!lobbyChannel||onlineRaceStarted)return;
   if(payload.mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){ $('mmStatus').innerText='Ranked requires Level 10 and one Ranked Ticket.';return; }
-  if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race.';return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){$('mmStatus').innerText=`You need ${RACE_ENTRY_ENERGY} energy to enter this race.`;return;}
+  rankedBotRoster=payload.mode==='ranked'&&Array.isArray(payload.botRoster)?payload.botRoster.slice(0,5):[];
+  if(payload.mode==='ranked'&&rankedBotRoster.length)pushNotification('RANKED GRID FILLED',`Your Ranked race has ${rankedBotRoster.length} AI opponent${rankedBotRoster.length===1?'':'s'} filling the open grid slots.`,'ranked');
   onlineRaceStarted=true;onlineRaceId=String(payload.race_id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`);onlineLocalFinishSent=false;onlineFinishers.clear();onlineCollisionCooldown=0;
   onlineRoomMode=payload.mode||onlineRoomMode;
   if(onlineRoomMode==='ranked'){profile.rankedTickets=Math.max(0,(profile.rankedTickets||0)-1);saveProfile();updateUI();}
@@ -2029,14 +2123,20 @@ function launchOnlineRace(payload){
   if(onlineStartTimer)clearTimeout(onlineStartTimer);
   const startAt=Number(payload.start_at)||Date.now()+3500;
   const delay=Math.max(0,startAt-Date.now()-3150);
-  $('mmStatus').innerText=`Matched ${onlineParticipants.length||2} drivers. Synchronizing race start…`;
+  $('mmStatus').innerText=`Matched ${Math.min(6,(onlineParticipants.length||1)+rankedBotRoster.length)} drivers · ${rankedBotRoster.length} AI fillers. Synchronizing race start…`;
   onlineStartTimer=setTimeout(()=>{onlineStartTimer=null;if(!lobbyChannel)return;beginRace(true);},delay);
+}
+function buildRankedBotRoster(count,seed,tierIndex=getEventTierIndex()){
+  const names=['NOVA AI','APEX AI','KIRA AI','VOLT AI','GHOST AI'];const colors=['36d8ff','ff557a','f2b84b','8df06a','b78cff'];let state=(Number(seed)||1)>>>0;
+  const rnd=()=>{state^=state<<13;state^=state>>>17;state^=state<<5;return (state>>>0)/4294967296;};
+  return Array.from({length:clamp(Math.floor(count),0,5)},(_,i)=>({username:names[i],paint:colors[(i+Math.floor(rnd()*colors.length))%colors.length],bodyStyle:1+Math.floor(rnd()*4),ability:clamp(.94+tierIndex*.018+rnd()*.12,.94,1.22),adapt:clamp(.98+rnd()*.08,.98,1.06)}));
 }
 async function sendOnlineRaceStart(mode,hostRecord){
   if(!lobbyChannel||!authUser)return;
-  const members=roomMemberList().slice(0,6);if(members.length<2)return;
+  const members=roomMemberList().slice(0,6);if(members.length<(mode==='ranked'?1:2))return;
   const host=hostRecord||members.find(m=>m.isHost)||members[0];
-  const payload={user_id:authUser.id,mode,track:TRACKS[host.track]?host.track:currentTrack,laps:clamp(Math.floor(Number(host.laps)||3),2,6),weather:host.weather||'CLEAR',seed:Number(host.seed)||Math.floor(Math.random()*4294967295),race_id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,start_at:Date.now()+5200};
+  const seed=Number(host.seed)||Math.floor(Math.random()*4294967295);const botRoster=mode==='ranked'?buildRankedBotRoster(6-members.length,seed):[];
+  const payload={user_id:authUser.id,mode,humans:members.map(m=>({user_id:m.user_id,username:m.username||'RACER'})),botRoster,track:TRACKS[host.track]?host.track:currentTrack,laps:clamp(Math.floor(Number(host.laps)||3),2,6),weather:host.weather||'CLEAR',seed,race_id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,start_at:Date.now()+5200};
   await lobbyChannel.send({type:'broadcast',event:'race_start',payload});
   launchOnlineRace(payload);
 }
@@ -2106,17 +2206,17 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
       $('lobbyStartBtn').disabled=!isRoomHost||!allReady||onlineRaceStarted;$('lobbyStartBtn').style.display=isRoomHost?'block':'none';$('lobbyLeaveBtn').disabled=false;
       return;
     }
-    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 racers connected. Pairing complete.`:`Searching for another racer (${activeMembers.length}/6).`;
-    if(activeMembers.length>=2&&!onlineRaceStarted&&!lobbyStartTimer){
+    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 human racers connected. Pairing complete.`:mode==='ranked'?'Ranked fallback will fill the remaining grid with AI racers.':`Searching for another racer (${activeMembers.length}/6).`;
+    if(activeMembers.length>=(mode==='ranked'?1:2)&&!onlineRaceStarted&&!lobbyStartTimer){
       lobbyStartTimer=setTimeout(async()=>{
         lobbyStartTimer=null;if(!lobbyChannel||onlineRaceStarted)return;
-        const group=roomMemberList().slice(0,6);if(group.length<2||!group.some(m=>m.user_id===authUser.id))return;
+        const group=roomMemberList().slice(0,6);if(group.length<(mode==='ranked'?1:2)||!group.some(m=>m.user_id===authUser.id))return;
         const host=group.find(m=>m.isHost)||group[0];
         if(host.user_id!==authUser.id){$('mmStatus').innerText='Players found. Waiting for the lobby host to start the shared race…';return;}
-        if(profile.energy<10){$('mmStatus').innerText='You need 10 energy to enter this race.';return;}
+        if(profile.energy<RACE_ENTRY_ENERGY){$('mmStatus').innerText='You need 5 energy to enter this race.';return;}
         if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$('mmStatus').innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
         await sendOnlineRaceStart(mode,host);
-      },2200);
+      },mode==='ranked'?5200:2200);
     }
   });
   await lobbyChannel.subscribe(async status=>{
@@ -2138,46 +2238,50 @@ async function startPrivateLobbyRace(){
   const members=roomMemberList().slice(0,6);
   if(members.length<2||members.length>6){$('lobbyStatus').innerText='A race needs 2–6 connected drivers.';return;}
   if(!members.every(m=>m.ready)){$('lobbyStatus').innerText='Every driver must press I’M READY first.';return;}
-  if(profile.energy<10){$('lobbyStatus').innerText='You need 10 energy to enter this race.';return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need 5 energy to enter this race.';return;}
   await sendOnlineRaceStart('casual',members.find(m=>m.isHost)||members[0]);
 }
 async function connectPrivateRoom(mode,roomCode,isHost){
   if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to create or join an online lobby.';return;}
-  if(profile.energy<10){$('lobbyStatus').innerText='You need at least 10 energy to enter a casual race.';return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need at least 5 energy to enter a casual race.';return;}
   $('matchmakingModal').classList.remove('hidden');
   await startRaceRoom(roomCode,mode,isHost,true,false);
 }
 async function connectPublicLobby(){
   if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to enter the public lobby.';return;}
-  if(profile.energy<10){$('lobbyStatus').innerText='You need at least 10 energy to enter a casual race.';return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need at least 5 energy to enter a casual race.';return;}
   $('matchmakingModal').classList.remove('hidden');
   await startRaceRoom('PUBLIC','casual',false,true,true);
 }
 async function findOnlineMatch(mode){
   const status=mode==='ranked'?'rankedQueueStatus':'casualQueueStatus';
   if(!supabaseReady||!authUser){$(status).innerText='Sign in and configure Supabase Realtime to search for online players.';return;}
-  if(profile.energy<10){$(status).innerText='Not enough energy. You need 10 energy to race.';return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){$(status).innerText=`Not enough energy. You need ${RACE_ENTRY_ENERGY} energy to race.`;return;}
   if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$(status).innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
-  await leaveOnlineRoom();queueMode=mode;queuePairing=false;
+  await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';
   $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':'SEARCHING FOR CASUAL PLAYERS';
-  $('mmStatus').innerText='Joining the online queue…';$(status).innerText='Searching for up to six online racers…';
+  $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?'Searching for humans first. AI grid fillers activate after 18 seconds.':'Searching for up to six online racers…';
   try{
     matchmakingChannel=supabase.channel(`matchmaking:${mode}`,{config:{presence:{key:authUser.id}}});
-    const tryPair=async()=>{
+    const tryPair=async(forceBots=false)=>{
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
-      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=10&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0)));
+      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0)));
       members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
       const myIndex=members.findIndex(m=>m.user_id===authUser.id);if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
-      if(group.length<2){$(status).innerText=mode==='ranked'?'Searching globally for eligible Ranked racers…':'Searching globally for Casual racers…';$('mmStatus').innerText=$(status).innerText;return;}
+      if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`Searching for humans · ${group.length}/6 found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
+      if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
       queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
-      $(status).innerText=`${group.length}/6 players found. Joining ${mode} race…`;$('mmStatus').innerText=$(status).innerText;
-      try{await startRaceRoom(code,mode,authUser.id===hostId,false,false);await leaveQueue();}catch(e){queuePairing=false;throw e;}
+      $(status).innerText=`${group.length} human player${group.length===1?'':'s'} found. Filling to six with AI where needed…`;$('mmStatus').innerText=$(status).innerText;
+      try{await startRaceRoom(code,mode,authUser.id===hostId,false,false);if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}setTimeout(()=>{if(matchmakingChannel)leaveQueue();},18000);}catch(e){queuePairing=false;throw e;}
     };
     matchmakingChannel.on('presence',{event:'sync'},()=>{tryPair().catch(e=>{$(status).innerText=`Matchmaking error: ${e.message}`;});});
     await matchmakingChannel.subscribe(async state=>{
       if(state==='SUBSCRIBED'){
         await matchmakingChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,energy:profile.energy,level:profile.level,tickets:profile.rankedTickets||0});
+        if(mode==='ranked'){
+          rankedFallbackTimer=setTimeout(()=>{rankedQueueReady=true;tryPair(true).catch(e=>{$(status).innerText=`Ranked fallback error: ${e.message}`;});},18000);
+        }
         await tryPair();
       }else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){$(status).innerText='Queue connection failed. Check Supabase Realtime settings.';}
     });
@@ -2187,8 +2291,10 @@ async function findOnlineMatch(mode){
 document.addEventListener('DOMContentLoaded',async()=>{
   try{init();initGarage();}catch(e){console.error(e);$('authStatus').innerText='3D renderer could not initialize in this browser. Try updating your browser or disabling hardware acceleration.';}
   $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
+  $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
   if(supabaseReady){await refreshAuth();if(authUser)$('authGate').classList.add('hidden');}
+  if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);
   // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
   applyEnergyRegen();updateUI();
   document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
@@ -2219,11 +2325,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
   $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('mmCancelBtn').addEventListener('click',async()=>{$('matchmakingModal').classList.add('hidden');await leaveOnlineRoom();$('mmStatus').innerText='Search cancelled.';$('casualQueueStatus').innerText='Not currently searching.';$('rankedQueueStatus').innerText='Not currently searching.';});
-  $('briefingConfirm').addEventListener('click',confirmRaceBriefing);$('briefingCancel').addEventListener('click',()=>{$('raceBriefingModal').classList.add('hidden');raceLapsPrepared=false;});$('briefingPowerupA').addEventListener('change',()=>{if($('briefingPowerupA').value===$('briefingPowerupB').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupA').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupB').value=next.id;}});$('briefingPowerupB').addEventListener('change',()=>{if($('briefingPowerupB').value===$('briefingPowerupA').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupB').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupA').value=next.id;}});
+  $('briefingConfirm').addEventListener('click',confirmRaceBriefing);$('briefingCancel').addEventListener('click',()=>{$('raceBriefingModal').classList.add('hidden');raceLapsPrepared=false;});$('briefingPowerupA').addEventListener('change',()=>{if($('briefingPowerupA').value===$('briefingPowerupB').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupA').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupB').value=next.id;}updateBriefingLoadoutPreview();});$('briefingPowerupB').addEventListener('change',()=>{if($('briefingPowerupB').value===$('briefingPowerupA').value){const next=POWERUPS.find(p=>p.id!==$('briefingPowerupB').value&&(profile.inventory[p.id]||0)>0);if(next)$('briefingPowerupA').value=next.id;}updateBriefingLoadoutPreview();});
   $('pauseGraphic').addEventListener('click',pauseRace);$('resumeBtn').addEventListener('click',resumeRace);
   $('quitBtn').addEventListener('click',async()=>{$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
   $('menuBtn').addEventListener('click',async()=>{$('finishMenu').classList.add('hidden');$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
-  $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<10){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
+  $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<RACE_ENTRY_ENERGY){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
   $('tournamentBtn').addEventListener('click',()=>{storySideIndex=-1;if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';openRaceBriefing();});
   $('specialEventBtn').addEventListener('click',()=>{storySideIndex=-1;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=(gameMode==='time'||gameMode==='ghost')?1:3;playerMode='solo';openRaceBriefing();});
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);

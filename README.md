@@ -11,7 +11,7 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 - Daily / weekly contracts, longer-term Nightshift crew contracts, rotating events, tournament windows, Street Rep milestones and Ranked Tickets.
 - Casual Quick Match, public casual lobby, private lobbies with ready-up and host start, and a separate online-only Ranked queue. All online rooms are capped at six racers.
 - Shared online race start settings, remote racer positions / speed / lap / damage / nitro, online collision messaging, shared pickup claims, finish notifications and online results display.
-- 50 Energy cap with automatic +1 Energy every five minutes (including offline time), paid +10 Energy refills, purchasable Ranked Tickets, per-race objective / loadout briefing, randomized 2–6 lap races, per-race weather and seeded randomized supply-drop placement.
+- 100 Energy cap with automatic +1 Energy every five minutes (including offline time), exactly 5 Energy charged at the start of each race, purchasable +25 Energy refills and Ranked Tickets, per-race objective / loadout briefing, randomized 2–6 lap races, per-race weather and seeded randomized supply-drop placement.
 
 
 ## November 19 — UI / 3D Weather / Track Expansion
@@ -28,10 +28,10 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 - Added two chapter decisions (Back the Crew / Chase the Lead) with different win rewards, and chapter-specific mission briefings with story dialogue, objectives and reward information.
 - Added a pre-race briefing to solo, story, side-story, tournament and rotating special-event starts. Players can equip up to two owned powerups; an empty loadout is allowed.
 - Added Drift Trial, Checkpoint Rush, Survival Gauntlet and Traffic Run as original modes alongside Street, Police, Time Elimination, Ghost, Infected and Random Circuit.
-- Expanded powerups to eight types. Added credit purchases for powerups, +10 Energy refills, Ranked Tickets, 40 paint finishes and nine visual attachments.
+- Expanded powerups to eight types. Added credit purchases for powerups, +25 Energy refills, Ranked Tickets, 40 paint finishes and nine visual attachments.
 - Rebuilt garage car choice as visible vehicle cards with rank filters. Upgrade prices scale with vehicle rank and upgrade level, while engine / handling gains remain small and capped within each vehicle's class range. Upgrade records are stored per car.
 - Added turn-profile geometry to the 30 circuits: hairpins, chicanes, esses, kinks, double-apex corners, banked sections and varying-radius bends. Each track card lists its turn profile.
-- Energy automatically regenerates by one point every five minutes, up to 50, while the game is open or closed. The partial recharge timer is retained when energy is spent. A deliberately empty pre-race powerup loadout remains empty after saving and reloading.
+- Energy automatically regenerates by one point every five minutes, up to 100, while the game is open or closed. Every race attempt that starts charges exactly 5 Energy; queue searches and lobby browsing do not charge Energy. The partial recharge timer is retained when energy is spent. A deliberately empty pre-race powerup loadout remains empty after saving and reloading. Store refills add 25 Energy up to the 100 Energy cap.
 
 ## Install
 
@@ -52,10 +52,18 @@ Credentials are intentionally placeholders. Offline / guest racing remains avail
 
 ## Multiplayer notes
 
-- Casual Quick Match and Ranked search separate queues. Ranked requires a signed-in player at Street Rep level 10+, one Ranked Ticket and at least 10 Energy; a ticket is consumed only after a valid room launch.
+- Casual Quick Match and Ranked search separate queues. Ranked requires a signed-in player at Street Rep level 10+, one Ranked Ticket and at least 5 Energy; a ticket is consumed when the shared race launches. Ranked searches for humans for up to 18 seconds, then fills remaining grid slots with local AI rivals so the six-driver grid can start even when the queue is quiet.
 - Public and private casual rooms support up to six players. Private/public lobbies display player readiness; the host starts after at least two players are present and everyone is ready.
-- Online position, car state, pickup claims, contact effects and finishes use Supabase Realtime broadcast. Every client simulates its own physics. This is still a client-authoritative prototype, not production anti-cheat or trusted server matchmaking. Public competitive launch needs a server-authoritative race/result service, validation and reconnect handling.
+- Online position, car state, pickup claims, contact effects and finishes use Supabase Realtime broadcast. Ranked gives the queue up to 18 seconds to find human opponents, then adds AI fillers to reach a six-driver grid. Every client simulates its own physics and AI fillers locally. This is still a client-authoritative prototype, not production anti-cheat or trusted server matchmaking. Public competitive launch needs a server-authoritative queue/race/result service, validation and reconnect handling.
 
 ## Asset / test limitations
 
 Tracks and cars remain locally generated stylized 3D geometry. They are not high-resolution licensed assets. Static HTML / JavaScript checks can detect syntax and structural problems, but they do not replace live gameplay tests in multiple browsers / accounts. Configure Supabase and test the public/private lobby, ready-up, synchronized starts, car state, pickup claims and finish results with at least two separate accounts before relying on online play.
+
+## November 19 — Energy, Notifications, Events and Ranked Queue Update
+
+- Energy capacity is now 100. Every race costs exactly 5 Energy at race start; searching queues and browsing lobbies costs nothing. Energy regenerates by +1 every five minutes, including time offline, and the Store sells +25 refills.
+- Added an auto-opening notification inbox for rewards, unlocks, energy updates, purchases, event resets and Ranked grid fills. The bell keeps unread counts available.
+- Daily and weekly challenge targets and rewards scale with Street Rep / selected car rank. AI event pace and special-event objectives also scale with rank tier.
+- Ranked matchmaking searches for humans for 18 seconds, then fills the remaining seats with up to five AI opponents. Total ranked grid size is six. Ranked still requires a signed-in Level 10+ player and a Ranked Ticket.
+- Garage rank chips and Store rank chips show distinct selection states; the Store now only displays actual vehicle classes (D through Exotic) instead of an ambiguous All Ranks option.
