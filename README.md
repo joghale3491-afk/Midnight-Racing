@@ -78,3 +78,27 @@ Tracks and cars remain locally generated stylized 3D geometry. They are not high
 - Daily and weekly challenge targets and rewards scale with Street Rep / selected car rank. AI event pace and special-event objectives also scale with rank tier.
 - Ranked matchmaking searches for humans for 18 seconds, then fills the remaining seats with up to five AI opponents. Total ranked grid size is six. Ranked still requires a signed-in Level 10+ player and a Ranked Ticket.
 - Garage rank chips and Store rank chips show distinct selection states; the Store now only displays actual vehicle classes (D through Exotic) instead of an ambiguous All Ranks option.
+
+
+## Update v17 — AI powerups and visual refresh
+
+- Added a live two-slot in-race powerup panel with item names, key hints, and remaining charges. The panel can be clicked to select a slot; Q activates the selected item and E switches between available slots.
+- AI rivals now start with a small private powerup kit, collect supply drops, and activate boost, repair, shield, grip, pulse, jammer, scanner, and overdrive according to race conditions. AI powerups have visible temporary glow effects.
+- AI racing lines now make short adjustments toward nearby supply drops. AI inventories are separate from the player's saved inventory.
+- Improved rival/ghost/remote-car detail while keeping civilian traffic on the lower-cost model. Added more sport trim, improved wheel faces, body accents, lights, and aero details.
+- Added textured terrain, stronger asphalt detail, lane paint, illuminated trackside bollards, branded circuit signs, corner lighting, and more balanced scene lighting.
+- Bumped the service-worker cache key so browsers fetch the new build.
+
+The updated JavaScript passes syntax validation. The live WebGL scene still requires a browser/device smoke test to confirm visual performance on the target hardware.
+
+
+## Update v18 — finish line and AI powerup improvements
+
+- Added a high-contrast black-and-white checker stripe across the road and a lit START / FINISH banner above the circuit at the start/finish point. Both local racers receive a finish-line notification on crossing.
+- Fixed AI powerup decisions so police pursuit vehicles can also activate their own powerups. Patrol cars receive shield, pulse or jammer charges; other rivals can use repair, shield, grip, pulse, overdrive, jammer and scanner.
+- Added distinct temporary AI powerup glow colors and extended pickup seeking while scanner is active. AI inventories remain private and do not use the player’s stock.
+- Bumped the service-worker cache key so browsers fetch the updated build.
+
+Static JavaScript syntax and structural checks are run on the packaged build. A live browser/device test is still required for WebGL visuals and online multiplayer behavior.
+
+- AI shields now also protect police units from player-caused impact damage.
