@@ -1,4 +1,4 @@
-const CACHE="midnight-racing-v19-race-start-fix";
+const CACHE="midnight-racing-v21-railmat-webgl2-start-fix";
 const CORE=["./","./index.html","./manifest.webmanifest","./icon-192.svg","./icon-512.svg"];
 self.addEventListener("install",e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));});
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));

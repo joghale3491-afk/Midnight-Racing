@@ -892,7 +892,7 @@ let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
 let playerMode = 'solo', selectedStoryPath = 'crew', selectedChapter = 0, storySideIndex = -1;
 let raceBriefingConfirmed=false, raceLapsPrepared=false, activePowerupSlot=0, briefingSlotActive=0, driftScore=0, p2DriftScore=0, checkpointProgress=0, p2CheckpointProgress=0, selectedStoryChoice='crew';
-let raceLaunchPending=false, raceCountdownTimer=null, pendingRankedTicket=false, graphicsInitError=null;
+let raceLaunchPending=false, raceCountdownTimer=null, raceLaunchWatchdog=null, raceLaunchStage='idle', pendingRankedTicket=false, graphicsInitError=null;
 let raceLapsCompleted = 0, raceAwarded = false, powerupCooldown = false, powerupPickups = [], activeEffects = {}, policeHeat = 0;
 let checkpointDeadline=120, checkpointMarkers=[], trafficDamageLimit=40, trafficFailed=false, policeTargetTime=90;
 let infectedCountdown=30, infectedRound=1, infectedEliminationOrder=[], infectedChampion=null, p2Infected=false;
@@ -1229,7 +1229,27 @@ function updateWeatherEffects(dt){
   if(w.light){w.flashTimer-=dt;if(w.flashTimer<=0){w.flashTimer=4+Math.random()*7;w.light.position.set((player?.position.x||0)+(Math.random()-.5)*75,35,(player?.position.z||0)+(Math.random()-.5)*75);w.light.intensity=7+Math.random()*9;}else if(w.light.intensity>0){w.light.intensity=Math.max(0,w.light.intensity-dt*38);}}
 }
 
+function checkWebGL2Support(){
+  let probeContext=null;
+  try{
+    const probeCanvas=document.createElement('canvas');
+    probeContext=probeCanvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false});
+    if(!probeContext){
+      return {ok:false,message:'WebGL 2 is unavailable. Turn on hardware acceleration and allow WebGL in your browser settings, then reload the game.'};
+    }
+    const version=String(probeContext.getParameter(probeContext.VERSION)||'WebGL 2');
+    const loseContext=probeContext.getExtension('WEBGL_lose_context');
+    if(loseContext)loseContext.loseContext();
+    return {ok:true,version};
+  }catch(error){
+    try{const loseContext=probeContext?.getExtension?.('WEBGL_lose_context');if(loseContext)loseContext.loseContext();}catch(_){}
+    return {ok:false,message:`The browser blocked WebGL 2: ${error?.message||error}. Enable hardware acceleration/WebGL and reload.`};
+  }
+}
+
 function init() {
+  const webglCheck=checkWebGL2Support();
+  if(!webglCheck.ok)throw new Error(webglCheck.message);
   const compactScreen=window.innerWidth<760||window.innerHeight<560;
   renderer = new THREE.WebGLRenderer({canvas,antialias:!compactScreen,alpha:false,powerPreference:'high-performance',stencil:false,preserveDrawingBuffer:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,compactScreen?1.0:1.25));
@@ -1406,11 +1426,12 @@ function buildWorld(id,startRace=true){
   const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=192;const sx=signCanvas.getContext('2d');
   const signGrad=sx.createLinearGradient(0,0,512,192);signGrad.addColorStop(0,'#07111f');signGrad.addColorStop(.58,'#12344a');signGrad.addColorStop(1,'#36152d');sx.fillStyle=signGrad;sx.fillRect(0,0,512,192);sx.strokeStyle='#'+trackAccent.toString(16).padStart(6,'0');sx.lineWidth=9;sx.strokeRect(7,7,498,178);sx.fillStyle='#eafaff';sx.font='900 47px Arial';sx.fillText('MIDNIGHT',28,82);sx.fillStyle='#'+trackAccent.toString(16).padStart(6,'0');sx.font='900 27px Arial';sx.fillText('DIVISION  /  STREET CIRCUIT',30,130);sx.fillStyle='#b7d1df';sx.font='bold 15px Arial';sx.fillText(cfg.name+'   •   NIGHTSHIFT MOTOR CLUB',30,160);
   const signTexture=new THREE.CanvasTexture(signCanvas);signTexture.colorSpace=THREE.SRGBColorSpace;const signMat=new THREE.MeshStandardMaterial({map:signTexture,emissive:trackAccent,emissiveIntensity:.32,roughness:.42,metalness:.24});
+  // Define the rail material before the first gantry/post uses it (avoid a temporal-dead-zone ReferenceError).
+  const railMat=makeMat(cfg.theme==='alpine'?0x8b9ba3:0x536575,.34,.76);
   for(let d=70,board=0;d<trackLength;d+=145,board++){const f=frameAt(d),side=board%2?1:-1,pos=f.p.clone().addScaledVector(f.side,side*16);pos.y=5.2;const yaw=Math.atan2(f.tangent.x,f.tangent.z)+(side>0?Math.PI/2:-Math.PI/2);addTrackBox(world,new THREE.BoxGeometry(7.2,2.7,.22),signMat,pos,yaw,false);const foot=pos.clone();foot.y=1.5;addTrackBox(world,new THREE.BoxGeometry(.22,3.2,.22),railMat,foot.clone().addScaledVector(f.side,-side*2.8),yaw,false);addTrackBox(world,new THREE.BoxGeometry(.22,3.2,.22),railMat,foot.clone().addScaledVector(f.side,side*2.8),yaw,false);}
   // Detailed roadside scenery varies by circuit theme.
   const buildingMat=makeMat(cfg.theme==='city'?0x17283a:0x273542,.85,.25);
   const windowMat=new THREE.MeshStandardMaterial({color:0x8beaff,emissive:0x35bde8,emissiveIntensity:1.15});
-  const railMat=makeMat(cfg.theme==='alpine'?0x8b9ba3:0x536575,.34,.76);
   const hasRails=['city','industrial','alpine','skyway','harbor'].includes(cfg.theme);
   const railCount=hasRails?Math.ceil(trackLength/24)*2:0;
   const railInstances=hasRails?new THREE.InstancedMesh(new THREE.BoxGeometry(.22,1.0,17),railMat,railCount):null;
@@ -1771,12 +1792,16 @@ function createRacers(){
   gameState='countdown';renderRacePowerupHud();$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
   if(raceCountdownTimer)clearInterval(raceCountdownTimer);
   raceCountdownTimer=setInterval(()=>{
-    cd--;
-    if(cd>0){$('countdown').innerText=cd;return;}
-    if(cd===0){$('countdown').innerText='GO!';return;}
-    clearInterval(raceCountdownTimer);raceCountdownTimer=null;$('countdown').classList.remove('show');
-    if(!commitRaceEntryAtGo())return;
-    gameState='racing';document.body.classList.add('race-active');$('pauseGraphic').classList.add('visible');
+    try{
+      if(gameState!=='countdown'||!raceLaunchPending){clearInterval(raceCountdownTimer);raceCountdownTimer=null;return;}
+      cd--;
+      if(cd>0){$('countdown').innerText=cd;return;}
+      if(cd===0){$('countdown').innerText='GO!';return;}
+      clearInterval(raceCountdownTimer);raceCountdownTimer=null;$('countdown').classList.remove('show');
+      raceLaunchStage='entering race';gameState='racing';document.body.classList.add('race-active');$('pauseGraphic').classList.add('visible');
+      if(!commitRaceEntryAtGo())return;
+      if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+    }catch(error){abortRaceLaunch(error);}
   },1000);
 }
 function update(dt){
@@ -2554,8 +2579,24 @@ function updateAiPowerupEffects(r,dt,rivalMaxSpeed,gapToPlayer,bend){
 }
 
 function isRaceRendererReady(){
-  try{return !!(renderer&&scene&&camera&&renderer.getContext&&!renderer.getContext().isContextLost());}
-  catch(error){graphicsInitError=error;return false;}
+  try{
+    const gl=renderer?.getContext?.();
+    if(!renderer||!scene||!camera||!gl){
+      graphicsInitError=graphicsInitError||new Error('The main WebGL 2 renderer did not initialize.');
+      return false;
+    }
+    if(gl.isContextLost()){
+      graphicsInitError=new Error('The WebGL 2 graphics context was lost. Reload the page and check browser hardware acceleration.');
+      return false;
+    }
+    // The bundled Three.js r160 renderer requires WebGL 2, not WebGL 1.
+    const version=String(gl.getParameter(gl.VERSION)||'');
+    if(!version.includes('WebGL 2')){
+      graphicsInitError=new Error(`The active graphics context is not WebGL 2 (${version||'unknown context'}).`);
+      return false;
+    }
+    return true;
+  }catch(error){graphicsInitError=error;return false;}
 }
 function clearPartialRaceScene(){
   if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
@@ -2566,37 +2607,63 @@ function clearPartialRaceScene(){
 }
 function abortRaceLaunch(error){
   const detail=error instanceof Error?error.message:String(error||'Unknown initialization error');
-  clearPartialRaceScene();raceLaunchPending=false;pendingRankedTicket=false;raceBriefingConfirmed=false;
+  if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+  if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+  const failedStage=raceLaunchStage||'setup';
+  clearPartialRaceScene();raceLaunchPending=false;pendingRankedTicket=false;raceBriefingConfirmed=false;raceLaunchStage='idle';
   gameState='menu';document.body.classList.remove('race-active');
   $('raceBriefingModal')?.classList.add('hidden');$('pauseMenu')?.classList.add('hidden');$('finishMenu')?.classList.add('hidden');
   $('countdown')?.classList.remove('show');$('pauseGraphic')?.classList.remove('visible');
   $('menu')?.classList.remove('hidden');$('hud')?.classList.remove('live');
-  if(lobbyChannel&&onlineRaceStarted){onlineRaceStarted=false;onlineLocalFinishSent=false;if($('mmStatus'))$('mmStatus').innerText=`Race could not initialize: ${detail}. No energy or Ranked Ticket was charged.`;}
-  updateUI();console.error('Race launch aborted:',error);
-  alert(`Race could not start. No energy was charged.\n\n${detail}\n\nCheck that WebGL is enabled, then refresh and try again.`);
+  const message=`Race could not start during ${failedStage}: ${detail}. No Energy or Ranked Ticket was charged.`;
+  if($('lobbyStatus'))$('lobbyStatus').innerText=message;
+  if($('mmStatus')&&lobbyChannel)$('mmStatus').innerText=message;
+  updateUI();console.error('Race launch aborted:',{stage:raceLaunchStage,error});
+  alert(`Race could not start. No energy was charged.
+
+Stage: ${raceLaunchStage||'setup'}
+${detail}
+
+Please check WebGL / browser compatibility, then try again.`);
 }
 function commitRaceEntryAtGo(){
   if(!raceLaunchPending)return false;
+  if(!player||!world||gameState!=='racing'){abortRaceLaunch('The player car or race world was not ready at GO.');return false;}
   applyEnergyRegen();
   if(pendingRankedTicket&&(Number(profile.rankedTickets)||0)<1){abortRaceLaunch('Your Ranked Ticket is no longer available.');return false;}
   if((Number(profile.energy)||0)<RACE_ENTRY_ENERGY){abortRaceLaunch(`You need ${RACE_ENTRY_ENERGY} energy to start this race.`);return false;}
   if(!consumeRaceEnergy(RACE_ENTRY_ENERGY)){abortRaceLaunch('Energy could not be reserved for this race.');return false;}
   if(pendingRankedTicket){profile.rankedTickets=Math.max(0,(Number(profile.rankedTickets)||0)-1);saveProfile();updateUI();}
-  raceLaunchPending=false;pendingRankedTicket=false;return true;
+  raceLaunchPending=false;pendingRankedTicket=false;raceLaunchStage='racing';
+  if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+  return true;
 }
 
 function beginRace(skipBriefing=false){
-  if(raceLaunchPending||gameState==='countdown'||gameState==='racing'||gameState==='paused')return;
+  // Ignore duplicate clicks only while a real launch/countdown is underway. Recover stale state left by a prior interrupted attempt.
+  if(raceLaunchPending||gameState==='racing'||gameState==='paused')return;
+  if(gameState==='countdown'){
+    if(player&&raceCountdownTimer)return;
+    console.warn('Recovering stale countdown state before a new launch.');
+    if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+    if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+    clearPartialRaceScene();gameState='menu';document.body.classList.remove('race-active');
+    $('countdown')?.classList.remove('show');$('pauseGraphic')?.classList.remove('visible');
+  }
   if(!skipBriefing&&!raceBriefingConfirmed){openRaceBriefing();return;}
   raceBriefingConfirmed=false;
   applyEnergyRegen();updateUI();
   if(!isRaceRendererReady()){
-    alert(`The 3D race engine is not ready. No energy was charged.\n\n${graphicsInitError?.message||'WebGL could not be initialized.'}\n\nEnable hardware acceleration/WebGL or try another browser, then refresh.`);
+    alert(`The 3D race engine is not ready. No energy was charged.
+
+${graphicsInitError?.message||'WebGL could not be initialized.'}
+
+Enable hardware acceleration/WebGL or try another browser, then refresh.`);
     return;
   }
   if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}. Energy restores one point every five minutes.`);return;}
   if(lobbyChannel&&onlineRoomMode==='ranked'&&(Number(profile.rankedTickets)||0)<1){alert('A Ranked Ticket is required. No energy was charged.');return;}
-  raceLaunchPending=true;pendingRankedTicket=!!(lobbyChannel&&onlineRoomMode==='ranked');
+  raceLaunchPending=true;pendingRankedTicket=!!(lobbyChannel&&onlineRoomMode==='ranked');raceLaunchStage='preparing track';
   try{
     initAudio();lastNetworkSync=0;
     if(lobbyChannel){onlineLocalFinishSent=false;onlineFinishers.clear();$('finishSummary').dataset.baseSummary='';}
@@ -2607,13 +2674,23 @@ function beginRace(skipBriefing=false){
     if(Number.isFinite(Number(forcedRaceLaps))&&forcedRaceLaps>=2){raceLaps=clamp(Math.floor(forcedRaceLaps),2,6);forcedRaceLaps=null;}
     setRaceWeather(forcedRaceWeather);forcedRaceWeather=null;
     worldSeed=(Number(forcedRaceSeed)>>>0)||Math.floor(Math.random()*4294967295);forcedRaceSeed=null;
-    buildWorld(currentTrack,true);
-    if(!player||gameState!=='countdown'||!raceCountdownTimer)throw new Error('Track or racer setup did not finish.');
+    // Build the track independently, then explicitly build racers and the countdown.
+    // This avoids relying on buildWorld's optional auto-start side effect.
+    buildWorld(currentTrack,false);
+    if(!world||!trackCurve||!Number.isFinite(trackLength)||trackLength<=0)throw new Error('The track geometry did not initialize correctly.');
+    raceLaunchStage='creating racers';
+    createRacers();
+    if(!player||gameState!=='countdown'||!raceCountdownTimer)throw new Error('The player car or countdown could not be created.');
     if(world)world.visible=true;
     $('menu').classList.add('hidden');$('hud').classList.add('live');
-    // The race entry cost is charged only when the countdown reaches GO.
+    raceLaunchStage='countdown';
+    // If a background tab or browser timer stalls, recover to the menu without charging entry energy.
+    raceLaunchWatchdog=setTimeout(()=>{
+      if(raceLaunchPending&&gameState==='countdown')abortRaceLaunch(new Error('The countdown did not reach GO. The browser may have paused the game timer.'));
+    },12000);
   }catch(error){abortRaceLaunch(error);}
 }
+
 function finishRace(){
   if(raceAwarded)return;
   raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
@@ -3002,7 +3079,7 @@ async function findOnlineMatch(mode){
 }
 // --- EVENT LISTENERS ---
 document.addEventListener('DOMContentLoaded',async()=>{
-  try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Enable WebGL/hardware acceleration or use another browser.`;}
+  try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Check that WebGL 2 is enabled and browser hardware acceleration is on, then reload.`;}
   try{if(renderer)initGarage();}catch(e){console.warn('Garage preview renderer unavailable; race renderer remains available:',e);if($('garagePreviewStatus'))$('garagePreviewStatus').innerText='Garage preview unavailable in this browser.';}
   $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});

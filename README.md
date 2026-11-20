@@ -1,8 +1,23 @@
 # MIDNIGHT RACING — Combined Update
 
+# November 20 — Race Start / WebGL Initialization Fix (v21)
+
+- Fixed the `railMat` temporal-dead-zone error: the roadside rail material is now created before the start/finish gantry posts use it. This error could abort `buildWorld()` before racers and the countdown were created.
+- Added an explicit WebGL 2 capability probe before creating the main Three.js renderer. The bundled Three.js r160 build requires WebGL 2.
+- Race-start readiness now verifies that the live renderer context is WebGL 2 and is not lost. Missing, unsupported, or lost contexts produce a specific setup error.
+- Bumped the service-worker cache to v21 so the corrected HTML replaces the cached race-start build.
+
 This package combines the November 19 Track / Graphics Upgrade with the uploaded Online Racing, Multiplayer Lobby, Main Story Episodes, and Quest / Star Ratings updates.
 
 ## Included
+
+## November 20 — Race Launch Reliability Fix (v20)
+
+- Split race startup into explicit track construction and racer/countdown initialization instead of relying on an implicit `buildWorld()` side effect.
+- Added stale-countdown recovery and a 12-second launch watchdog.
+- Race entry Energy and Ranked Ticket are committed only after the countdown transitions into the live racing state; failed setup exits to the Race Hub without charging.
+- Failed launches show the exact startup stage and error message.
+
 
 ## November 20 — Gameplay, Ranked AI and Visual Stability Update
 
