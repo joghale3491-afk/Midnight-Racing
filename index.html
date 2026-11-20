@@ -1289,7 +1289,55 @@ function formatTime(sec){const m=Math.floor(sec/60),s=sec%60;return `${String(m)
 function makeMat(color,roughness=.65,metalness=0,extra={}){return new THREE.MeshStandardMaterial({color,roughness,metalness,...extra});}
 
 // --- EDM SYNTH ---
-function playSfx(frequency=120,duration=.12){if(!soundEnabled||!audioCtx)return;try{const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sawtooth';osc.frequency.setValueAtTime(frequency,audioCtx.currentTime);gain.gain.setValueAtTime(.08,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration);}catch(e){console.warn('Audio effect:',e.message);}}
+function playSfx(frequency=120,duration=.12){
+ if(!soundEnabled||!audioCtx)return;
+ try{const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(Math.max(35,frequency*.58),t+duration);f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(.055,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(f);f.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration);}catch(e){}
+}
+const engineVoices={};
+function updateEngineSound(speed=0,throttle=false,dt=.016,player=1){
+ if(!audioCtx||!soundEnabled)return;
+ try{
+  let v=engineVoices[player],t=audioCtx.currentTime;
+  if(!v){
+   const master=audioCtx.createGain();master.gain.value=0;master.connect(audioCtx.destination);
+   const low=audioCtx.createOscillator(),high=audioCtx.createOscillator(),sub=audioCtx.createOscillator();
+   const lf=audioCtx.createBiquadFilter(),hf=audioCtx.createBiquadFilter();
+   const lg=audioCtx.createGain(),hg=audioCtx.createGain(),sg=audioCtx.createGain();
+   low.type='sawtooth';high.type='square';sub.type='triangle';lf.type='lowpass';lf.frequency.value=520;hf.type='bandpass';hf.frequency.value=1050;hf.Q.value=.7;
+   lg.gain.value=.42;hg.gain.value=.075;sg.gain.value=.22;
+   low.connect(lf);lf.connect(lg);lg.connect(master);high.connect(hf);hf.connect(hg);hg.connect(master);sub.connect(sg);sg.connect(master);
+   low.start();high.start();sub.start();v=engineVoices[player]={master,low,high,sub};
+  }
+  const normalized=clamp((Number(speed)||0)/230,0,1),rpm=clamp(48+normalized*155+(throttle?38:0),48,255);
+  const target=throttle?.105:(speed>4?.055:0.0001);
+  v.low.frequency.setTargetAtTime(rpm,t,.075);v.high.frequency.setTargetAtTime(rpm*2.02,t,.075);v.sub.frequency.setTargetAtTime(rpm*.5,t,.08);
+  v.master.gain.setTargetAtTime(target,t,.11);
+ }catch(e){}
+}
+function playNoiseBurst(duration=.18,volume=.12,filterHz=1200){
+ if(!audioCtx||!soundEnabled)return;
+ try{const n=Math.max(1,Math.floor(audioCtx.sampleRate*duration)),b=audioCtx.createBuffer(1,n,audioCtx.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+ const src=audioCtx.createBufferSource(),f=audioCtx.createBiquadFilter(),g=audioCtx.createGain(),t=audioCtx.currentTime;src.buffer=b;f.type='lowpass';f.frequency.value=filterHz;g.gain.setValueAtTime(volume,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);src.connect(f);f.connect(g);g.connect(audioCtx.destination);src.start(t);
+ }catch(e){}
+}
+function playPowerupSound(id){
+ if(!audioCtx||!soundEnabled)return;
+ const t=audioCtx.currentTime;
+ const tone=(freq,end,shape='sine',vol=.07,delay=0)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=shape;o.frequency.setValueAtTime(freq,t+delay);o.frequency.exponentialRampToValueAtTime(Math.max(40,end),t+delay+.24);g.gain.setValueAtTime(.001,t+delay);g.gain.linearRampToValueAtTime(vol,t+delay+.025);g.gain.exponentialRampToValueAtTime(.001,t+delay+.28);o.connect(g);g.connect(audioCtx.destination);o.start(t+delay);o.stop(t+delay+.3);};
+ switch(id){
+  case 'boost': case 'overdrive': playNoiseBurst(.42,.10,2100);tone(180,620,'sawtooth',.045);tone(95,210,'sine',.07,.04);break;
+  case 'shield': tone(420,980,'sine',.06);tone(630,1180,'triangle',.04,.07);break;
+  case 'repair': tone(260,520,'sine',.055);tone(390,780,'sine',.04,.11);break;
+  case 'grip': playNoiseBurst(.22,.055,850);tone(145,95,'triangle',.05);break;
+  case 'scanner': tone(880,440,'sine',.045);tone(660,990,'sine',.035,.16);break;
+  case 'pulse': case 'jammer': tone(1200,180,'sawtooth',.055);playNoiseBurst(.32,.07,700);break;
+  default: tone(330,660,'triangle',.05);
+ }
+}
+function playCrashSound(intensity=1){
+ playNoiseBurst(.22,.15*clamp(intensity,.4,1.5),520);
+ playSfx(92,.2);
+}
 function initAudio() {
     // Original soundtrack is embedded directly in this HTML; no external music URL or file is needed.
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
@@ -2091,9 +2139,9 @@ function update(dt){
   const nitroActiveNow=!!(!playerEliminated&&!playerFinished&&boost&&nitro>0);
   const playerSpeedLimit=maxSpeed*(nitroActiveNow?1.24:1)*(activeEffects.boost>0?1.28:1)*(activeEffects.overdrive>0?1.18:1);
   if(playerEliminated||playerFinished){playerSpeed=0;}else if(gas)playerSpeed+=accel*(activeEffects.boost>0?1.38:1)*(activeEffects.overdrive>0?1.16:1)*dt;else if(brake)playerSpeed-=accel*1.45*dt;else playerSpeed*=Math.pow(.986,dt*60);
-  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(112+up.nitro*2.8+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(25-up.nitro*1.2)*dt);if(!nitroWasActive)playSfx(520,.22);}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);nitroWasActive=nitroActiveNow;
-  engineSoundCooldown=Math.max(0,engineSoundCooldown-dt);nitroSoundCooldown=Math.max(0,nitroSoundCooldown-dt);if(soundEnabled&&gas&&engineSoundCooldown<=0){playSfx(90+Math.min(170,playerSpeed*1.4),.045);engineSoundCooldown=.16;}if(nitroActiveNow&&nitroSoundCooldown<=0){playSfx(760,.075);nitroSoundCooldown=.32;}
-  if(gameMode==='drift'&&!playerEliminated&&!playerFinished&&driftHeld&&(left||right)&&playerSpeed>38&&Math.abs(playerOffset)>0.9&&Math.abs(playerOffset)<7.5){driftComboTime+=dt;driftScore+=(playerSpeed*.55*Math.abs(playerOffset))*dt*(1+Math.min(.8,driftComboTime*.18));driftSoundCooldown=Math.max(0,driftSoundCooldown-dt);if(driftSoundCooldown<=0){playSfx(300+Math.min(180,Math.abs(playerOffset)*20),.1);driftSoundCooldown=.28;}}else driftComboTime=Math.max(0,driftComboTime-dt*1.5);
+  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(112+up.nitro*2.8+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(25-up.nitro*1.2)*dt);if(!nitroWasActive){playNoiseBurst(.42,.12,2400);playSfx(165,.3);}}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);nitroWasActive=nitroActiveNow;
+  updateEngineSound(playerSpeed,!!gas,dt,1);engineSoundCooldown=Math.max(0,engineSoundCooldown-dt);nitroSoundCooldown=Math.max(0,nitroSoundCooldown-dt);if(nitroActiveNow&&nitroSoundCooldown<=0){playNoiseBurst(.34,.085,2600);playSfx(230,.22);nitroSoundCooldown=.48;}
+  if(gameMode==='drift'&&!playerEliminated&&!playerFinished&&driftHeld&&(left||right)&&playerSpeed>38&&Math.abs(playerOffset)>0.9&&Math.abs(playerOffset)<7.5){driftComboTime+=dt;driftScore+=(playerSpeed*.55*Math.abs(playerOffset))*dt*(1+Math.min(.8,driftComboTime*.18));driftSoundCooldown=Math.max(0,driftSoundCooldown-dt);if(driftSoundCooldown<=0){playNoiseBurst(.22,.045,1100);playSfx(115+Math.min(70,Math.abs(playerOffset)*8),.12);driftSoundCooldown=.34;}}else driftComboTime=Math.max(0,driftComboTime-dt*1.5);
   if(gameMode==='checkpoint'&&!playerEliminated&&!playerFinished)while(checkpointProgress<4&&playerDistance>=trackLength*(checkpointProgress+1)/5&&Math.abs(playerOffset)<=7.6){checkpointProgress++;checkpointDeadline+=14;showToast(`CHECKPOINT ${checkpointProgress}/4 · +14 SECONDS`,'success');playSfx(660,.16);}
   const steer=(10+effective.handling*.085+up.handling*.4+(activeEffects.grip>0?2.2:0))*weatherGrip;
   if(!playerEliminated&&!playerFinished){if(left)playerOffset-=steer*dt;if(right)playerOffset+=steer*dt;if(gameMode==='drift'&&driftHeld&&(left||right))playerOffset+=(right?1:-1)*2.6*dt;}
@@ -2210,7 +2258,7 @@ function update(dt){
     const p2max=maxSpeed*(p2NitroActive?1.22:1)*(p2ActiveEffects.boost>0?1.28:1)*(p2ActiveEffects.overdrive>0?1.18:1);
     const p2Steer=(10+effective.handling*.085+up.handling*.4+(p2ActiveEffects.grip>0?2.2:0))*weatherGrip;
     if(p2Eliminated||p2Finished)p2State.speed=0;else if(p2gas)p2State.speed+=accel*.98*(p2ActiveEffects.boost>0?1.38:1)*(p2ActiveEffects.overdrive>0?1.16:1)*dt;else if(p2brake)p2State.speed-=accel*1.35*dt;else p2State.speed*=Math.pow(.986,dt*60);
-    if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=108*dt;p2State.nitro=Math.max(0,p2State.nitro-26*dt);if(!p2NitroWasActive)playSfx(500,.2);if(p2NitroSoundCooldown<=0){playSfx(730,.07);p2NitroSoundCooldown=.34;}}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);p2NitroWasActive=p2NitroActive;p2NitroSoundCooldown=Math.max(0,p2NitroSoundCooldown-dt);
+    updateEngineSound(p2State.speed,!!(keys.KeyI||mobilePressed.has('p2gas')),dt,2);if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=108*dt;p2State.nitro=Math.max(0,p2State.nitro-26*dt);if(!p2NitroWasActive){playNoiseBurst(.42,.10,2400);playSfx(160,.28);}if(p2NitroSoundCooldown<=0){playNoiseBurst(.28,.065,2300);p2NitroSoundCooldown=.48;}}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);p2NitroWasActive=p2NitroActive;p2NitroSoundCooldown=Math.max(0,p2NitroSoundCooldown-dt);
     if(!p2Eliminated&&!p2Finished){if(p2left)p2State.offset-=p2Steer*dt;if(p2right)p2State.offset+=p2Steer*dt;}
     p2State.offset=clamp(p2State.offset,-8,8);p2State.speed=clamp(p2State.speed,-30,p2max);if(!p2Eliminated&&!p2Finished)p2State.dist+=Math.max(0,p2State.speed)*dt;
     trafficCars.forEach((t,ti)=>{if(t.active&&!p2Eliminated&&!p2Finished&&trackGap(t.dist,p2State.dist)<4.2&&Math.abs(t.offset-p2State.offset)<2.6&&canApplyPlayerImpact('p2',.86)){if(!(p2ActiveEffects.shield>0))p2State.damage+=3.2*impactDamageScale;p2State.speed=Math.max(0,p2State.speed-11);}});
@@ -2262,7 +2310,7 @@ function update(dt){
   if(gameMode==='infected'){setInfectedVisual(player,playerInfected);setInfectedVisual(localPlayer2,p2Infected);rivals.forEach(r=>setInfectedVisual(r.mesh,!!r.infected));}
 
   // Traffic collisions are discrete impacts so sustained overlap cannot drain the full condition bar.
-  if(!playerEliminated&&!playerFinished)trafficCars.forEach((t,ti)=>{if(!t.active)return;const gap=trackGap(t.dist,playerDistance);if(gap<4.2&&Math.abs(t.offset-playerOffset)<2.6&&canApplyPlayerImpact('p1',.86)){if(!(activeEffects.shield>0))damage+=3.2*impactDamageScale;playerSpeed=Math.max(0,playerSpeed-11);if(crashSoundCooldown<=0){playSfx(85,.16);crashSoundCooldown=.65;}}});
+  if(!playerEliminated&&!playerFinished)trafficCars.forEach((t,ti)=>{if(!t.active)return;const gap=trackGap(t.dist,playerDistance);if(gap<4.2&&Math.abs(t.offset-playerOffset)<2.6&&canApplyPlayerImpact('p1',.86)){if(!(activeEffects.shield>0))damage+=3.2*impactDamageScale;playerSpeed=Math.max(0,playerSpeed-11);if(crashSoundCooldown<=0){playCrashSound(1);crashSoundCooldown=.65;}}});
   powerupPickups.forEach((p,pickupIndex)=>{
     if(p.disabled)return;
     if(!p.active){p.respawn-=dt;if(p.respawn<=0&&!lobbyChannel){p.active=true;p.mesh.visible=true;}return;}
@@ -2893,7 +2941,7 @@ function activatePowerup(){
  if(powerupCooldown||playerEliminated||playerFinished)return;
  const load=getRaceLoadout(false),stock=racePowerupCharges;let id=load[activePowerupSlot]||'';
  if(!id||(stock[id]||0)<=0){const fallback=load.findIndex(power=>power&&(stock[power]||0)>0);if(fallback>=0){activePowerupSlot=fallback;id=load[fallback];profile.selectedPowerup=id;}else{$('powerStatus').innerText='NO POWERUP CHARGES · COLLECT A SUPPLY DROP';renderRacePowerupHud();return;}}
- powerupCooldown=true;setTimeout(()=>powerupCooldown=false,350);profile.selectedPowerup=id;stock[id]=Math.max(0,(stock[id]||0)-1);
+ powerupCooldown=true;setTimeout(()=>powerupCooldown=false,350);profile.selectedPowerup=id;stock[id]=Math.max(0,(stock[id]||0)-1);playPowerupSound(id);
  if(id==='boost'){activeEffects.boost=4.5;const carSpec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0],baseCap=carStatsWithUpgrades(carSpec).speed/1.5;playerSpeed=Math.min(playerSpeed+44,baseCap*1.28);}
  if(id==='repair')damage=Math.max(0,damage-35);
  if(id==='shield')activeEffects.shield=5;
@@ -3027,7 +3075,7 @@ function activateP2Powerup(){
   if(!localPlayer2||p2PowerupCooldown||p2Eliminated||p2Finished)return;
   const load=getRaceLoadout(true),stock=p2RacePowerupCharges;let id=load[p2ActivePowerupSlot]||'';
   if(!id||(stock[id]||0)<=0){const fallback=load.findIndex(power=>power&&(stock[power]||0)>0);if(fallback>=0){p2ActivePowerupSlot=fallback;id=load[fallback];}else{showToast('PLAYER 2 · NO POWERUP CHARGES · COLLECT A SUPPLY DROP','powerup');renderP2RacePowerupHud();return;}}
-  p2PowerupCooldown=true;setTimeout(()=>p2PowerupCooldown=false,350);stock[id]=Math.max(0,(stock[id]||0)-1);
+  p2PowerupCooldown=true;setTimeout(()=>p2PowerupCooldown=false,350);stock[id]=Math.max(0,(stock[id]||0)-1);playPowerupSound(id);
   if(id==='boost'){p2ActiveEffects.boost=4.5;const carSpec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0],baseCap=carStatsWithUpgrades(carSpec).speed/1.5;p2State.speed=Math.min(p2State.speed+44,baseCap*1.28);}
   else if(id==='repair')p2State.damage=Math.max(0,p2State.damage-35);
   else if(id==='shield')p2ActiveEffects.shield=5;
