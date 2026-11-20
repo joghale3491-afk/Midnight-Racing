@@ -581,6 +581,60 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
 @media(max-width:850px){.hubGrid{grid-template-columns:1fr;gap:10px}.sideNav{position:sticky;top:64px;z-index:3;flex-direction:row;overflow-x:auto;padding:4px 0 8px;background:#07111ff2}.navBtn{flex:0 0 auto;padding:10px 12px}.menuWrap{padding:13px}.hubTop{margin-bottom:10px}.modeCard{min-height:74px}}
 @media(max-width:520px){.overlay{padding:7px}.menuWrap{width:100%;max-height:98dvh;border-radius:12px}.hubTop{gap:8px}.hubLogo{font-size:27px}.creditsPill{padding:8px 10px;font-size:8px}.modeGrid,.featureGrid{grid-template-columns:1fr!important}.raceInfo{gap:10px;padding:7px 10px}.info small{font-size:7px}.info b{font-size:18px}.controlsHint{display:none}#driftControlBtn{bottom:23%;padding:11px 18px;font-size:10px}}
 
+
+/* MIDNIGHT RACING · usability and responsive polish */
+.menuWrap{height:min(94dvh,980px);max-height:94dvh;overflow:hidden}
+.hubGrid{min-height:0;flex:1;overflow:hidden;grid-template-columns:176px minmax(0,1fr);align-items:stretch}
+.sideNav{
+  align-self:stretch;position:sticky;top:0;min-height:0;max-height:calc(94dvh - 118px);
+  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:#39788a #07111f;padding:2px 7px 12px 0;
+  scrollbar-gutter:stable;
+}
+.sideNav::-webkit-scrollbar,.hubMain::-webkit-scrollbar{width:7px}
+.sideNav::-webkit-scrollbar-thumb,.hubMain::-webkit-scrollbar-thumb{background:#39788a;border-radius:20px}
+.sideNav::-webkit-scrollbar-track,.hubMain::-webkit-scrollbar-track{background:#07111f}
+.navBtn{flex:0 0 auto;min-height:44px;line-height:1.35;white-space:normal}
+.hubMain{min-height:0;max-height:none;height:100%;overscroll-behavior:contain;scrollbar-gutter:stable}
+button{ -webkit-tap-highlight-color:transparent }
+@media(pointer:coarse),(max-width:850px){
+  .menuWrap{height:96dvh;max-height:96dvh}
+  .hubGrid{display:flex;flex-direction:column;min-height:0;overflow:hidden;gap:7px}
+  .sideNav{
+    position:sticky;top:0;z-index:8;display:flex;flex:0 0 auto;flex-direction:row;
+    width:100%;max-height:none;overflow-x:auto;overflow-y:hidden;gap:7px;
+    padding:5px 2px 9px;background:#071522f7;scrollbar-width:thin;
+    overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+  }
+  .navBtn{flex:0 0 auto;min-height:42px;white-space:nowrap;scroll-snap-align:start}
+  .hubMain{flex:1 1 auto;width:100%;height:auto;max-height:none;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 3px 16px 0}
+  #touchControls{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));gap:10px}
+  .touchCluster{grid-template-columns:repeat(3,minmax(46px,56px));grid-template-rows:repeat(2,52px);gap:6px}
+  .touchRight{grid-template-columns:repeat(2,minmax(48px,60px));grid-template-rows:repeat(2,52px)}
+  .touchCluster button{min-width:44px;min-height:48px;font-size:15px;border:1px solid #9beeffbb;background:linear-gradient(145deg,#102b40ed,#071522ed);box-shadow:0 5px 16px #0009,inset 0 1px #ffffff18;touch-action:none}
+  .touchCluster button.pressed{background:#16718b;transform:scale(.96);box-shadow:0 0 0 2px #63f3ff55,0 4px 12px #0008}
+  #mobileControlsHint{bottom:max(2px,env(safe-area-inset-bottom));font-size:8px;max-width:94vw;white-space:normal;text-align:center}
+}
+@media(max-width:520px){
+  .menuWrap{padding:10px}
+  .hubTop{flex:0 0 auto}
+  .sideNav{margin:0 -2px}
+  .navBtn{padding:10px 12px;font-size:9px}
+  .hubMain{padding-bottom:22px}
+  #touchControls{bottom:max(8px,env(safe-area-inset-bottom));padding-left:7px;padding-right:7px}
+  .touchCluster{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,48px);gap:5px;padding:5px}
+  .touchRight{grid-template-columns:repeat(2,46px);grid-template-rows:repeat(2,48px)}
+  .touchCluster button{font-size:13px;border-radius:12px}
+  .bottom{bottom:132px}
+}
+@media(orientation:landscape) and (max-height:520px) and (pointer:coarse){
+  #touchControls{bottom:4px}
+  .touchCluster{grid-template-rows:repeat(2,40px);gap:4px}
+  .touchRight{grid-template-rows:repeat(2,40px)}
+  .touchCluster button{min-height:38px}
+  #mobileControlsHint{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -1295,23 +1349,45 @@ function playSfx(frequency=120,duration=.12){
 }
 const engineVoices={};
 function updateEngineSound(speed=0,throttle=false,dt=.016,player=1){
- if(!audioCtx||!soundEnabled)return;
+ if(!audioCtx)return;
+ if(!soundEnabled){Object.values(engineVoices).forEach(v=>{try{v.master.gain.setTargetAtTime(0,audioCtx.currentTime,.025);}catch(e){}});return;}
  try{
   let v=engineVoices[player],t=audioCtx.currentTime;
   if(!v){
    const master=audioCtx.createGain();master.gain.value=0;master.connect(audioCtx.destination);
-   const low=audioCtx.createOscillator(),high=audioCtx.createOscillator(),sub=audioCtx.createOscillator();
-   const lf=audioCtx.createBiquadFilter(),hf=audioCtx.createBiquadFilter();
-   const lg=audioCtx.createGain(),hg=audioCtx.createGain(),sg=audioCtx.createGain();
-   low.type='sawtooth';high.type='square';sub.type='triangle';lf.type='lowpass';lf.frequency.value=520;hf.type='bandpass';hf.frequency.value=1050;hf.Q.value=.7;
-   lg.gain.value=.42;hg.gain.value=.075;sg.gain.value=.22;
-   low.connect(lf);lf.connect(lg);lg.connect(master);high.connect(hf);hf.connect(hg);hg.connect(master);sub.connect(sg);sg.connect(master);
-   low.start();high.start();sub.start();v=engineVoices[player]={master,low,high,sub};
+   const low=audioCtx.createOscillator(),mid=audioCtx.createOscillator(),high=audioCtx.createOscillator();
+   const lowFilter=audioCtx.createBiquadFilter(),midFilter=audioCtx.createBiquadFilter(),highFilter=audioCtx.createBiquadFilter();
+   const lowGain=audioCtx.createGain(),midGain=audioCtx.createGain(),highGain=audioCtx.createGain();
+   low.type='sawtooth';mid.type='triangle';high.type='square';
+   lowFilter.type='lowpass';lowFilter.frequency.value=430;lowFilter.Q.value=.7;
+   midFilter.type='bandpass';midFilter.frequency.value=680;midFilter.Q.value=.8;
+   highFilter.type='lowpass';highFilter.frequency.value=1450;highFilter.Q.value=.6;
+   lowGain.gain.value=.34;midGain.gain.value=.16;highGain.gain.value=.025;
+   low.connect(lowFilter);lowFilter.connect(lowGain);lowGain.connect(master);
+   mid.connect(midFilter);midFilter.connect(midGain);midGain.connect(master);
+   high.connect(highFilter);highFilter.connect(highGain);highGain.connect(master);
+   // A quiet filtered combustion layer adds the rough, pulsing texture of an engine.
+   const noiseBuffer=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),noiseData=noiseBuffer.getChannelData(0);
+   for(let i=0;i<noiseData.length;i++)noiseData[i]=(Math.random()*2-1)*.45;
+   const noise=audioCtx.createBufferSource(),noiseFilter=audioCtx.createBiquadFilter(),noiseGain=audioCtx.createGain();
+   noise.buffer=noiseBuffer;noise.loop=true;noiseFilter.type='bandpass';noiseFilter.frequency.value=520;noiseFilter.Q.value=.55;
+   noiseGain.gain.value=.018;noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(master);
+   const pulse=audioCtx.createOscillator(),pulseGain=audioCtx.createGain();
+   pulse.type='sine';pulse.frequency.value=18;pulseGain.gain.value=.006;pulse.connect(pulseGain);pulseGain.connect(master);
+   low.start();mid.start();high.start();noise.start();pulse.start();
+   v=engineVoices[player]={master,low,mid,high,noiseFilter,noiseGain,pulse};
   }
-  const normalized=clamp((Number(speed)||0)/230,0,1),rpm=clamp(48+normalized*155+(throttle?38:0),48,255);
-  const target=throttle?.105:(speed>4?.055:0.0001);
-  v.low.frequency.setTargetAtTime(rpm,t,.075);v.high.frequency.setTargetAtTime(rpm*2.02,t,.075);v.sub.frequency.setTargetAtTime(rpm*.5,t,.08);
-  v.master.gain.setTargetAtTime(target,t,.11);
+  const kmh=Math.max(0,Number(speed)||0),normalized=clamp(kmh/245,0,1);
+  // RPM rises with road speed, with a throttle blip and a believable idle when stationary.
+  const rpm=clamp(34+normalized*142+(throttle?24:0),34,225);
+  const load=throttle?1:.48,volume=kmh<2&&!throttle?.018:(.045+normalized*.048);
+  v.low.frequency.setTargetAtTime(rpm,t,.09);
+  v.mid.frequency.setTargetAtTime(rpm*2.01,t,.075);
+  v.high.frequency.setTargetAtTime(rpm*3.02,t,.065);
+  v.noiseFilter.frequency.setTargetAtTime(360+normalized*900+(throttle?260:0),t,.12);
+  v.noiseGain.gain.setTargetAtTime(.009+normalized*.018+(throttle?.012:0),t,.1);
+  v.pulse.frequency.setTargetAtTime(clamp(rpm*.42,14,92),t,.08);
+  v.master.gain.setTargetAtTime(volume*load,t,.12);
  }catch(e){}
 }
 function playNoiseBurst(duration=.18,volume=.12,filterHz=1200){
@@ -3682,7 +3758,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
   window.addEventListener('keyup',e=>keys[e.code]=false);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
-  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
+  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();try{btn.setPointerCapture(e.pointerId);}catch(err){}mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
   $('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').style.display=$('playerModeSelect').value==='local2'?'block':'none';$('p2LoadoutSetup').hidden=$('playerModeSelect').value!=='local2';$('p1Touch').style.display='block';document.body.classList.toggle('local-two-player',$('playerModeSelect').value==='local2');});
   const energyTimer=setInterval(()=>{const gained=applyEnergyRegen();updateUI();if(gained)saveProfile();},10000);
   window.addEventListener('beforeunload',saveProfile);
