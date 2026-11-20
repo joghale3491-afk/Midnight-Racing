@@ -27,6 +27,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
 .info small{display:block;font-size:9px;letter-spacing:.18em;color:#99b2c7;font-weight:900}
 .info b{font-size:clamp(17px,2.2vw,27px);font-variant-numeric:tabular-nums}
 #position{color:var(--gold)} #lap{color:var(--cyan)}
+.modeTimerHud{z-index:5;position:absolute;top:13.5%;left:50%;transform:translateX(-50%);display:none;min-width:220px;padding:9px 18px;text-align:center;background:linear-gradient(120deg,#07101ce8,#10283be8);border:1px solid #69eaff77;box-shadow:0 0 24px #2bdfff26;backdrop-filter:blur(10px);pointer-events:none;clip-path:polygon(9px 0,100% 0,100% calc(100% - 9px),calc(100% - 9px) 100%,0 100%,0 9px)}.modeTimerHud.visible{display:block}.modeTimerHud small{display:block;color:#9ab8cc;font-size:9px;letter-spacing:.2em;font-weight:900}.modeTimerHud strong{display:block;color:#fff;font-size:clamp(24px,3vw,36px);font-variant-numeric:tabular-nums;text-shadow:0 0 16px #53eaff88}.modeTimerHud.warning strong{color:#ff6f83;text-shadow:0 0 16px #ff476b99}
+#driftControlBtn{z-index:5;position:absolute;left:50%;bottom:13%;transform:translateX(-50%);display:none;pointer-events:auto;border:1px solid #62f5ff;background:linear-gradient(135deg,#0b3145ed,#111b32ed);color:#eaffff;padding:13px 25px;border-radius:999px;font-weight:1000;letter-spacing:.16em;box-shadow:0 0 22px #4eeaff55}#driftControlBtn.visible{display:block}#driftControlBtn.active{background:#ff4f9a;color:white;box-shadow:0 0 28px #ff4f9a99}
 .speedPanel{min-width:122px;text-align:right;text-shadow:0 3px 12px #000}
 #speed{font-size:clamp(34px,5vw,60px);font-weight:1000;line-height:.85;font-variant-numeric:tabular-nums;color:var(--cyan)}
 .speedUnit{font-size:10px;letter-spacing:.25em;color:#c7d6e3;font-weight:900;margin-top:6px}
@@ -596,6 +598,9 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
   </div>
   <div class="controlsHint">P1 LEFT VIEW · WASD / ARROWS · SPACE NITRO · Q POWERUP · E SWITCH · P2 RIGHT VIEW · IJKL · U NITRO · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
 </div>
+<div id="modeTimerHud" class="modeTimerHud" aria-live="polite"><small id="modeTimerLabel">ROUND TIMER</small><strong id="modeTimerValue">00:30</strong></div>
+<button id="driftControlBtn" type="button" data-control="drift">HOLD TO DRIFT</button>
+<audio id="raceMusic" preload="none" loop src="https://opengameart.org/sites/default/files/hot_roadway_bpm160_0.ogg"></audio>
 
 <div id="countdown"></div>
 
@@ -856,7 +861,7 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
           <div class="heroStrip"><div><div class="eyebrow">PERSONALIZE YOUR NIGHT DRIVE</div><h2>GAME <span style="color:var(--pink)">SETTINGS</span></h2></div></div>
           <div class="featureGrid">
             <div class="featureCard"><h3>PROFILE</h3><label class="eyebrow" for="usernameInput">RACER USERNAME</label><input class="mrInput" id="usernameInput" maxlength="18" placeholder="Choose a username"><button class="smallBtn" id="saveUsernameBtn">SAVE USERNAME</button><p id="accountStatus" class="mutedText">Guest profile. Sign in to sync progress across devices.</p></div>
-            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Original EDM / techno soundtrack</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are both available in solo mode.</p></div>
+            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> CC0 techno soundtrack + synth fallback</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are both available in solo mode.</p></div>
             <div class="featureCard"><h3>ACCOUNT ACCESS</h3><input class="mrInput" id="accountEmail" type="email" placeholder="Email address"><input class="mrInput" id="accountPassword" type="password" placeholder="Password"><div class="formRow"><button class="smallBtn" id="signInBtn">SIGN IN</button><button class="smallBtn" id="signUpBtn">CREATE ACCOUNT</button></div><button class="smallBtn" id="signOutBtn">SIGN OUT</button><p class="mutedText" id="cloudSaveStatus">Cloud save is available after Supabase is configured.</p></div>
           </div>
         </section>
@@ -906,10 +911,10 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
 
 <div id="touchControls">
   <div id="p1Touch">
-    <div class="touchCluster"><div class="touchLabel">PLAYER 1</div><button data-control="p1left">◀</button><button data-control="p1brake">▼</button><button data-control="p1right">▶</button><button data-control="p1nitro">N₂</button><button data-control="p1gas" style="grid-column:2/4">GAS</button></div>
+    <div class="touchCluster"><div class="touchLabel">PLAYER 1</div><button data-control="p1left">◀</button><button data-control="p1brake">▼</button><button data-control="p1right">▶</button><button data-control="p1nitro">N₂</button><button data-control="p1gas" style="grid-column:2/4">GAS</button><button data-control="drift" id="touchDriftBtn" style="display:none;grid-column:1/4">DRIFT</button></div>
   </div>
   <div id="p2Touch">
-    <div class="touchCluster"><div class="touchLabel">PLAYER 2</div><button data-control="p2left">◀</button><button data-control="p2brake">▼</button><button data-control="p2right">▶</button><button data-control="p2nitro">N₂</button><button data-control="p2gas" style="grid-column:2/4">GAS</button><button data-control="p2power">O</button><button data-control="p2swap">SWAP</button></div>
+    <div class="touchCluster"><div class="touchLabel">PLAYER 2</div><button data-control="p2left">◀</button><button data-control="p2brake">▼</button><button data-control="p2right">▶</button><button data-control="p2nitro">N₂</button><button data-control="p2gas" style="grid-column:2/4">GAS</button><button data-control="p2power">O</button><button data-control="p2swap">SWAP</button><button data-control="p2drift" id="p2TouchDriftBtn" style="display:none;grid-column:1/4">P2 DRIFT</button></div>
   </div>
   <div class="touchCluster touchRight"><div class="touchLabel">BOOST / POWERUP</div><button data-control="p1boost">N₂</button><button data-control="p1power">Q</button><button data-control="p1swap">E</button><button data-control="p1gas">▲</button><button data-control="p1brake">▼</button></div>
 </div>
@@ -1166,7 +1171,7 @@ function consumeRaceEnergy(amount=RACE_ENTRY_ENERGY){
   profile.energy=Math.max(0,profile.energy-amount);saveProfile();updateUI();return true;
 }
 applyEnergyRegen();
-let audioCtx = null, musicInterval = null, musicEnabled = true, soundEnabled = true, musicVolume = 0.3;
+let audioCtx = null, musicInterval = null, musicEnabled = true, soundEnabled = true, musicVolume = 0.3, engineSoundCooldown=0, nitroSoundCooldown=0, nitroWasActive=false, p2NitroWasActive=false, p2NitroSoundCooldown=0, driftSoundCooldown=0;
 
 // --- TRACK CONFIG ---
 const TRACKS = {
@@ -1232,7 +1237,7 @@ for(let i=STORY_CHAPTERS.length;i<TRACK_ORDER.length;i++){
   const trackId=TRACK_ORDER[i],track=TRACKS[trackId],arc=EXTRA_STORY_ARCS[i-8]||[`Nightshift ${i+1}`,`A new rival threatens the crew’s place on the circuit.`];
   const modes=['street','checkpoint','police','drift','duel','traffic','time','infected'];
   const mode=modes[(i-8)%modes.length],contact=EXTRA_STORY_CONTACTS[(i-8)%EXTRA_STORY_CONTACTS.length];
-  const objectiveByMode={street:'Win the circuit and finish ahead of the crew rival.',checkpoint:'Hit all four route checkpoints and finish before the 120-second deadline.',police:'Escape the aggressive patrol fleet by surviving for 90 seconds.',drift:'Earn the target drift score on the dedicated Drift Arena.',duel:'Beat the single elite rival over three laps.',traffic:'Complete two laps with less than 40% vehicle damage.',time:'Survive the elimination rounds and be the last driver standing.',infected:'Avoid the tagged racer. The tagged driver is eliminated every 30 seconds until one racer remains.'};
+  const objectiveByMode={street:'Win the circuit and finish ahead of the crew rival.',checkpoint:'Reach four checkpoints before time expires. Start with 48 seconds; each checkpoint adds 14 seconds.',police:'Evade the patrol fleet for a randomized 72–110 seconds. Police follow behind and make staggered attack runs.',drift:'Hold SHIFT (or the on-screen DRIFT button) while steering through slides on the dedicated Drift Arena.',duel:'Beat the single elite rival over three laps.',traffic:'Complete two laps with less than 40% vehicle damage.',time:'Survive the elimination rounds and be the last driver standing.',infected:'Avoid the tagged racer. The tagged driver is eliminated every 30 seconds until one racer remains.'};
   STORY_CHAPTERS.push({title:arc[0],tag:`NIGHTSHIFT FILE ${String(i+1).padStart(2,'0')}`,track:trackId,mode,objective:objectiveByMode[mode],reward:900+i*55,unlock:i+1<TRACK_ORDER.length?TRACKS[TRACK_ORDER[i+1]].name:'CAMPAIGN COMPLETE',contact,dialogue:`“${arc[1]} We need your call before the next run.” — ${contact.split(' ·')[0].toUpperCase()}`,story:`${arc[1]} ${track.name} becomes the next chapter in the Nightshift campaign. The crew has gathered around the route map. Mara checks the build, Juno studies the timing data, Vex scouts the rival lineup, and Rook warns that the syndicate is changing its tactics. Your decision will shape the crew’s next move.`,desc:''});
   const names=['The Crew Room','Signal Check','After Hours Debrief'];
   STORY_THREADS.push(names.map((name,j)=>({title:`${name} · ${arc[0]}`,body:[`Before the event, ${contact.split(' ·')[0]} brings you into the workshop. The crew compares notes and explains what is at stake. A small detail in the route map suggests the rival knows more than they should. You can take time to listen or go straight to the starting grid.`,`The first run exposes a clue that changes the crew’s theory. Juno wants to preserve the evidence, Mara wants to protect the cars, and Vex believes the rival is trying to provoke a mistake. You have to prove you can stay composed when the pressure rises.`,`After the race, the team reviews the result together. The episode closes one lead and opens another, with a new route marked on the campaign board. Your progress here is required before the next chapter can begin.`][j],dialogue:[`“We’re not just racing a route. We’re finding out who keeps moving the finish line.” — ${contact.split(' ·')[0].toUpperCase()}`,`“Watch the next corner. The obvious line is not always the safe one.” — JUNO`,`“Every decision has a result. Make yours count.” — NIGHTSHIFT`][j]})));
@@ -1263,6 +1268,7 @@ function makeMat(color,roughness=.65,metalness=0,extra={}){return new THREE.Mesh
 // --- EDM SYNTH ---
 function playSfx(frequency=120,duration=.12){if(!soundEnabled||!audioCtx)return;try{const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type='sawtooth';osc.frequency.setValueAtTime(frequency,audioCtx.currentTime);gain.gain.setValueAtTime(.08,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration);}catch(e){console.warn('Audio effect:',e.message);}}
 function initAudio() {
+    const raceMusic=$('raceMusic');if(raceMusic&&musicEnabled){raceMusic.volume=musicVolume;raceMusic.play().catch(()=>{console.info('External CC0 music unavailable; using built-in synth soundtrack.');});}else if(raceMusic)raceMusic.pause();
     if(audioCtx) { audioCtx.resume?.().catch(()=>{}); return; }
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
     if(!AudioContextClass)return;
@@ -1277,6 +1283,7 @@ function initAudio() {
     };
     musicInterval = setInterval(() => {
       if(!audioCtx || !musicEnabled || gameState === 'paused') return;
+      if(raceMusic&&!raceMusic.paused&&!raceMusic.ended)return;
       // Four-on-the-floor kick, clap on beats 2/4 and crisp off-beat hi-hats.
       if(step%4===0) envelopeTone(125,'sine',.42,.22,43);
       if(step%8===4) { envelopeTone(185,'triangle',.11,.085,110); envelopeTone(1120,'square',.025,.055,650); }
@@ -1942,6 +1949,7 @@ function updateHumanPowerupGlow(car,effects){
   visual.pulseWave.visible=(effects.pulse||0)>0||(effects.jammer||0)>0;
   if(visual.pulseWave.visible){visual.pulseWave.material.color.setHex((effects.jammer||0)>0?0xff5aa6:0x6feaff);visual.pulseWave.rotation.z+=.05;visual.pulseWave.scale.setScalar(1+.12*Math.sin(raceTime*11));}
 }
+function setInfectedVisual(car,infected){if(!car)return;car.traverse(obj=>{if(!obj.isMesh||!obj.material)return;const mats=Array.isArray(obj.material)?obj.material:[obj.material];mats.forEach(mat=>{if(!mat.emissive)return;if(mat.userData.infectedBase===undefined)mat.userData.infectedBase=mat.emissive.getHex();mat.emissive.setHex(infected?0xff164f:mat.userData.infectedBase);mat.emissiveIntensity=infected?1.15:0;});});}
 function createRacers(){
   if(player)dispose3DObject(player);
   if(localPlayer2)dispose3DObject(localPlayer2);
@@ -1991,7 +1999,7 @@ function createRacers(){
   p2RacePowerupLoadout=localPlayer2?(p2BriefingLoadout||[]).filter(id=>(Number(profile.inventory[id])||0)>0).slice(0,2):[];
   const startingCharges=allocateLocalRacePowerupCharges(racePowerupLoadout,p2RacePowerupLoadout);
   racePowerupCharges=startingCharges.p1;p2RacePowerupCharges=localPlayer2?startingCharges.p2:{};
-  checkpointDeadline=120;trafficDamageLimit=40;policeTargetTime=90;playerFinished=false;p2Finished=false;playerFinishTime=null;p2FinishTime=null;
+  checkpointDeadline=48;trafficDamageLimit=40;policeTargetTime=72+Math.floor(raceRandom()*39);nitroWasActive=false;p2NitroWasActive=false;p2NitroSoundCooldown=0;driftSoundCooldown=0;playerFinished=false;p2Finished=false;playerFinishTime=null;p2FinishTime=null;
   eliminationActive=gameMode==='time';eliminationCountdown=TIME_ATTACK_ROUND_SECONDS;eliminationOrder=[];eliminationChampion=null;playerEliminated=false;p2Eliminated=false;eliminationRound=0;
   // Randomized starting grid: two lanes, staggered rows, with the human driver assigned a shuffled grid pod.
   // Police mode keeps the player in the front row and lines every patrol car up behind the player.
@@ -2021,13 +2029,25 @@ function createRacers(){
     if(localPlayer2){p2StartDistance=-7;p2State.dist=p2StartDistance;p2State.offset=3;}
     rivals.forEach(r=>{r.startDist=Number(r.dist)||0;});
   }
-  const start=frameAt(playerDistance);player.position.copy(start.p).addScaledVector(start.side,playerOffset);player.position.y=.2;player.lookAt(frameAt(playerDistance+5).p);
-  if(localPlayer2){const start2=frameAt(p2State.dist);localPlayer2.position.copy(start2.p).addScaledVector(start2.side,p2State.offset);localPlayer2.position.y=.2;localPlayer2.lookAt(frameAt(p2State.dist+5).p);}
-  // Place every AI mesh on its grid pod before the countdown starts.
-  rivals.forEach(r=>{const rf=frameAt(r.dist);r.mesh.position.copy(rf.p).addScaledVector(rf.side,r.offset);r.mesh.position.y=.2;r.mesh.lookAt(frameAt(r.dist+5).p.clone().addScaledVector(rf.side,r.offset));});
+  // Straight, parallel starting grid: calculate every car from ONE shared start-line frame.
+  // This prevents cars from following the track's curvature while waiting for the countdown.
+  const gridAnchor=frameAt(0);
+  const gridForward=gridAnchor.tangent.clone().normalize();
+  const gridSide=gridAnchor.side.clone().normalize();
+  const placeOnStraightGrid=(mesh,dist,offset)=>{
+    const longitudinal=Number(dist)+6.5; // front row (-6.5) sits on the start line
+    mesh.position.copy(gridAnchor.p).addScaledVector(gridForward,longitudinal).addScaledVector(gridSide,Number(offset)||0);
+    mesh.position.y=.2;
+    mesh.lookAt(mesh.position.clone().addScaledVector(gridForward,5));
+  };
+  const start=frameAt(playerDistance);
+  placeOnStraightGrid(player,playerDistance,playerOffset);
+  if(localPlayer2)placeOnStraightGrid(localPlayer2,p2State.dist,p2State.offset);
+  // Place all AI cars on the same straight, parallel grid before countdown begins.
+  rivals.forEach(r=>placeOnStraightGrid(r.mesh,r.dist,r.offset));
   const cameraFocus=start.p.clone();
-  const cameraBack=start.tangent.clone().multiplyScalar(-17);camera.position.copy(cameraFocus).add(new THREE.Vector3(0,8,0)).add(cameraBack);camera.lookAt(cameraFocus.clone().add(new THREE.Vector3(0,1.2,0)));
-  if(localPlayer2&&camera2){const startP2=frameAt(p2State.dist);camera2.position.copy(startP2.p).add(new THREE.Vector3(0,8,0)).addScaledVector(startP2.tangent,-17);camera2.lookAt(startP2.p.clone().add(new THREE.Vector3(0,1.2,0)));}
+  const cameraBack=gridForward.clone().multiplyScalar(-17);camera.position.copy(cameraFocus).add(new THREE.Vector3(0,8,0)).add(cameraBack);camera.lookAt(cameraFocus.clone().addScaledVector(gridForward,5).add(new THREE.Vector3(0,1.2,0)));
+  if(localPlayer2&&camera2){camera2.position.copy(localPlayer2.position).add(new THREE.Vector3(0,8,0)).addScaledVector(gridForward,-17);camera2.lookAt(localPlayer2.position.clone().addScaledVector(gridForward,5).add(new THREE.Vector3(0,1.2,0)));}
   $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${Math.min(6,rivals.length+1+(localPlayer2?1:0)+Math.max(remotePlayers.size||0,onlineParticipants.length?onlineParticipants.length-1:0))}/6`;
   gameState='countdown';renderRacePowerupHud();renderP2RacePowerupHud();$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
   if(raceCountdownTimer)clearInterval(raceCountdownTimer);
@@ -2053,19 +2073,22 @@ function update(dt){
   const effective=carStatsWithUpgrades(spec),carLevel=effective.level,up=effective.upgrades;const weatherGrip=currentWeather==='SNOW'?0.82:((currentWeather==='RAIN'||currentWeather==='STORM')?0.91:1);
   const accel=effective.acceleration*.72*weatherGrip;
   const impactDamageScale=clamp(1.25-effective.durability*.0045,.78,1);
-  const maxSpeed=(effective.speed/1.5)*weatherGrip; // Base internal speed cap; timed powerups may briefly raise it.
-  const playerSpeedLimit=maxSpeed*(activeEffects.boost>0?1.28:1)*(activeEffects.overdrive>0?1.18:1);
+  const maxSpeed=(effective.speed/1.5)*weatherGrip; // Base internal speed cap.
   const left=keys.KeyA||keys.ArrowLeft||mobilePressed.has('p1left');
   const right=keys.KeyD||keys.ArrowRight||mobilePressed.has('p1right');
   const gas=keys.KeyW||keys.ArrowUp||mobilePressed.has('p1gas');
   const brake=keys.KeyS||keys.ArrowDown||mobilePressed.has('p1brake');
+  const driftHeld=gameMode==='drift'&&(keys.ShiftLeft||mobilePressed.has('drift'));
   const boost=keys.Space||mobilePressed.has('p1nitro')||mobilePressed.has('p1boost');
+  const nitroActiveNow=!!(!playerEliminated&&!playerFinished&&boost&&nitro>0);
+  const playerSpeedLimit=maxSpeed*(nitroActiveNow?1.24:1)*(activeEffects.boost>0?1.28:1)*(activeEffects.overdrive>0?1.18:1);
   if(playerEliminated||playerFinished){playerSpeed=0;}else if(gas)playerSpeed+=accel*(activeEffects.boost>0?1.38:1)*(activeEffects.overdrive>0?1.16:1)*dt;else if(brake)playerSpeed-=accel*1.45*dt;else playerSpeed*=Math.pow(.986,dt*60);
-  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(82+up.nitro*2.2+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(28-up.nitro*1.2)*dt);}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);
-  if(gameMode==='drift'&&!playerEliminated&&!playerFinished&&(left||right)&&playerSpeed>55&&Math.abs(playerOffset)>1.2&&Math.abs(playerOffset)<7.2){driftComboTime+=dt;driftScore+=(playerSpeed*.55*Math.abs(playerOffset))*dt*(1+Math.min(.8,driftComboTime*.18));}else driftComboTime=Math.max(0,driftComboTime-dt*1.5);
-  if(gameMode==='checkpoint'&&!playerEliminated&&!playerFinished)while(checkpointProgress<4&&playerDistance>=trackLength*(checkpointProgress+1)/5&&Math.abs(playerOffset)<=7.6)checkpointProgress++;
+  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(112+up.nitro*2.8+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(25-up.nitro*1.2)*dt);if(!nitroWasActive)playSfx(520,.22);}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);nitroWasActive=nitroActiveNow;
+  engineSoundCooldown=Math.max(0,engineSoundCooldown-dt);nitroSoundCooldown=Math.max(0,nitroSoundCooldown-dt);if(soundEnabled&&gas&&engineSoundCooldown<=0){playSfx(90+Math.min(170,playerSpeed*1.4),.045);engineSoundCooldown=.16;}if(nitroActiveNow&&nitroSoundCooldown<=0){playSfx(760,.075);nitroSoundCooldown=.32;}
+  if(gameMode==='drift'&&!playerEliminated&&!playerFinished&&driftHeld&&(left||right)&&playerSpeed>38&&Math.abs(playerOffset)>0.9&&Math.abs(playerOffset)<7.5){driftComboTime+=dt;driftScore+=(playerSpeed*.55*Math.abs(playerOffset))*dt*(1+Math.min(.8,driftComboTime*.18));driftSoundCooldown=Math.max(0,driftSoundCooldown-dt);if(driftSoundCooldown<=0){playSfx(300+Math.min(180,Math.abs(playerOffset)*20),.1);driftSoundCooldown=.28;}}else driftComboTime=Math.max(0,driftComboTime-dt*1.5);
+  if(gameMode==='checkpoint'&&!playerEliminated&&!playerFinished)while(checkpointProgress<4&&playerDistance>=trackLength*(checkpointProgress+1)/5&&Math.abs(playerOffset)<=7.6){checkpointProgress++;checkpointDeadline+=14;showToast(`CHECKPOINT ${checkpointProgress}/4 · +14 SECONDS`,'success');playSfx(660,.16);}
   const steer=(10+effective.handling*.085+up.handling*.4+(activeEffects.grip>0?2.2:0))*weatherGrip;
-  if(!playerEliminated&&!playerFinished){if(left)playerOffset-=steer*dt;if(right)playerOffset+=steer*dt;}
+  if(!playerEliminated&&!playerFinished){if(left)playerOffset-=steer*dt;if(right)playerOffset+=steer*dt;if(gameMode==='drift'&&driftHeld&&(left||right))playerOffset+=(right?1:-1)*2.6*dt;}
   playerOffset=clamp(playerOffset,-8,8);playerSpeed=clamp(playerSpeed,-35,playerSpeedLimit);
   if(!playerEliminated&&!playerFinished)playerDistance+=Math.max(0,playerSpeed)*dt;
   animateCarWheels(player,playerSpeed,dt);
@@ -2105,11 +2128,13 @@ function update(dt){
       const sideBias=(r.index%2===0?-1:1)*(1.55+policeHeat*.8);
       const desiredOffset=clamp(targetOffset+sideBias,-6.6,6.6);
       r.offset+=clamp(desiredOffset-r.offset,-(13+policeHeat*10)*dt,(13+policeHeat*10)*dt);
-      const desiredPursuitSpeed=clamp(targetSpeed+14+policeHeat*12+clamp((signedGap-7)*.72,-16,38),maxSpeed*.68,maxSpeed*1.27);
-      r.speed+=(desiredPursuitSpeed-r.speed)*Math.min(1,dt*(2.2+policeHeat*.45));
+      const desiredPursuitSpeed=clamp(targetSpeed+18+policeHeat*13+clamp((signedGap-14)*.62,-10,42),maxSpeed*.72,maxSpeed*1.29);
+      r.speed+=(desiredPursuitSpeed-r.speed)*Math.min(1,dt*(2.0+policeHeat*.42));
       const nextPoliceDist=r.dist+r.speed*dt;
-      // Do not let patrols drive past their target; hold a tight rear-quarter position for a ram attempt.
-      r.dist=Math.min(nextPoliceDist,targetDist-(2.8+(r.index%2)*1.5));
+      // Patrols trail at a readable gap, then make staggered attack runs rather than sitting on the bumper.
+      const attackWindow=((Math.floor(raceTime/7)+r.index)%3===0)&&(raceTime%7<1.35);
+      const desiredGap=attackWindow?7.2:12.5+(r.index%3)*1.8;
+      r.dist=Math.min(nextPoliceDist,targetDist-desiredGap);
       const contactGap=Math.abs(targetDist-r.dist);
       if(contactGap<8.5&&Math.abs(r.offset-targetOffset)<4.2&&canApplyPlayerImpact(targetP2?'p2':'p1',.92)){
         const ramDamage=(5.4+policeHeat*1.65)*impactDamageScale;
@@ -2173,15 +2198,16 @@ function update(dt){
     const p2gas=keys.KeyI||mobilePressed.has('p2gas'),p2brake=keys.KeyK||mobilePressed.has('p2brake');
     const p2left=keys.KeyJ||mobilePressed.has('p2left'),p2right=keys.KeyL||mobilePressed.has('p2right');
     const p2boost=keys.KeyU||mobilePressed.has('p2nitro');
-    const p2max=maxSpeed*(p2ActiveEffects.boost>0?1.28:1)*(p2ActiveEffects.overdrive>0?1.18:1);
+    const p2NitroActive=!!(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0);
+    const p2max=maxSpeed*(p2NitroActive?1.22:1)*(p2ActiveEffects.boost>0?1.28:1)*(p2ActiveEffects.overdrive>0?1.18:1);
     const p2Steer=(10+effective.handling*.085+up.handling*.4+(p2ActiveEffects.grip>0?2.2:0))*weatherGrip;
     if(p2Eliminated||p2Finished)p2State.speed=0;else if(p2gas)p2State.speed+=accel*.98*(p2ActiveEffects.boost>0?1.38:1)*(p2ActiveEffects.overdrive>0?1.16:1)*dt;else if(p2brake)p2State.speed-=accel*1.35*dt;else p2State.speed*=Math.pow(.986,dt*60);
-    if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=75*dt;p2State.nitro=Math.max(0,p2State.nitro-29*dt);}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);
+    if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=108*dt;p2State.nitro=Math.max(0,p2State.nitro-26*dt);if(!p2NitroWasActive)playSfx(500,.2);if(p2NitroSoundCooldown<=0){playSfx(730,.07);p2NitroSoundCooldown=.34;}}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);p2NitroWasActive=p2NitroActive;p2NitroSoundCooldown=Math.max(0,p2NitroSoundCooldown-dt);
     if(!p2Eliminated&&!p2Finished){if(p2left)p2State.offset-=p2Steer*dt;if(p2right)p2State.offset+=p2Steer*dt;}
     p2State.offset=clamp(p2State.offset,-8,8);p2State.speed=clamp(p2State.speed,-30,p2max);if(!p2Eliminated&&!p2Finished)p2State.dist+=Math.max(0,p2State.speed)*dt;
     trafficCars.forEach((t,ti)=>{if(t.active&&!p2Eliminated&&!p2Finished&&trackGap(t.dist,p2State.dist)<4.2&&Math.abs(t.offset-p2State.offset)<2.6&&canApplyPlayerImpact('p2',.86)){if(!(p2ActiveEffects.shield>0))p2State.damage+=3.2*impactDamageScale;p2State.speed=Math.max(0,p2State.speed-11);}});
-    if(gameMode==='drift'&&!p2Eliminated&&!p2Finished&&(p2left||p2right)&&p2State.speed>55&&Math.abs(p2State.offset)>1.2&&Math.abs(p2State.offset)<7.2){p2DriftComboTime+=dt;p2DriftScore+=(p2State.speed*.55*Math.abs(p2State.offset))*dt*(1+Math.min(.8,p2DriftComboTime*.18));}else p2DriftComboTime=Math.max(0,p2DriftComboTime-dt*1.5);
-    if(gameMode==='checkpoint'&&!p2Eliminated&&!p2Finished)while(p2CheckpointProgress<4&&p2State.dist>=trackLength*(p2CheckpointProgress+1)/5&&Math.abs(p2State.offset)<=7.6)p2CheckpointProgress++;
+    if(gameMode==='drift'&&!p2Eliminated&&!p2Finished&&(keys.Numpad0||mobilePressed.has('p2drift'))&&(p2left||p2right)&&p2State.speed>38&&Math.abs(p2State.offset)>1.2&&Math.abs(p2State.offset)<7.2){p2DriftComboTime+=dt;p2DriftScore+=(p2State.speed*.55*Math.abs(p2State.offset))*dt*(1+Math.min(.8,p2DriftComboTime*.18));}else p2DriftComboTime=Math.max(0,p2DriftComboTime-dt*1.5);
+    if(gameMode==='checkpoint'&&!p2Eliminated&&!p2Finished)while(p2CheckpointProgress<4&&p2State.dist>=trackLength*(p2CheckpointProgress+1)/5&&Math.abs(p2State.offset)<=7.6){p2CheckpointProgress++;checkpointDeadline+=14;showToast(`PLAYER 2 CHECKPOINT ${p2CheckpointProgress}/4 · +14 SECONDS`,'success');playSfx(660,.16);}
     const f2=frameAt(p2State.dist);localPlayer2.position.copy(f2.p).addScaledVector(f2.side,p2State.offset);localPlayer2.position.y=.2;localPlayer2.lookAt(frameAt(p2State.dist+5).p.clone().addScaledVector(frameAt(p2State.dist+5).side,p2State.offset));animateCarWheels(localPlayer2,p2State.speed,dt);
     // Camera centers between the two racers so both remain in view.
   }
@@ -2225,6 +2251,8 @@ function update(dt){
     }
   }
 
+  if(gameMode==='infected'){setInfectedVisual(player,playerInfected);setInfectedVisual(localPlayer2,p2Infected);rivals.forEach(r=>setInfectedVisual(r.mesh,!!r.infected));}
+
   // Traffic collisions are discrete impacts so sustained overlap cannot drain the full condition bar.
   if(!playerEliminated&&!playerFinished)trafficCars.forEach((t,ti)=>{if(!t.active)return;const gap=trackGap(t.dist,playerDistance);if(gap<4.2&&Math.abs(t.offset-playerOffset)<2.6&&canApplyPlayerImpact('p1',.86)){if(!(activeEffects.shield>0))damage+=3.2*impactDamageScale;playerSpeed=Math.max(0,playerSpeed-11);if(crashSoundCooldown<=0){playSfx(85,.16);crashSoundCooldown=.65;}}});
   powerupPickups.forEach((p,pickupIndex)=>{
@@ -2249,7 +2277,7 @@ function update(dt){
     renderRacePowerupHud();renderP2RacePowerupHud();saveProfile();
     if(lobbyChannel&&onlineRaceStarted&&collector.type==='p1')lobbyChannel.send({type:'broadcast',event:'pickup_claim',payload:{user_id:authUser?.id,race_id:onlineRaceId,pickup_index:pickupIndex,lap:Math.floor(playerDistance/Math.max(1,trackLength))}}).catch(()=>{});
   });
-  crashSoundCooldown=Math.max(0,crashSoundCooldown-dt);Object.keys(activeEffects).forEach(k=>{activeEffects[k]-=dt;if(activeEffects[k]<=0){delete activeEffects[k];if(k==='scanner')trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=false;});}});Object.keys(p2ActiveEffects).forEach(k=>{p2ActiveEffects[k]-=dt;if(p2ActiveEffects[k]<=0){delete p2ActiveEffects[k];if(k==='scanner'&&!(activeEffects.scanner>0))trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=false;});}});updateHumanPowerupGlow(player,activeEffects);updateHumanPowerupGlow(localPlayer2,p2ActiveEffects);
+  crashSoundCooldown=Math.max(0,crashSoundCooldown-dt);Object.keys(activeEffects).forEach(k=>{activeEffects[k]-=dt;if(activeEffects[k]<=0){delete activeEffects[k];if(k==='scanner')trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=false;});}});Object.keys(p2ActiveEffects).forEach(k=>{p2ActiveEffects[k]-=dt;if(p2ActiveEffects[k]<=0){delete p2ActiveEffects[k];if(k==='scanner'&&!(activeEffects.scanner>0))trafficCars.forEach(t=>{if(t.scanRing)t.scanRing.visible=false;});}});updateHumanPowerupGlow(player,{...activeEffects,boost:Math.max(activeEffects.boost||0,nitroActiveNow?.12:0)});updateHumanPowerupGlow(localPlayer2,{...p2ActiveEffects,boost:Math.max(p2ActiveEffects.boost||0,((keys.KeyU||mobilePressed.has('p2nitro'))&&p2State.nitro>0)?.12:0)});
   const powerDown=!!(keys.KeyQ||mobilePressed.has('p1power'));if(powerDown&&!powerupInputWasDown)activatePowerup();powerupInputWasDown=powerDown;
   const p2PowerDown=!!(keys.KeyO||mobilePressed.has('p2power'));if(p2PowerDown&&!p2PowerupInputWasDown)activateP2Powerup();p2PowerupInputWasDown=p2PowerDown;
   const p2SwapDown=!!mobilePressed.has('p2swap');if(p2SwapDown&&!p2SwapInputWasDown)switchP2PowerupSlot();p2SwapInputWasDown=p2SwapDown;
@@ -2289,6 +2317,12 @@ function update(dt){
 
   if(ghostCar&&ghostTargetTime>0){const ghostProgress=clamp(raceTime/ghostTargetTime,0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
   const tierChallengeBoost=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const driftTarget=3000+tierChallengeBoost*650;trafficDamageLimit=Math.max(20,40-tierChallengeBoost*3);
+  const timerHud=$('modeTimerHud'),timerLabel=$('modeTimerLabel'),timerValue=$('modeTimerValue');let modeClock=null,modeClockTitle='';
+  if(gameMode==='time'){modeClock=eliminationCountdown;modeClockTitle=`TIME UNTIL ELIMINATION · ROUND ${eliminationRound+1}`;}
+  else if(isPoliceMode){modeClock=Math.max(0,policeTargetTime-raceTime);modeClockTitle=`POLICE PURSUIT · ${Math.ceil(policeTargetTime)}s TARGET`;}
+  else if(gameMode==='checkpoint'){modeClock=Math.max(0,checkpointDeadline-raceTime);modeClockTitle='CHECKPOINT RUN · TIME REMAINING';}
+  else if(gameMode==='infected'){modeClock=infectedCountdown;modeClockTitle=`INFECTED · ROUND ${infectedRound}`;}
+  if(timerHud){timerHud.classList.toggle('visible',modeClock!==null);timerHud.classList.toggle('warning',modeClock!==null&&modeClock<=10);if(modeClock!==null){timerLabel.innerText=modeClockTitle;timerValue.innerText=`${Math.ceil(modeClock)}s`;}}
   if(gameMode==='infected')$('powerStatus').innerText=`INFECTED ROUND ${infectedRound} · TAGGED DRIVER ELIMINATED IN ${Math.ceil(infectedCountdown)}s`;
   else if(gameMode==='drift')$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()} · COMBO x${(1+Math.min(.8,driftComboTime*.18)).toFixed(1)}`;
   else if(gameMode==='checkpoint')$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4 · ${Math.max(0,Math.ceil(checkpointDeadline-raceTime))}s LEFT`;
@@ -2339,6 +2373,7 @@ function update(dt){
   }
   rivals.forEach(r=>{const rf=frameAt(r.dist);r.mesh.position.copy(rf.p).addScaledVector(rf.side,r.offset);r.mesh.position.y=.2;r.mesh.lookAt(frameAt(r.dist+5).p.clone().addScaledVector(rf.side,r.offset));});
 
+  const driftBtn=$('driftControlBtn');if(driftBtn){driftBtn.classList.toggle('visible',gameMode==='drift'&&gameState==='racing');driftBtn.classList.toggle('active',!!driftHeld);}const touchDrift=$('touchDriftBtn'),p2TouchDrift=$('p2TouchDriftBtn');if(touchDrift)touchDrift.style.display=gameMode==='drift'?'block':'none';if(p2TouchDrift)p2TouchDrift.style.display=gameMode==='drift'&&!!localPlayer2?'block':'none';
   const lapNow=Math.min(raceLaps,Math.floor(Math.max(0,raceDistanceProgress(playerDistance,playerStartDistance))/trackLength)+1);$('lap').innerText=eliminationActive?`ROUND ${eliminationRound+1} · ${Math.max(0,Math.ceil(eliminationCountdown))}s`:`${lapNow}/${raceLaps}`;
   $('speed').innerText=Math.floor(playerSpeed*1.5).toString().padStart(3,'0');$('timer').innerText=formatTime(raceTime);
   if(localPlayer2){$('p2SpeedHud').innerText=Math.floor(p2State.speed*1.5).toString().padStart(3,'0');$('p2ConditionHud').innerText=`CONDITION ${Math.max(0,100-Math.floor(p2State.damage))}%`;$('p2NitroHud').innerText=`NITRO ${Math.floor(p2State.nitro)}%`;}
@@ -2864,7 +2899,7 @@ function activatePowerup(){
 function currentRaceObjective(){
  if(document.body.dataset.storyRace==='1')return STORY_CHAPTERS[selectedChapter]?.objective||'Complete the chapter objective.';
  if(storySideIndex>=0)return sideMissionBrief(selectedChapter,storySideIndex);
- const tier=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const objectives={street:'Finish in the top three. Win for the full reward.',time:'Every 30 seconds the racer in last place is eliminated. Be the final racer remaining.',police:'Evade the actively pursuing patrol cars for 90 seconds. They will steer into your line and attempt to ram you.',ghost:bestTimes[currentTrack]?`Beat your ${formatTime(bestTimes[currentTrack])} personal best on this unlocked track while racing its ghost.`:'Set your first lap record on this unlocked track; your ghost will appear on future runs.',infected:'Stay untagged. The tagged racer can pass the tag by contact and is eliminated when the 30-second round timer expires. Rounds continue until one racer remains.',drift:`Earn at least ${(3000+tier*650).toLocaleString()} drift points by holding clean slides on the dedicated Drift Arena.`,checkpoint:'Pass all four marked gates in order, then cross the finish line within 120 seconds.',duel:'Beat the single elite rival in a three-lap head-to-head race.',traffic:`Complete two laps through heavy traffic while keeping damage below ${Math.max(20,40-tier*3)}%.`,random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
+ const tier=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const objectives={street:'Finish in the top three. Win for the full reward.',time:'Every 30 seconds the racer in last place is eliminated. Be the final racer remaining.',police:'Evade the actively pursuing patrol cars for a randomized 72–110 seconds. They follow behind at a visible gap and make staggered attack runs.',ghost:bestTimes[currentTrack]?`Beat your ${formatTime(bestTimes[currentTrack])} personal best on this unlocked track while racing its ghost.`:'Set your first lap record on this unlocked track; your ghost will appear on future runs.',infected:'Stay untagged. The tagged racer can pass the tag by contact and is eliminated when the 30-second round timer expires. Rounds continue until one racer remains.',drift:`Earn at least ${(3000+tier*650).toLocaleString()} drift points on Drift Arena. Hold LEFT SHIFT or the on-screen DRIFT button while steering to initiate a scored slide.`,checkpoint:'Start with 48 seconds. Reach each of four checkpoints to earn 14 additional seconds, then cross the finish line.',duel:'Beat the single elite rival in a three-lap head-to-head race.',traffic:`Complete two laps through heavy traffic while keeping damage below ${Math.max(20,40-tier*3)}%.`,random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
  if(document.body.dataset.tournament==='1')return 'Tournament final: finish as high as possible. First place earns the champion reward.';
  if(document.body.dataset.specialEvent==='1')return `Rotating special event: ${objectives[gameMode]||'Complete the event objective.'}`;
  return objectives[gameMode]||'Finish the race and earn Street Rep.';
@@ -2906,7 +2941,7 @@ function openRaceBriefing(){
  if(forcedRaceWeather){currentWeather=forcedRaceWeather;}else setRaceWeather();
  $('briefingTitle').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?`SIDE STORY ${storySideIndex+1} · ${STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'CREW EPISODE'}`:`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${STORY_CHAPTERS[selectedChapter]?.title||'NIGHTSHIFT'}`):`${gameMode.toUpperCase().replaceAll('_',' ')} BRIEFING`;
  $('briefingStory').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?STORY_THREADS[selectedChapter]?.[storySideIndex]?.body:STORY_CHAPTERS[selectedChapter]?.story)||'The crew is waiting on your call.':'The crew has checked the route, weather and vehicle. Review the mission and select your equipment before the start.';
- $('briefingMode').innerText=gameMode.toUpperCase();$('briefingTrack').innerText=TRACKS[currentTrack]?.name||'NEON DISTRICT';$('briefingWeather').innerText=`${currentWeather} · ${gameMode==='time'?`ELIMINATION · ${TIME_ATTACK_ROUND_SECONDS}s ROUNDS`:gameMode==='police'?'90-SECOND PURSUIT':gameMode==='checkpoint'?'120-SECOND CHECKPOINT RUN':gameMode==='ghost'?'PERSONAL BEST':gameMode==='drift'?'DRIFT ARENA':`${raceLaps} LAPS`}`;$('briefingObjective').innerText=currentRaceObjective();
+ $('briefingMode').innerText=gameMode.toUpperCase();$('briefingTrack').innerText=TRACKS[currentTrack]?.name||'NEON DISTRICT';$('briefingWeather').innerText=`${currentWeather} · ${gameMode==='time'?`ELIMINATION · ${TIME_ATTACK_ROUND_SECONDS}s ROUNDS`:gameMode==='police'?'72–110 SECOND PURSUIT':gameMode==='checkpoint'?'48s START · +14s PER CHECKPOINT':gameMode==='ghost'?'PERSONAL BEST':gameMode==='drift'?'DRIFT ARENA':`${raceLaps} LAPS`}`;$('briefingObjective').innerText=currentRaceObjective();
  fillBriefingPowerupSelects();$('raceBriefingModal').classList.remove('hidden');
 }
 function confirmRaceBriefing(){
@@ -3147,6 +3182,7 @@ Enable hardware acceleration/WebGL or try another browser, then refresh.`);
 
 function finishRace(){
   if(raceAwarded)return;
+  $('modeTimerHud')?.classList.remove('visible');$('driftControlBtn')?.classList.remove('visible');$('raceMusic')?.pause();
   raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
   const eventTier=getEventTierIndex(),isSpecialEvent=document.body.dataset.specialEvent==='1',isTournament=document.body.dataset.tournament==='1';
   const eventRewardScale=1+eventTier*.12;
@@ -3254,13 +3290,13 @@ function finishRace(){
   else if(gameMode==='duel')$('finishTitle').innerText=won?'RIVAL DEFEATED':'RIVAL DUEL LOST';
   else $('finishTitle').innerText=won?'RACE WON':`FINISHED · #${place}`;
   const localResults=localPlayer2?`PLAYER 1 #${place}${playerFinishTime?` (${formatTime(playerFinishTime)})`:''} · PLAYER 2 #${p2Place}${p2FinishTime?` (${formatTime(p2FinishTime)})`:''} · ${p2Won?'PLAYER 2 WINS':won?'PLAYER 1 WINS':'NO LOCAL WINNER'}. `:'';
-  const objectiveText=gameMode==='time'?(won?'You survived every elimination and were the final racer remaining.':`You were eliminated in position ${place}.`):isPoliceMode?(localPlayer2?`Player 1: ${policeFailed?'busted':'escaped'} · Player 2: ${p2PoliceFailed?'busted':'escaped'}.`:(policeFailed?'Your vehicle was disabled before the pursuit timer ended.':'You survived the full 90-second pursuit.')):gameMode==='ghost'?(ghostTargetTime<=0?'First lap record saved.':ghostBeat?'Your personal-best lap was beaten.':'Your ghost remained ahead this time.'):gameMode==='drift'?`Drift score: ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()}.`:gameMode==='checkpoint'?`Checkpoints: ${checkpointProgress}/4. Time limit: 120 seconds.`:gameMode==='traffic'?`Vehicle damage: ${Math.floor(damage)}% / ${trafficLimit}% allowed.`:gameMode==='infected'?(won?'You remained untagged and outlasted every racer.':'You were tagged and eliminated.'):`${place===1?'1st place':`Place ${place}`}.`;
+  const objectiveText=gameMode==='time'?(won?'You survived every elimination and were the final racer remaining.':`You were eliminated in position ${place}.`):isPoliceMode?(localPlayer2?`Player 1: ${policeFailed?'busted':'escaped'} · Player 2: ${p2PoliceFailed?'busted':'escaped'}.`:(policeFailed?'Your vehicle was disabled before the pursuit timer ended.':'You survived the full 90-second pursuit.')):gameMode==='ghost'?(ghostTargetTime<=0?'First lap record saved.':ghostBeat?'Your personal-best lap was beaten.':'Your ghost remained ahead this time.'):gameMode==='drift'?`Drift score: ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()}.`:gameMode==='checkpoint'?`Checkpoints: ${checkpointProgress}/4. Starting time: 48 seconds; each checkpoint adds 14 seconds.`:gameMode==='traffic'?`Vehicle damage: ${Math.floor(damage)}% / ${trafficLimit}% allowed.`:gameMode==='infected'?(won?'You remained untagged and outlasted every racer.':'You were tagged and eliminated.'):`${place===1?'1st place':`Place ${place}`}.`;
   $('finishSummary').innerText=localResults+`${formatTime(raceTime)} · ${objectiveText} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion reward added.':` Tournament placement: #${place}.`):'')+(isSpecialEvent?' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
   $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText=lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
   $('finishMenu').classList.remove('hidden');if(lobbyChannel&&onlineRaceStarted)updateOnlineFinishSummary();saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
-function pauseRace(){if(gameState!=='racing')return;gameState='paused';document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
-function resumeRace(){if(gameState!=='paused')return;gameState='racing';document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
+function pauseRace(){if(gameState!=='racing')return;$('raceMusic')?.pause();gameState='paused';document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
+function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(musicEnabled){const track=$('raceMusic');if(track){track.volume=musicVolume;track.play().catch(()=>{});}}document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
 async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const resultMode=onlineRoomMode==='ranked'&&lobbyChannel?'ranked':gameMode;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:getDisplayUsername(),track:currentTrack,mode:resultMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
 async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';
   const ranked=$('rankedLeaderboard');if(ranked){ranked.innerHTML='<div class="mutedText">Loading Ranked standings…</div>';const {data:rankedData,error:rankedError}=await supabase.from('race_leaderboard').select('username,track,race_time,placement').eq('mode','ranked').order('race_time',{ascending:true}).limit(20);if(rankedError){ranked.innerHTML=`<div class="mutedText">Ranked standings unavailable: ${escapeHtml(rankedError.message)}</div>`;}else{ranked.innerHTML='';(rankedData||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)} · ${escapeHtml(r.track||'')}</span>`;ranked.appendChild(el);});if(!rankedData?.length)ranked.innerHTML='<div class="mutedText">No Ranked results yet. Complete an online Ranked race while signed in.</div>';}}
@@ -3574,17 +3610,17 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('briefingConfirm').addEventListener('click',confirmRaceBriefing);$('briefingCancel').addEventListener('click',()=>{$('raceBriefingModal').classList.add('hidden');raceLapsPrepared=false;});document.querySelectorAll('.loadoutTab[data-loadout-slot]').forEach(tab=>tab.addEventListener('click',()=>{briefingSlotActive=Number(tab.dataset.loadoutSlot)||0;renderBriefingPowerupCards();}));document.querySelectorAll('.p2LoadoutTab').forEach(tab=>tab.addEventListener('click',()=>{p2BriefingSlotActive=Number(tab.dataset.p2LoadoutSlot)||0;renderP2BriefingPowerupCards();}));$('briefingPowerupA').addEventListener('change',()=>{if($('briefingPowerupA').value===$('briefingPowerupB').value)$('briefingPowerupB').value='';renderP2BriefingPowerupCards();updateBriefingLoadoutPreview();});$('briefingPowerupB').addEventListener('change',()=>{if($('briefingPowerupB').value===$('briefingPowerupA').value)$('briefingPowerupA').value='';renderP2BriefingPowerupCards();updateBriefingLoadoutPreview();});$('p2BriefingPowerupA').addEventListener('change',()=>{if($('p2BriefingPowerupA').value===$('p2BriefingPowerupB').value)$('p2BriefingPowerupB').value='';renderP2BriefingPowerupCards();updateBriefingLoadoutPreview();});$('p2BriefingPowerupB').addEventListener('change',()=>{if($('p2BriefingPowerupB').value===$('p2BriefingPowerupA').value)$('p2BriefingPowerupA').value='';renderP2BriefingPowerupCards();updateBriefingLoadoutPreview();});
   $('racePowerupSlots').addEventListener('click',e=>{const slot=e.target.closest('[data-power-slot]');if(slot)selectPowerupSlot(Number(slot.dataset.powerSlot));});$('p2PowerupSlots').addEventListener('click',e=>{const slot=e.target.closest('[data-p2-power-slot]');if(slot)selectP2PowerupSlot(Number(slot.dataset.p2PowerSlot)||0);});
   $('pauseGraphic').addEventListener('click',pauseRace);$('resumeBtn').addEventListener('click',resumeRace);
-  $('quitBtn').addEventListener('click',async()=>{$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
-  $('menuBtn').addEventListener('click',async()=>{$('finishMenu').classList.add('hidden');$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
+  $('quitBtn').addEventListener('click',async()=>{$('raceMusic')?.pause();$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
+  $('menuBtn').addEventListener('click',async()=>{$('raceMusic')?.pause();$('finishMenu').classList.add('hidden');$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
   $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<RACE_ENTRY_ENERGY){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
   $('tournamentBtn').addEventListener('click',()=>{storySideIndex=-1;if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';openRaceBriefing();});
   $('specialEventBtn').addEventListener('click',()=>{storySideIndex=-1;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=gameMode==='time'?999:(['ghost','police','checkpoint','drift'].includes(gameMode)?1:gameMode==='duel'?3:gameMode==='traffic'?2:3);playerMode='solo';openRaceBriefing();});
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('tutorialBtn').addEventListener('click',()=>{tutorialStep=0;showTutorial();});$('tutorialNext').addEventListener('click',()=>{if(tutorialStep<TUTORIAL_STEPS.length-1){tutorialStep++;showTutorial();}else{$('tutorialModal').classList.add('hidden');}});$('tutorialBack').addEventListener('click',()=>{tutorialStep=Math.max(0,tutorialStep-1);showTutorial();});$('tutorialClose').addEventListener('click',()=>$('tutorialModal').classList.add('hidden'));
-  $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;});
-  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}});$('soundToggle').addEventListener('change',e=>soundEnabled=e.target.checked);
+  $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;const track=$('raceMusic');if(track)track.volume=musicVolume;});
+  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;const track=$('raceMusic');if(track){if(musicEnabled){track.volume=musicVolume;track.play().catch(()=>{});}else track.pause();}if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}});$('soundToggle').addEventListener('change',e=>soundEnabled=e.target.checked);
   $('touchStyle').addEventListener('change',e=>document.body.dataset.touchStyle=e.target.value);
-  window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
+  window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
   window.addEventListener('keyup',e=>keys[e.code]=false);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
   document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
