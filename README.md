@@ -102,3 +102,8 @@ The updated JavaScript passes syntax validation. The live WebGL scene still requ
 Static JavaScript syntax and structural checks are run on the packaged build. A live browser/device test is still required for WebGL visuals and online multiplayer behavior.
 
 - AI shields now also protect police units from player-caused impact damage.
+
+
+## Race-start reliability (v19)
+
+Race energy and Ranked Tickets are charged only after track/racer setup succeeds and the countdown reaches **GO**. If WebGL, track construction, or racer initialization fails, the game returns to the menu and does not deduct either entry resource. The start flow also blocks duplicate launch clicks and reports renderer/setup errors.

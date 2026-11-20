@@ -892,6 +892,7 @@ let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
 let playerMode = 'solo', selectedStoryPath = 'crew', selectedChapter = 0, storySideIndex = -1;
 let raceBriefingConfirmed=false, raceLapsPrepared=false, activePowerupSlot=0, briefingSlotActive=0, driftScore=0, p2DriftScore=0, checkpointProgress=0, p2CheckpointProgress=0, selectedStoryChoice='crew';
+let raceLaunchPending=false, raceCountdownTimer=null, pendingRankedTicket=false, graphicsInitError=null;
 let raceLapsCompleted = 0, raceAwarded = false, powerupCooldown = false, powerupPickups = [], activeEffects = {}, policeHeat = 0;
 let checkpointDeadline=120, checkpointMarkers=[], trafficDamageLimit=40, trafficFailed=false, policeTargetTime=90;
 let infectedCountdown=30, infectedRound=1, infectedEliminationOrder=[], infectedChampion=null, p2Infected=false;
@@ -1768,7 +1769,15 @@ function createRacers(){
   const cameraBack=start.tangent.clone().multiplyScalar(-17);camera.position.copy(cameraFocus).add(new THREE.Vector3(0,8,0)).add(cameraBack);camera.lookAt(cameraFocus.clone().add(new THREE.Vector3(0,1.2,0)));
   $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${Math.min(6,rivals.length+1+(localPlayer2?1:0)+Math.max(remotePlayers.size||0,onlineParticipants.length?onlineParticipants.length-1:0))}/6`;
   gameState='countdown';renderRacePowerupHud();$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
-  const cdInterval=setInterval(()=>{cd--;if(cd>0)$('countdown').innerText=cd;else if(cd===0)$('countdown').innerText='GO!';else{clearInterval(cdInterval);$('countdown').classList.remove('show');gameState='racing';$('pauseGraphic').classList.add('visible');}},1000);
+  if(raceCountdownTimer)clearInterval(raceCountdownTimer);
+  raceCountdownTimer=setInterval(()=>{
+    cd--;
+    if(cd>0){$('countdown').innerText=cd;return;}
+    if(cd===0){$('countdown').innerText='GO!';return;}
+    clearInterval(raceCountdownTimer);raceCountdownTimer=null;$('countdown').classList.remove('show');
+    if(!commitRaceEntryAtGo())return;
+    gameState='racing';document.body.classList.add('race-active');$('pauseGraphic').classList.add('visible');
+  },1000);
 }
 function update(dt){
   if(gameState!=='racing')return;
@@ -2544,21 +2553,66 @@ function updateAiPowerupEffects(r,dt,rivalMaxSpeed,gapToPlayer,bend){
   if(r.fxRing){r.fxRing.visible=Object.values(r.aiEffects).some(v=>v>0);r.fxRing.material.color.setHex(choice==='shield'?0x9d79ff:choice==='overdrive'?0xffcf55:choice==='grip'||choice==='repair'?0x55ef9c:choice==='pulse'||choice==='jammer'?0xff5caa:0x4eeaff);}
 }
 
+function isRaceRendererReady(){
+  try{return !!(renderer&&scene&&camera&&renderer.getContext&&!renderer.getContext().isContextLost());}
+  catch(error){graphicsInitError=error;return false;}
+}
+function clearPartialRaceScene(){
+  if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+  try{if(player)dispose3DObject(player);if(localPlayer2)dispose3DObject(localPlayer2);if(ghostCar)dispose3DObject(ghostCar);rivals.forEach(r=>dispose3DObject(r.mesh));if(world)dispose3DObject(world);}
+  catch(error){console.warn('Partial race cleanup:',error);}
+  player=null;localPlayer2=null;ghostCar=null;rivals=[];trafficCars=[];powerupPickups=[];world=null;
+  if(scene){if(scene.background?.isTexture)scene.background.dispose();scene.background=new THREE.Color(0x07111e);}
+}
+function abortRaceLaunch(error){
+  const detail=error instanceof Error?error.message:String(error||'Unknown initialization error');
+  clearPartialRaceScene();raceLaunchPending=false;pendingRankedTicket=false;raceBriefingConfirmed=false;
+  gameState='menu';document.body.classList.remove('race-active');
+  $('raceBriefingModal')?.classList.add('hidden');$('pauseMenu')?.classList.add('hidden');$('finishMenu')?.classList.add('hidden');
+  $('countdown')?.classList.remove('show');$('pauseGraphic')?.classList.remove('visible');
+  $('menu')?.classList.remove('hidden');$('hud')?.classList.remove('live');
+  if(lobbyChannel&&onlineRaceStarted){onlineRaceStarted=false;onlineLocalFinishSent=false;if($('mmStatus'))$('mmStatus').innerText=`Race could not initialize: ${detail}. No energy or Ranked Ticket was charged.`;}
+  updateUI();console.error('Race launch aborted:',error);
+  alert(`Race could not start. No energy was charged.\n\n${detail}\n\nCheck that WebGL is enabled, then refresh and try again.`);
+}
+function commitRaceEntryAtGo(){
+  if(!raceLaunchPending)return false;
+  applyEnergyRegen();
+  if(pendingRankedTicket&&(Number(profile.rankedTickets)||0)<1){abortRaceLaunch('Your Ranked Ticket is no longer available.');return false;}
+  if((Number(profile.energy)||0)<RACE_ENTRY_ENERGY){abortRaceLaunch(`You need ${RACE_ENTRY_ENERGY} energy to start this race.`);return false;}
+  if(!consumeRaceEnergy(RACE_ENTRY_ENERGY)){abortRaceLaunch('Energy could not be reserved for this race.');return false;}
+  if(pendingRankedTicket){profile.rankedTickets=Math.max(0,(Number(profile.rankedTickets)||0)-1);saveProfile();updateUI();}
+  raceLaunchPending=false;pendingRankedTicket=false;return true;
+}
+
 function beginRace(skipBriefing=false){
+  if(raceLaunchPending||gameState==='countdown'||gameState==='racing'||gameState==='paused')return;
   if(!skipBriefing&&!raceBriefingConfirmed){openRaceBriefing();return;}
   raceBriefingConfirmed=false;
-  if(!consumeRaceEnergy(RACE_ENTRY_ENERGY)){alert('Not enough energy. Energy restores one point every five minutes, and you can buy a refill in the Store.');return;}
-  initAudio();document.body.classList.add('race-active');
-  lastNetworkSync=0;if(lobbyChannel){onlineLocalFinishSent=false;onlineFinishers.clear();$('finishSummary').dataset.baseSummary='';}
-  if(!TRACKS[currentTrack])currentTrack='neon';
-  isPoliceMode=gameMode==='police';
-  if(!raceLapsPrepared)raceLaps=gameMode==='time'?999:(['ghost','police','checkpoint','drift'].includes(gameMode)?1:gameMode==='duel'?3:gameMode==='traffic'?2:2+Math.floor(Math.random()*5));
-  raceLapsPrepared=false;
-  if(Number.isFinite(Number(forcedRaceLaps))&&forcedRaceLaps>=2){raceLaps=clamp(Math.floor(forcedRaceLaps),2,6);forcedRaceLaps=null;}
-  setRaceWeather(forcedRaceWeather);forcedRaceWeather=null;
-  worldSeed=(Number(forcedRaceSeed)>>>0)||Math.floor(Math.random()*4294967295);forcedRaceSeed=null;
-  buildWorld(currentTrack);if(world)world.visible=true;
-  $('menu').classList.add('hidden');$('hud').classList.add('live');$('pauseGraphic').classList.add('visible');
+  applyEnergyRegen();updateUI();
+  if(!isRaceRendererReady()){
+    alert(`The 3D race engine is not ready. No energy was charged.\n\n${graphicsInitError?.message||'WebGL could not be initialized.'}\n\nEnable hardware acceleration/WebGL or try another browser, then refresh.`);
+    return;
+  }
+  if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}. Energy restores one point every five minutes.`);return;}
+  if(lobbyChannel&&onlineRoomMode==='ranked'&&(Number(profile.rankedTickets)||0)<1){alert('A Ranked Ticket is required. No energy was charged.');return;}
+  raceLaunchPending=true;pendingRankedTicket=!!(lobbyChannel&&onlineRoomMode==='ranked');
+  try{
+    initAudio();lastNetworkSync=0;
+    if(lobbyChannel){onlineLocalFinishSent=false;onlineFinishers.clear();$('finishSummary').dataset.baseSummary='';}
+    if(!TRACKS[currentTrack])currentTrack='neon';
+    isPoliceMode=gameMode==='police';
+    if(!raceLapsPrepared)raceLaps=gameMode==='time'?999:(['ghost','police','checkpoint','drift'].includes(gameMode)?1:gameMode==='duel'?3:gameMode==='traffic'?2:2+Math.floor(Math.random()*5));
+    raceLapsPrepared=false;
+    if(Number.isFinite(Number(forcedRaceLaps))&&forcedRaceLaps>=2){raceLaps=clamp(Math.floor(forcedRaceLaps),2,6);forcedRaceLaps=null;}
+    setRaceWeather(forcedRaceWeather);forcedRaceWeather=null;
+    worldSeed=(Number(forcedRaceSeed)>>>0)||Math.floor(Math.random()*4294967295);forcedRaceSeed=null;
+    buildWorld(currentTrack,true);
+    if(!player||gameState!=='countdown'||!raceCountdownTimer)throw new Error('Track or racer setup did not finish.');
+    if(world)world.visible=true;
+    $('menu').classList.add('hidden');$('hud').classList.add('live');
+    // The race entry cost is charged only when the countdown reaches GO.
+  }catch(error){abortRaceLaunch(error);}
 }
 function finishRace(){
   if(raceAwarded)return;
@@ -2730,7 +2784,7 @@ function launchOnlineRace(payload){
   if(payload.mode==='ranked'&&rankedBotRoster.length)pushNotification('RANKED GRID FILLED',`Your Ranked race has ${rankedBotRoster.length} AI opponent${rankedBotRoster.length===1?'':'s'} filling the open grid slots.`,'ranked');
   onlineRaceStarted=true;onlineRaceId=String(payload.race_id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`);onlineLocalFinishSent=false;onlineFinishers.clear();onlineCollisionCooldown=0;
   onlineRoomMode=payload.mode||onlineRoomMode;
-  if(onlineRoomMode==='ranked'){profile.rankedTickets=Math.max(0,(profile.rankedTickets||0)-1);saveProfile();updateUI();}
+  // Ranked Ticket is charged with race energy only after the local countdown reaches GO.
   currentTrack=TRACKS[payload.track]?payload.track:currentTrack;gameMode='street';playerMode='solo';isPoliceMode=false;
   forcedRaceLaps=clamp(Math.floor(Number(payload.laps)||3),2,6);forcedRaceWeather=payload.weather||'CLEAR';forcedRaceSeed=Number(payload.seed)||null;
   document.body.dataset.returnView=onlineRoomMode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament='0';document.body.dataset.storyRace='0';
@@ -2948,7 +3002,8 @@ async function findOnlineMatch(mode){
 }
 // --- EVENT LISTENERS ---
 document.addEventListener('DOMContentLoaded',async()=>{
-  try{init();initGarage();}catch(e){console.error(e);$('authStatus').innerText='3D renderer could not initialize in this browser. Try updating your browser or disabling hardware acceleration.';}
+  try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Enable WebGL/hardware acceleration or use another browser.`;}
+  try{if(renderer)initGarage();}catch(e){console.warn('Garage preview renderer unavailable; race renderer remains available:',e);if($('garagePreviewStatus'))$('garagePreviewStatus').innerText='Garage preview unavailable in this browser.';}
   $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
@@ -2959,7 +3014,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
-  $('startBtn').addEventListener('click',()=>{document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
+  $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){alert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
   $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
   $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
   $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
