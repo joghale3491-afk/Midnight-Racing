@@ -4,6 +4,17 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 
 ## Included
 
+## November 20 — Gameplay, Ranked AI and Visual Stability Update
+
+- Reworked Time Attack and Infected into timed last-place/tagged-racer elimination rounds; Police Pursuit uses active intercepting patrol AI and a 90-second escape target; Ghost Run races the saved personal best; Drift Trial uses its dedicated Drift Arena; Checkpoint Run and Traffic Run have explicit timed objectives and a strict damage cap.
+- Replaced Survival Gauntlet with Rival Duel. Local two-player result handling, per-player finish states, and mode-specific failure/respawn behavior have been tightened.
+- Added collision damage for player cars, local Player 2, AI rivals, civilian traffic and roadside barriers. Disabled vehicles respawn at full condition in normal modes; Police Pursuit and Traffic Run retain their elimination/failure rules.
+- Ranked waits up to 18 seconds for human players, then fills every open seat to a six-driver grid with AI whose car rank, vehicle stats and driver level are derived from the human lobby. Offline rivals also use class-matched vehicle stats and adapt their pace and racing line.
+- Vehicle price, class, model and individual car level now determine displayed and live performance. Speedometer conversion was corrected so a D-class car's top-speed stat is its real displayed km/h cap rather than being boosted above 200 km/h.
+- Improved car/track presentation and renderer performance, initialized the race camera at the starting grid, and refreshed RaceHub, Story, garage and race setup selectors with visible option cards. Powerup acquire/use notifications and the relocated pause control are included.
+- Static JavaScript syntax, HTML structure/duplicate-ID checks and deterministic AI roster tests pass. Live 3D gameplay, browser-specific rendering and multi-account Supabase matchmaking still need to be tested in a real browser session.
+
+
 - 30 procedural Three.js circuits with distinct turn profiles, improved road / scenery pass, 3D garage and shared vehicle model builder.
 - Rank-banded 140-car catalogue, car levels, upgrades, paint colours, attachments, store and powerup inventory.
 - Responsive desktop / mobile controls, separate local two-player controls, tutorial, intro and original synthesized EDM / techno audio.
@@ -27,7 +38,7 @@ This package combines the November 19 Track / Graphics Upgrade with the uploaded
 - Expanded the Nightshift campaign to 30 main chapters and 90 side episodes. The ordered track list follows the story chapter order; completing a chapter race and earning at least one star in all three side episodes unlocks the next chapter and its matching circuit.
 - Added two chapter decisions (Back the Crew / Chase the Lead) with different win rewards, and chapter-specific mission briefings with story dialogue, objectives and reward information.
 - Added a pre-race briefing to solo, story, side-story, tournament and rotating special-event starts. Players can equip up to two owned powerups; an empty loadout is allowed.
-- Added Drift Trial, Checkpoint Rush, Survival Gauntlet and Traffic Run as original modes alongside Street, Police, Time Elimination, Ghost, Infected and Random Circuit.
+- Added Drift Trial, Checkpoint Run, Rival Duel and Traffic Run as original modes alongside Street, Police Pursuit, Time Attack, Ghost Run, Infected and Random Circuit.
 - Expanded powerups to eight types. Added credit purchases for powerups, +25 Energy refills, Ranked Tickets, 40 paint finishes and nine visual attachments.
 - Rebuilt garage car choice as visible vehicle cards with rank filters. Upgrade prices scale with vehicle rank and upgrade level, while engine / handling gains remain small and capped within each vehicle's class range. Upgrade records are stored per car.
 - Added turn-profile geometry to the 30 circuits: hairpins, chicanes, esses, kinks, double-apex corners, banked sections and varying-radius bends. Each track card lists its turn profile.
@@ -52,9 +63,9 @@ Credentials are intentionally placeholders. Offline / guest racing remains avail
 
 ## Multiplayer notes
 
-- Casual Quick Match and Ranked search separate queues. Ranked requires a signed-in player at Street Rep level 10+, one Ranked Ticket and at least 5 Energy; a ticket is consumed when the shared race launches. Ranked searches for humans for up to 18 seconds, then fills remaining grid slots with local AI rivals so the six-driver grid can start even when the queue is quiet.
+- Casual Quick Match and Ranked search separate queues. Ranked requires a signed-in player at Street Rep level 10+, one Ranked Ticket and at least 5 Energy; a ticket is consumed when the shared race launches. Ranked searches for humans for up to 18 seconds, then fills remaining grid slots with AI rivals matched to the human lobby’s Street Rep level, car class and vehicle stats so the six-driver grid can start even when the queue is quiet.
 - Public and private casual rooms support up to six players. Private/public lobbies display player readiness; the host starts after at least two players are present and everyone is ready.
-- Online position, car state, pickup claims, contact effects and finishes use Supabase Realtime broadcast. Ranked gives the queue up to 18 seconds to find human opponents, then adds AI fillers to reach a six-driver grid. Every client simulates its own physics and AI fillers locally. This is still a client-authoritative prototype, not production anti-cheat or trusted server matchmaking. Public competitive launch needs a server-authoritative queue/race/result service, validation and reconnect handling.
+- Online position, car state, pickup claims, contact effects and finishes use Supabase Realtime broadcast. Ranked gives the queue up to 18 seconds to find human opponents, then adds stat-matched AI fillers to reach a six-driver grid. The shared roster is generated from the human players’ Street Rep level, selected car rank and derived vehicle stats; every client simulates its own physics and AI fillers locally. This is still a client-authoritative prototype, not production anti-cheat or trusted server matchmaking. Public competitive launch needs a server-authoritative queue/race/result service, validation and reconnect handling.
 
 ## Asset / test limitations
 
