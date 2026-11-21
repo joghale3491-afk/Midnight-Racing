@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
-<title>MIDNIGHT RACING — 3D Street Racing</title>
+<title>MIDNIGHT RACING v38 — 3D Street Racing</title>
 <script type="importmap">
 {
   "imports": {
@@ -157,7 +157,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;col
 @media(max-width:850px){.hubGrid{grid-template-columns:1fr}.sideNav{flex-direction:row;overflow:auto;padding:0}.navBtn{flex:1;text-align:center;white-space:nowrap;padding:11px 9px;border-radius:8px}.modeGrid{grid-template-columns:repeat(2,1fr)}#trackGrid{grid-template-columns:repeat(2,1fr)}.storyLayout,.garageGrid,.mpWrap{grid-template-columns:1fr}}
 @media(max-width:520px){.menuWrap{width:98vw;max-height:96vh;padding:13px;border-radius:12px}.hubTop{padding-bottom:12px;margin-bottom:12px;flex-direction:column;align-items:flex-start}.hubLogo{font-size:27px}.hubTag{font-size:7px}.hubGrid{gap:12px}.heroStrip{border-radius:10px}.storyMetaGrid{grid-template-columns:1fr 1fr}.storyFeature,.storyList,.garageCard{padding:13px}}
 
-.storyEpisodeText{font-size:10px;line-height:1.55;color:#a9c1d2;max-width:620px;margin:5px 0}.storyEpisodeQuote{font-size:9px;line-height:1.5;color:#ffd36a;font-style:italic;margin-top:5px}.storyStars{color:#ffd36a;letter-spacing:.12em;white-space:nowrap}.lobbyDriver{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;background:#07121f;border:1px solid #7beaff20;border-radius:8px;font-size:10px}.lobbyDriver small{color:#89a4b8;font-size:8px}.mpActions .smallBtn{min-width:0}
+.storyEpisodeText{font-size:10px;line-height:1.55;color:#a9c1d2;max-width:620px;margin:5px 0}.storyEpisodeQuote{font-size:9px;line-height:1.5;color:#ffd36a;font-style:italic;margin-top:5px}.storyStars{color:#ffd36a;letter-spacing:.12em;white-space:nowrap}.lobbyDriver{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px;background:#07121f;border:1px solid #7beaff20;border-radius:8px;font-size:10px;min-width:0}.lobbyDriver .driverName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.lobbyDriver .driverStatus{color:#89a4b8;font-size:8px;letter-spacing:.1em;white-space:nowrap}.lobbyDriver.isYou{border-color:#60eaff66;background:linear-gradient(90deg,#0d2b3a,#07121f)}.mmRoster{margin:14px 0 18px;padding:12px;border:1px solid #70eaff30;border-radius:10px;background:#06111de8;text-align:left}.mmRoster .panelTitle{margin:0 0 9px}.mmPlayersList{max-height:190px;min-height:42px;overflow-y:auto}.mmPlayersList .lobbyDriver{padding:8px 9px}.mmPlayersList .mutedText{margin:0;text-align:center;padding:10px}.mpActions .smallBtn{min-width:0}
 /* MIDNIGHT RACING expansion */
 .eyebrow,.questTag{font-size:9px;letter-spacing:.2em;color:#68eaff;font-weight:1000}
 .featureGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -1177,11 +1177,11 @@ body.local-two-player.race-active #hud .speedPanel{right:52vw!important;}
             </div>
             <div class="mpCard">
               <h3>PRIVATE LOBBY</h3>
-              <p class="mpMuted">Create a private casual room for up to six drivers, or join a friend's six-character room code.</p>
-              <div class="formRow"><input class="mrInput" id="roomCodeInput" maxlength="6" placeholder="ROOM CODE"><button class="smallBtn" id="joinRoomBtn">JOIN ROOM</button></div>
+              <p class="mpMuted">Create an invite-only casual room for up to six drivers, then share its 8-character code with friends. Rooms close when everyone leaves.</p>
+              <div class="formRow"><input class="mrInput" id="roomCodeInput" maxlength="8" placeholder="8-CHARACTER ROOM CODE" autocomplete="off" autocapitalize="characters"><button class="smallBtn" id="joinRoomBtn">JOIN ROOM</button></div>
               <button class="secondaryBtn" id="createRoomBtn" style="width:100%">CREATE PRIVATE LOBBY</button>
               <button class="secondaryBtn" id="publicLobbyBtn" style="width:100%;margin-top:8px">ENTER PUBLIC LOBBY</button>
-              <div class="mpStatus" id="lobbyStatus">Create a room to get a code to share.</div>
+              <button class="smallBtn" id="copyRoomCodeBtn" type="button" disabled style="width:100%;margin-top:8px">COPY ROOM CODE</button><div class="mpStatus" id="lobbyStatus">Create a room to get an invite code, or enter a friend's code.</div>
               <div class="panelTitle">LOBBY DRIVERS · MAX 6</div>
               <div id="lobbyPlayers" class="dataList"><div class="mutedText">No lobby connected.</div></div>
               <div class="mpActions"><button class="smallBtn" id="lobbyReadyBtn" disabled>I’M READY</button><button class="smallBtn" id="lobbyStartBtn" disabled>START RACE · HOST</button><button class="smallBtn" id="lobbyLeaveBtn" disabled>LEAVE LOBBY</button></div>
@@ -1235,6 +1235,10 @@ body.local-two-player.race-active #hud .speedPanel{right:52vw!important;}
     <div class="eyebrow">ONLINE MATCHMAKING</div>
     <h2 id="mmTitle">SEARCHING...</h2>
     <p id="mmStatus">Looking for opponents...</p>
+    <div class="mmRoster" aria-live="polite">
+      <div class="panelTitle" id="mmPlayersTitle">PLAYERS IN QUEUE</div>
+      <div id="mmPlayersList" class="dataList mmPlayersList"><div class="mutedText">Waiting for racers to join…</div></div>
+    </div>
     <div class="overlayButtons"><button class="secondaryBtn" id="mmCancelBtn">CANCEL</button></div>
   </div>
 </div>
@@ -1270,8 +1274,8 @@ import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP (CHANGE THESE TWO LINES) ---
-const SUPABASE_URL = 'https://mrmassbqjcfdsnnfknww.supabase.co'; // Add your project URL
-const SUPABASE_ANON_KEY = 'sb_publishable_t0OojBZSDsFKsJK0kn9I-g_njpzJJnn'; // Use the public anon/publishable key only
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // Add your project URL
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Use the public anon/publishable key only
 const supabaseReady = /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && SUPABASE_ANON_KEY.length > 20 && !SUPABASE_ANON_KEY.includes('YOUR_');
 const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -1294,6 +1298,7 @@ const remotePlayers = new Map(), remotePlayerMeshes = new Map(), onlineFinishers
 let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onlineRaceId = null, onlineLocalFinishSent = false, onlineCollisionCooldown = 0, rankedFallbackTimer = null, rankedBotRoster = [];
 let notificationAutoCloseTimer=null, toastCloseTimer=null;
 let privateLobby = false, publicLobby = false, privateLobbyReady = false, isRoomHost = false, roomMetadata = null, onlineParticipants = [];
+let privateRoomRegistered = false, privateRoomJoinCheckTimer = null;
 let policeFailed = false, p2PoliceFailed = false, specialEventMode = 'infected', queuePairing = false;
 let activeTournamentStage=1, activeTournamentEventKey='', policeBackupWave1=false, policeBackupWave2=false;
 let policeSirenNodes=null;
@@ -3905,6 +3910,13 @@ async function handleAuth(signup=false,email=$('gateEmail').value,password=$('ga
 async function refreshAuth(){if(!supabaseReady)return;try{const {data}=await supabase.auth.getSession();authUser=data.session?.user||null;if(authUser){profile.username=(authUser.user_metadata?.username||profile.username).slice(0,18);$('accountStatus').innerText=`Signed in: ${getDisplayUsername()}`;await loadCloudProfile();await syncPublicUsername();}}catch(e){console.warn(e);}}
 
 // --- SUPABASE MATCHMAKING & PRIVATE LOBBIES ---
+const PRIVATE_ROOM_ALPHABET='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function generatePrivateRoomCode(){
+  const bytes=new Uint8Array(8);
+  try{crypto.getRandomValues(bytes);}catch(e){for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);}
+  return Array.from(bytes,b=>PRIVATE_ROOM_ALPHABET[b%PRIVATE_ROOM_ALPHABET.length]).join('');
+}
+function normalizePrivateRoomCode(value){return String(value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8);}
 function stableRoomCode(ids){
   const text=ids.slice().sort().join('|');let h=2166136261;
   for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
@@ -3914,6 +3926,7 @@ async function leaveQueue(){
   if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}
   if(matchmakingChannel&&supabaseReady){try{await supabase.removeChannel(matchmakingChannel);}catch(e){console.warn(e);}}
   matchmakingChannel=null;queueMode=null;queuePairing=false;
+  renderMatchmakingPlayers([]);
 }
 function updateOnlineFinishSummary(){
   if(!$('finishMenu')||$('finishMenu').classList.contains('hidden'))return;
@@ -3926,15 +3939,40 @@ function updateOnlineFinishSummary(){
   $('finishSummary').innerText=`${base} · ONLINE RESULTS: ${rows.length}/${expected} FINISHED${own?` · CURRENT PLACE ${own}/${expected}`:''}${text?' · '+text:''}`;
   if(own&&rows.length===expected)$('finishTitle').innerText=`ONLINE PLACE ${own} / ${expected}`;
 }
-function renderLobbyPlayers(members){
-  const host=$('lobbyPlayers');if(!host)return;host.innerHTML='';
-  const list=(members||[]).slice(0,6);
-  if(!list.length){host.innerHTML='<div class="mutedText">No lobby connected.</div>';return;}
-  list.forEach(m=>{const row=document.createElement('div');row.className='lobbyDriver';const name=document.createElement('b');name.textContent=String(m.username||'RACER');const status=document.createElement('small');status.textContent=m.isHost?'HOST':m.ready?'READY':'WAITING';row.append(name,status);host.appendChild(row);});
+function renderDriverRoster(targetId,members,kind='lobby'){
+  const host=$(targetId);if(!host)return;host.replaceChildren();
+  const byId=new Map();
+  for(const member of (Array.isArray(members)?members:[])){
+    if(!member||!member.user_id)continue;
+    const id=String(member.user_id);
+    if(!byId.has(id))byId.set(id,member);
+  }
+  const list=Array.from(byId.values()).slice(0,6);
+  if(!list.length){
+    const empty=document.createElement('div');empty.className='mutedText';
+    empty.textContent=kind==='queue'?'Waiting for racers to join the queue…':'No players connected yet.';
+    host.appendChild(empty);return;
+  }
+  list.forEach((member,index)=>{
+    const row=document.createElement('div');row.className='lobbyDriver';
+    const self=String(member.user_id)===String(authUser?.id||'');if(self)row.classList.add('isYou');
+    const name=document.createElement('b');name.className='driverName';
+    name.textContent=String(member.username||'RACER').trim().slice(0,18)||'RACER';
+    const status=document.createElement('small');status.className='driverStatus';
+    if(kind==='queue')status.textContent=self?'YOU · SEARCHING':'SEARCHING';
+    else status.textContent=[member.isHost?'HOST':null,member.ready?'READY':'WAITING',self?'YOU':null].filter(Boolean).join(' · ');
+    row.append(name,status);host.appendChild(row);
+  });
 }
+function renderLobbyPlayers(members){renderDriverRoster('lobbyPlayers',members,'lobby');}
+function renderMatchmakingPlayers(members){renderDriverRoster('mmPlayersList',members,'queue');}
 function roomMemberList(){
   if(!lobbyChannel)return[];
-  return Object.values(lobbyChannel.presenceState()).flat().filter(m=>m&&m.user_id&&m.room_code===roomMetadata?.room_code&&m.mode===onlineRoomMode&&(onlineRoomMode!=='tournament'||m.event_key===roomMetadata?.event_key)).sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+  const matches=Object.values(lobbyChannel.presenceState()).flat().filter(m=>m&&m.user_id&&m.room_code===roomMetadata?.room_code&&m.mode===onlineRoomMode&&(onlineRoomMode!=='tournament'||m.event_key===roomMetadata?.event_key));
+  const unique=new Map();
+  matches.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+  for(const member of matches)if(!unique.has(String(member.user_id)))unique.set(String(member.user_id),member);
+  return Array.from(unique.values());
 }
 function applyRemoteImpact(payload){
   if(activeEffects.shield>0){delete activeEffects.shield;playerSpeed*=.94;showToast('SHIELD BLOCKED ONLINE IMPACT');}
@@ -4020,29 +4058,41 @@ async function leaveOnlineRoom(){
   if(lobbyStartTimer){clearTimeout(lobbyStartTimer);lobbyStartTimer=null;}
   if(queueStartTimer){clearTimeout(queueStartTimer);queueStartTimer=null;}
   if(onlineStartTimer){clearTimeout(onlineStartTimer);onlineStartTimer=null;}
+  if(privateRoomJoinCheckTimer){clearTimeout(privateRoomJoinCheckTimer);privateRoomJoinCheckTimer=null;}
+  const privateCodeToLeave=privateRoomRegistered&&roomMetadata?.room_code?roomMetadata.room_code:null;
   await leaveQueue();
   if(lobbyChannel&&supabaseReady){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}}
-  lobbyChannel=null;onlineRaceStarted=false;onlineRaceId=null;onlineLocalFinishSent=false;onlineRoomMode='casual';remoteOpponentState=null;privateLobby=false;publicLobby=false;privateLobbyReady=false;isRoomHost=false;roomMetadata=null;onlineParticipants=[];onlineGridRoster=[];onlineGridSeed=1;onlineFinishers.clear();
+  lobbyChannel=null;
+  if(privateCodeToLeave&&supabaseReady&&authUser){try{const {error}=await supabase.rpc('mr_leave_private_lobby',{p_room_code:privateCodeToLeave});if(error)console.warn('Private room leave cleanup:',error.message);}catch(e){console.warn('Private room leave cleanup:',e);}}
+  privateRoomRegistered=false;
+  onlineRaceStarted=false;onlineRaceId=null;onlineLocalFinishSent=false;onlineRoomMode='casual';remoteOpponentState=null;privateLobby=false;publicLobby=false;privateLobbyReady=false;isRoomHost=false;roomMetadata=null;onlineParticipants=[];onlineGridRoster=[];onlineGridSeed=1;onlineFinishers.clear();
   remotePlayerMeshes.forEach(mesh=>{if(scene)scene.remove(mesh);});remotePlayerMeshes.clear();remotePlayers.clear();
   if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
   $('againBtn').classList.remove('hidden');
   if($('lobbyPlayers'))$('lobbyPlayers').innerHTML='<div class="mutedText">No lobby connected.</div>';
+  renderMatchmakingPlayers([]);
+  if($('copyRoomCodeBtn'))$('copyRoomCodeBtn').disabled=true;
   ['lobbyReadyBtn','lobbyStartBtn','lobbyLeaveBtn'].forEach(id=>{if($(id))$(id).disabled=true;});
   if($('lobbyReadyBtn'))$('lobbyReadyBtn').innerText='I’M READY';
 }
 async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=false,eventMeta={}){
   if(!supabaseReady||!authUser)return;
   if(lobbyChannel){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}lobbyChannel=null;}
-  onlineRaceStarted=false;onlineRaceId=null;onlineFinishers.clear();onlineLocalFinishSent=false;remoteOpponentState=null;onlineRoomMode=mode;privateLobby=!!privateRoom;publicLobby=!!isPublic;privateLobbyReady=false;isRoomHost=!!isHost;
+  onlineRaceStarted=false;onlineRaceId=null;onlineFinishers.clear();onlineLocalFinishSent=false;remoteOpponentState=null;onlineRoomMode=mode;privateLobby=!!privateRoom;publicLobby=!!isPublic;privateLobbyReady=false;isRoomHost=!!isHost;privateRoomRegistered=!!privateRoom&&!isPublic;
+  if(privateRoomJoinCheckTimer){clearTimeout(privateRoomJoinCheckTimer);privateRoomJoinCheckTimer=null;}
   remotePlayerMeshes.forEach(mesh=>{if(scene)scene.remove(mesh);});remotePlayerMeshes.clear();remotePlayers.clear();
   if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
   $('roomCodeInput').value=roomCode;
   if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connecting to the public casual lobby…':`Room ${roomCode} · share this code with up to five other drivers.`;
   $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':mode==='tournament'?'TOURNAMENT GRID FOUND':isPublic?'PUBLIC CASUAL LOBBY':'CASUAL LOBBY';
+  $('mmPlayersTitle').innerText=privateRoom&&!isPublic?'PRIVATE ROOM DRIVERS':isPublic?'PUBLIC LOBBY DRIVERS':'MATCHED ONLINE DRIVERS';
+  renderMatchmakingPlayers([]);
   $('mmStatus').innerText=`Connecting to ${mode} room…`;
   const driverProfile=currentDriverMatchProfile();
   roomMetadata={user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:2+Math.floor(Math.random()*5),weather:['CLEAR','RAIN','STORM','FOG','SNOW'][Math.floor(Math.random()*5)],seed:Math.floor(Math.random()*4294967295),isHost:!!isHost,ready:false,level:driverProfile.level,carId:driverProfile.carId,carRank:driverProfile.carRank,rankIndex:driverProfile.rankIndex,carLevel:driverProfile.carLevel,carPrice:driverProfile.carPrice,carStats:driverProfile.carStats,paint:profile.garage.paint,bodyStyle:getSelectedCar().body,...(eventMeta||{})};
-  lobbyChannel=supabase.channel(`race:${roomCode}`,{config:{broadcast:{self:false},presence:{key:authUser.id}}});
+  const isInviteOnlyRoom=!!privateRoom&&!isPublic;
+  const roomTopic=isInviteOnlyRoom?`private-race:${roomCode}`:`race:${roomCode}`;
+  lobbyChannel=supabase.channel(roomTopic,{config:{...(isInviteOnlyRoom?{private:true}:{}),broadcast:{self:false},presence:{key:authUser.id}}});
   lobbyChannel.on('broadcast',{event:'player_pos'},({payload})=>{
     if(!payload||!payload.user_id||payload.user_id===authUser?.id)return;
     if(onlineRaceId&&payload.race_id&&payload.race_id!==onlineRaceId)return;
@@ -4069,20 +4119,30 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
     updateOnlineFinishSummary();
   });
   lobbyChannel.on('presence',{event:'sync'},()=>{
-    const members=roomMemberList(),activeMembers=members.slice(0,6);onlineParticipants=activeMembers.map(m=>({user_id:m.user_id,username:m.username||'RACER'}));
+    const members=roomMemberList();
+    const activeMembers=members.slice(0,6);
+    onlineParticipants=activeMembers.map(m=>({user_id:m.user_id,username:m.username||'RACER'}));
+    if(privateLobby&&activeMembers.some(m=>m.isHost)&&privateRoomJoinCheckTimer){clearTimeout(privateRoomJoinCheckTimer);privateRoomJoinCheckTimer=null;}
     const activeIds=new Set(activeMembers.map(m=>String(m.user_id)));
     for(const [id,mesh] of remotePlayerMeshes){if(!activeIds.has(id)){if(scene)scene.remove(mesh);remotePlayerMeshes.delete(id);remotePlayers.delete(id);}}
     const inside=activeMembers.some(m=>m.user_id===authUser.id);
     if(!inside){$('mmStatus').innerText=`Room ${roomCode} is full (6/6).`;return;}
     if(privateLobby){
       renderLobbyPlayers(activeMembers);
+      renderMatchmakingPlayers(activeMembers);
       const allReady=activeMembers.length>=2&&activeMembers.every(m=>m.ready);
-      isRoomHost=(activeMembers.find(m=>m.isHost)?.user_id||activeMembers[0]?.user_id)===authUser.id;
+      const hostMember=activeMembers.find(m=>m.isHost)||activeMembers[0];
+      isRoomHost=hostMember?.user_id===authUser.id;
+      // If the original host disconnected, the earliest remaining player takes over.
+      if(isRoomHost&&roomMetadata&&!roomMetadata.isHost){roomMetadata.isHost=true;lobbyChannel.track({...roomMetadata}).catch(e=>console.warn('Host handoff presence update:',e));}
+      $('copyRoomCodeBtn').disabled=!isInviteOnlyRoom;
       $('lobbyStatus').innerText=`${isPublic?'Public lobby':`Room ${roomCode}`} · ${activeMembers.length}/6 drivers · ${allReady?'All drivers ready.':'Waiting for drivers to ready up.'}`;
       $('lobbyReadyBtn').disabled=activeMembers.length>=6&&!privateLobbyReady;$('lobbyReadyBtn').innerText=privateLobbyReady?'CANCEL READY':'I’M READY';
       $('lobbyStartBtn').disabled=!isRoomHost||!allReady||onlineRaceStarted;$('lobbyStartBtn').style.display=isRoomHost?'block':'none';$('lobbyLeaveBtn').disabled=false;
       return;
     }
+    $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED MATCH PLAYERS':mode==='tournament'?'TOURNAMENT ROUND PLAYERS':'MATCHED CASUAL PLAYERS';
+    renderMatchmakingPlayers(activeMembers);
     $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 human racers connected. Pairing complete.`:mode==='ranked'?'Ranked fallback will fill the remaining grid with AI racers.':mode==='tournament'?'Waiting for another tournament driver on the same round…':`Searching for another racer (${activeMembers.length}/6).`;
     if(activeMembers.length>=(mode==='ranked'?1:2)&&!onlineRaceStarted&&!lobbyStartTimer){
       lobbyStartTimer=setTimeout(async()=>{
@@ -4100,15 +4160,30 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
     if(status==='SUBSCRIBED'){
       await lobbyChannel.track({...roomMetadata});
       if(privateLobby){$('lobbyReadyBtn').disabled=false;$('lobbyLeaveBtn').disabled=false;$('lobbyStartBtn').disabled=true;$('lobbyStartBtn').style.display=isHost?'block':'none';}
-      if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connected to public casual lobby.':`Room ${roomCode} is open. Share the code with up to five other drivers.`;
+      $('copyRoomCodeBtn').disabled=!isInviteOnlyRoom;
+      if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connected to public casual lobby.':`Room ${roomCode} is open. Share this 8-character code with up to five other drivers.`;
       $('mmStatus').innerText=privateLobby?'Lobby connected. Ready up when everyone is here.':mode==='ranked'?'Connected to the Ranked queue room. Waiting for the shared start signal.':mode==='tournament'?'Connected to the tournament round lobby. Waiting for the shared start signal.':'Casual match connected. Waiting for the shared start signal.';
-    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){$('mmStatus').innerText='Lobby connection failed. Check Supabase Realtime settings.';}
+      if(isInviteOnlyRoom&&!isHost){
+        privateRoomJoinCheckTimer=setTimeout(async()=>{
+          if(!lobbyChannel||roomMetadata?.room_code!==roomCode||!privateRoomRegistered)return;
+          const current=roomMemberList();
+          if(!current.some(m=>m.isHost)){
+            $('lobbyStatus').innerText='No host was found in that room. Check the code and ask the host to create the room again.';
+            await leaveOnlineRoom();
+          }
+        },9000);
+      }
+    }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){$('mmStatus').innerText=isInviteOnlyRoom?'Private room connection failed. Run the v37 private-room SQL setup and check Realtime authorization policies.':'Lobby connection failed. Check Supabase Realtime settings.';$('lobbyStatus').innerText=$('mmStatus').innerText;if(isInviteOnlyRoom){const failedChannel=lobbyChannel;setTimeout(()=>{if(lobbyChannel===failedChannel)leaveOnlineRoom();},1200);}}
   });
 }
 async function setLobbyReady(){
   if(!lobbyChannel||!privateLobby||!roomMetadata)return;
-  privateLobbyReady=!privateLobbyReady;roomMetadata.ready=privateLobbyReady;
-  try{await lobbyChannel.track({...roomMetadata});}catch(e){$('lobbyStatus').innerText=`Could not update ready state: ${e.message}`;}
+  const nextReady=!privateLobbyReady;
+  try{
+    if(privateRoomRegistered){const {error}=await supabase.rpc('mr_set_private_lobby_ready',{p_room_code:roomMetadata.room_code,p_ready:nextReady});if(error)throw error;}
+    privateLobbyReady=nextReady;roomMetadata.ready=privateLobbyReady;
+    await lobbyChannel.track({...roomMetadata});
+  }catch(e){$('lobbyStatus').innerText=`Could not update ready state: ${e.message}`;}
 }
 async function startPrivateLobbyRace(){
   if(!lobbyChannel||!privateLobby||!isRoomHost)return;
@@ -4116,17 +4191,40 @@ async function startPrivateLobbyRace(){
   if(members.length<2||members.length>6){$('lobbyStatus').innerText='A race needs 2–6 connected drivers.';return;}
   if(!members.every(m=>m.ready)){$('lobbyStatus').innerText='Every driver must press I’M READY first.';return;}
   if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need 5 energy to enter this race.';return;}
-  await sendOnlineRaceStart('casual',members.find(m=>m.isHost)||members[0]);
+  try{
+    if(privateRoomRegistered){const {error}=await supabase.rpc('mr_start_private_lobby',{p_room_code:roomMetadata.room_code});if(error)throw error;}
+    await sendOnlineRaceStart('casual',members.find(m=>m.isHost)||members[0]);
+  }catch(e){$('lobbyStatus').innerText=`The room could not start: ${e.message}`;}
 }
 async function connectPrivateRoom(mode,roomCode,isHost){
   if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to create or join an online lobby.';return;}
   if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need at least 5 energy to enter a casual race.';return;}
-  $('matchmakingModal').classList.remove('hidden');
-  await startRaceRoom(roomCode,mode,isHost,true,false);
+  const code=normalizePrivateRoomCode(roomCode);
+  if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code)){$('lobbyStatus').innerText='Enter a valid 8-character room code. Avoid O, I, 0 and 1.';return;}
+  try{
+    if(lobbyChannel||matchmakingChannel)await leaveOnlineRoom();
+    const rpcName=isHost?'mr_create_private_lobby':'mr_join_private_lobby';
+    const {error}=await supabase.rpc(rpcName,{p_room_code:code,p_username:getDisplayUsername()});
+    if(error)throw error;
+    privateRoomRegistered=true;
+    $('roomCodeInput').value=code;
+    $('copyRoomCodeBtn').disabled=false;
+    $('matchmakingModal').classList.remove('hidden');
+    $('mmTitle').innerText=isHost?'CREATING PRIVATE ROOM':'JOINING PRIVATE ROOM';
+    $('mmStatus').innerText=isHost?'Creating your invite-only room…':'Checking room code and available slots…';
+    await startRaceRoom(code,mode,isHost,true,false);
+  }catch(e){
+    if(privateRoomRegistered){try{await supabase.rpc('mr_leave_private_lobby',{p_room_code:code});}catch(cleanupError){console.warn('Private room rollback failed:',cleanupError);}}
+    privateRoomRegistered=false;
+    $('matchmakingModal').classList.add('hidden');
+    $('copyRoomCodeBtn').disabled=true;
+    $('lobbyStatus').innerText=`Could not ${isHost?'create':'join'} the private room: ${e.message}`;
+  }
 }
 async function connectPublicLobby(){
   if(!supabaseReady||!authUser){$('lobbyStatus').innerText='Sign in with a configured Supabase project to enter the public lobby.';return;}
   if(profile.energy<RACE_ENTRY_ENERGY){$('lobbyStatus').innerText='You need at least 5 energy to enter a casual race.';return;}
+  if(lobbyChannel||matchmakingChannel)await leaveOnlineRoom();
   $('matchmakingModal').classList.remove('hidden');
   await startRaceRoom('PUBLIC','casual',false,true,true);
 }
@@ -4138,15 +4236,22 @@ async function findOnlineMatch(mode,eventMeta={}){
   if(mode==='tournament'&&(!eventMeta.event_key||!eventMeta.event_stage)){$(status).innerText='The tournament round could not be loaded. Refresh the Tournament tab.';return;}
   await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';
   $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':mode==='tournament'?'SEARCHING FOR TOURNAMENT DRIVERS':'SEARCHING FOR CASUAL PLAYERS';
+  $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN QUEUE':mode==='tournament'?'PLAYERS IN TOURNAMENT QUEUE':'PLAYERS IN CASUAL QUEUE';
+  renderMatchmakingPlayers([]);
   $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?'Searching for humans first. AI grid fillers activate after 18 seconds.':mode==='tournament'?`Finding human racers for ${eventMeta.tournament_stage_name||'this round'}…`:'Searching for up to six online racers…';
   try{
     matchmakingChannel=supabase.channel(`matchmaking:${mode}`,{config:{presence:{key:authUser.id}}});
     const tryPair=async(forceBots=false)=>{
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
-      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
-      members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
-      const myIndex=members.findIndex(m=>m.user_id===authUser.id);if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
+      const presenceRows=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m?.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
+      const uniqueMembers=new Map();
+      presenceRows.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+      for(const member of presenceRows)if(!uniqueMembers.has(String(member.user_id)))uniqueMembers.set(String(member.user_id),member);
+      const members=Array.from(uniqueMembers.values());
+      const myIndex=members.findIndex(m=>String(m.user_id)===String(authUser.id));if(myIndex<0){renderMatchmakingPlayers([]);$(status).innerText='Waiting to enter the queue…';return;}
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
+      $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN YOUR MATCH':mode==='tournament'?'PLAYERS IN YOUR TOURNAMENT ROUND':'PLAYERS IN YOUR CASUAL MATCH';
+      renderMatchmakingPlayers(group);
       if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`Searching for humans · ${group.length}/6 found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
       if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':mode==='tournament'?'Waiting for another human driver in the same tournament round…':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
       queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
@@ -4202,9 +4307,11 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('storyStartBtn').addEventListener('click',()=>{document.body.dataset.storyRace='1';document.body.dataset.returnView='storyPanel';startStory(-1);});
   $('sideStoryList').addEventListener('click',e=>{const b=e.target.closest('button[data-side]');if(!b)return;const n=Number(b.dataset.side);if(!profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='0';document.body.dataset.returnView='storyPanel';startStory(n);});
   $('mpCasualBtn').addEventListener('click',()=>findOnlineMatch('casual'));
-  $('createRoomBtn').addEventListener('click',()=>{const code=Math.random().toString(36).slice(2,8).toUpperCase();connectPrivateRoom('casual',code,true);});
-  $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){gameAlert('Enter a six-character room code.');return;}connectPrivateRoom('casual',code,false);});
-  $('publicLobbyBtn').addEventListener('click',connectPublicLobby);$('lobbyReadyBtn').addEventListener('click',setLobbyReady);$('lobbyStartBtn').addEventListener('click',startPrivateLobbyRace);$('lobbyLeaveBtn').addEventListener('click',async()=>{await leaveOnlineRoom();$('matchmakingModal').classList.add('hidden');$('lobbyStatus').innerText='You left the lobby.';});
+  $('createRoomBtn').addEventListener('click',()=>connectPrivateRoom('casual',generatePrivateRoomCode(),true));
+  $('joinRoomBtn').addEventListener('click',()=>{const code=normalizePrivateRoomCode($('roomCodeInput').value);if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code)){$('lobbyStatus').innerText='Enter the 8-character invite code from the host.';return;}connectPrivateRoom('casual',code,false);});
+  $('roomCodeInput').addEventListener('input',()=>{$('roomCodeInput').value=normalizePrivateRoomCode($('roomCodeInput').value);});
+  $('copyRoomCodeBtn').addEventListener('click',async()=>{const code=roomMetadata?.room_code;if(!code||!privateRoomRegistered)return;try{await navigator.clipboard.writeText(code);$('lobbyStatus').innerText=`Room code ${code} copied. Share it with your friends.`;}catch(e){$('roomCodeInput').focus();$('roomCodeInput').select();$('lobbyStatus').innerText=`Copy this room code and share it: ${code}`;}});
+  $('publicLobbyBtn').addEventListener('click',connectPublicLobby);$('lobbyReadyBtn').addEventListener('click',setLobbyReady);$('lobbyStartBtn').addEventListener('click',startPrivateLobbyRace);$('lobbyLeaveBtn').addEventListener('click',async()=>{await leaveOnlineRoom();$('matchmakingModal').classList.add('hidden');$('copyRoomCodeBtn').disabled=true;$('lobbyStatus').innerText='You left the lobby.';});
   $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
   $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('mmCancelBtn').addEventListener('click',async()=>{$('matchmakingModal').classList.add('hidden');await leaveOnlineRoom();$('mmStatus').innerText='Search cancelled.';$('casualQueueStatus').innerText='Not currently searching.';$('rankedQueueStatus').innerText='Not currently searching.';});
