@@ -1,33 +1,47 @@
-MIDNIGHT RACING v38 — MULTIPLAYER USERNAME ROSTERS
-==================================================
+MIDNIGHT RACING v39 — EASIER LOBBIES & READY CHECK
+=================================================
 
-UPDATE
+INSTALL
 1. Extract this ZIP.
-2. Upload every item inside the Midnight-Racing-v38 folder to the root of your existing GitHub Pages repository, replacing the v37 files.
-3. Keep index.html, sw.js, manifest.webmanifest, icon files, and the audio folder together.
-4. Commit to main, then refresh the published game with Ctrl+Shift+R.
-5. If the old menu remains cached, unregister the site's service worker and clear Cache Storage only. Do not clear Local Storage.
+2. Open index.html and put your Supabase Project URL and Publishable key in the existing SUPABASE_URL and SUPABASE_ANON_KEY settings. Do not use a Secret/service_role key.
+3. Upload every file and folder in this ZIP to the root of your existing GitHub Pages repository, replacing the previous version.
+4. Commit to main and refresh with Ctrl+Shift+R. If the older layout is cached, unregister the service worker and clear Cache Storage only (do not clear Local Storage).
+
+LOBBY CHANGES
+- Clear Quick Match, Open Public Lobby, Create Private Room, and Join a Friend sections.
+- Press Enter in the invite-code field to join.
+- Private-room hosts can copy an invite link. Opening it pre-fills the room code and opens the Multiplayer tab.
+- Private, public, Casual Quick Match, Ranked, and Tournament lobbies now have a Ready for Race toggle.
+- The host gets a Start Race button only after all connected human players are ready.
+- The matchmaking overlay contains the Ready/Start buttons so controls are usable while the overlay is open.
+- Player names and readiness labels remain visible in the lobby roster.
+- Public Casual is one shared open lobby in this build; private rooms are joined by invite link or code.
 
 SUPABASE
-- Keep using the Supabase project already connected to v37.
-- This is a client-side Realtime Presence/UI update; no new SQL is required.
-- Keep the existing v37 private-room SQL functions and RLS policies installed.
-- Make sure index.html contains your current Project URL and Publishable key. This source package intentionally leaves those values as placeholders. Never put a Supabase Secret/service_role key in the game.
-
-V38 CHANGES
-- Private rooms list each joined driver's in-game username, with HOST / READY / WAITING and YOU labels.
-- Public lobbies list the usernames of joined drivers.
-- Casual, Ranked and Tournament matchmaking show the six-player group assigned to the current queue slot.
-- The matched-room overlay continues to show the player names while the room connects.
-- Roster names are inserted as text, not HTML. Duplicate Realtime presence entries for the same user ID are deduplicated.
+- No new SQL is required. Keep the existing v37 private-room SQL functions and security policies installed.
+- Existing Supabase URL/key placeholders remain in the source package by design; insert your project's URL and Publishable key in index.html.
+- Private room creation, join, ready state, start and leave continue to use the v37 SQL RPCs. Public/queue readiness uses Realtime Presence and requires no additional table.
 
 TEST
-1. Use two different signed-in accounts in separate browsers/devices.
-2. Create a private room, join it from the second account, and confirm both names appear.
-3. Test the public lobby and confirm the same.
-4. Start Casual Quick Match on both accounts and confirm the queue shows the players' usernames.
-5. Repeat with Ranked/Tournament when eligible.
+1. Open two separate browsers/devices and sign in with two different accounts.
+2. Create a private room on Player 1 and copy the invite link.
+3. Open the link on Player 2, confirm it fills the code, then press JOIN ROOM.
+4. Both players should appear by username. Each presses READY FOR RACE.
+5. The host's START RACE button should enable only when both players are ready.
+6. Repeat using Join Public Lobby or Casual Quick Match.
 
 LIMITATION
-- Names are supplied through Supabase Realtime Presence. A username change appears after the player reconnects or updates their presence.
-- This environment can validate code syntax and package integrity but cannot perform a live session against your Supabase project.
+This package can be syntax-checked locally, but live cross-device Realtime behaviour still requires testing against your Supabase project.
+
+
+V39 AUDIO + UI PASS
+- RPM-responsive synthesized engine layer with exhaust/intake texture for Player 1 and Player 2.
+- Layered nitro activation and sustained boost audio, speed-responsive.
+- Soft tap and menu-transition sounds for interactive UI controls; controlled by the existing Sound Effects setting.
+- Updated HUD contrast, card hierarchy, responsive mobile layout, safe-area spacing, and reduced-motion support.
+- No external copyrighted music or samples added. Existing locally bundled original soundtrack remains included.
+- The engine and nitro effects are synthesized with the Web Audio API at runtime.
+
+
+SUPABASE NOTE
+NO ADDITIONAL SUPABASE SQL is required for v39. Keep the v37 private-room SQL and your existing RLS policies. This package leaves SUPABASE_URL and SUPABASE_ANON_KEY as placeholders, so add your own project URL and Publishable key to index.html before uploading. Do not use a secret/service-role key.

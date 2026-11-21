@@ -3,3 +3,7 @@ MIDNIGHT RACING V36 — ORIGINAL AUDIO
 The files in ./audio/ (midnight-racing-loop.mp3 and car-engine-loop.mp3) were synthesized specifically for the Midnight Racing game build. No third-party music recordings, car sound recordings, loops, or samples were used. The audio assets are dedicated under the Creative Commons CC0 1.0 Universal public-domain dedication.
 
 CC0 1.0 legal code: https://creativecommons.org/publicdomain/zero/1.0/
+
+
+V39 PROCEDURAL VEHICLE AND INTERFACE AUDIO
+The engine, intake/exhaust texture, nitro activation/boost layer, and menu interaction tones are synthesized at runtime using the Web Audio API. They contain no sampled commercial game sounds or third-party recordings.
