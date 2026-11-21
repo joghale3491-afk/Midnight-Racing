@@ -3,7 +3,30 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>MIDNIGHT RACING — 3D Street Racing v31</title>
+<meta name="description" content="Midnight Racing is an original 3D street-racing game. Build your garage, race the night, compete online, and climb the tournament series." />
+<meta name="theme-color" content="#060b16" />
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+<link rel="icon" type="image/png" sizes="48x48" href="./favicon-48.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+<link rel="icon" type="image/x-icon" href="./favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="canonical" href="https://joghale3491-afk.github.io/Midnight-Racing/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="MIDNIGHT RACING" />
+<meta property="og:description" content="Build your garage, race the night, and compete in the online tournament series." />
+<meta property="og:url" content="https://joghale3491-afk.github.io/Midnight-Racing/" />
+<meta property="og:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512.png" />
+<meta property="og:image:width" content="512" />
+<meta property="og:image:height" content="512" />
+<meta property="og:site_name" content="MIDNIGHT RACING" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="MIDNIGHT RACING" />
+<meta name="twitter:description" content="Build your garage, race the night, and compete in online tournaments." />
+<meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Midnight Racing" />
+<title>MIDNIGHT RACING — 3D Street Racing</title>
 <script type="importmap">
 {
   "imports": {
@@ -582,59 +605,212 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
 @media(max-width:520px){.overlay{padding:7px}.menuWrap{width:100%;max-height:98dvh;border-radius:12px}.hubTop{gap:8px}.hubLogo{font-size:27px}.creditsPill{padding:8px 10px;font-size:8px}.modeGrid,.featureGrid{grid-template-columns:1fr!important}.raceInfo{gap:10px;padding:7px 10px}.info small{font-size:7px}.info b{font-size:18px}.controlsHint{display:none}#driftControlBtn{bottom:23%;padding:11px 18px;font-size:10px}}
 
 
-/* MIDNIGHT RACING · usability and responsive polish */
-.menuWrap{height:min(94dvh,980px);max-height:94dvh;overflow:hidden}
-.hubGrid{min-height:0;flex:1;overflow:hidden;grid-template-columns:176px minmax(0,1fr);align-items:stretch}
+/* V34 · responsive navigation, cleaner layout and touch-first controls */
+.menuWrap{
+  display:flex;flex-direction:column;overflow:hidden;
+  max-height:min(94dvh,1000px);min-height:0;
+}
+.hubTop{flex:0 0 auto}
+.hubGrid{flex:1 1 auto;min-height:0;overflow:hidden;align-items:stretch}
 .sideNav{
-  align-self:stretch;position:sticky;top:0;min-height:0;max-height:calc(94dvh - 118px);
-  overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
-  scrollbar-width:thin;scrollbar-color:#39788a #07111f;padding:2px 7px 12px 0;
-  scrollbar-gutter:stable;
+  min-height:0;max-height:calc(94dvh - 150px);overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#34788c #07111f;
+  padding:2px 7px 8px 0;scrollbar-gutter:stable;
 }
 .sideNav::-webkit-scrollbar,.hubMain::-webkit-scrollbar{width:7px}
-.sideNav::-webkit-scrollbar-thumb,.hubMain::-webkit-scrollbar-thumb{background:#39788a;border-radius:20px}
+.sideNav::-webkit-scrollbar-thumb,.hubMain::-webkit-scrollbar-thumb{background:#34788c;border-radius:9px}
 .sideNav::-webkit-scrollbar-track,.hubMain::-webkit-scrollbar-track{background:#07111f}
-.navBtn{flex:0 0 auto;min-height:44px;line-height:1.35;white-space:normal}
-.hubMain{min-height:0;max-height:none;height:100%;overscroll-behavior:contain;scrollbar-gutter:stable}
+.navBtn{flex:0 0 auto;min-height:46px;line-height:1.35;white-space:normal}
+.hubMain{
+  min-height:0;max-height:calc(94dvh - 150px);overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;padding:0 5px 14px 0;scrollbar-width:thin;
+  scrollbar-color:#34788c #07111f;
+}
+.viewPanel{min-width:0}
 button{ -webkit-tap-highlight-color:transparent }
-@media(pointer:coarse),(max-width:850px){
-  .menuWrap{height:96dvh;max-height:96dvh}
-  .hubGrid{display:flex;flex-direction:column;min-height:0;overflow:hidden;gap:7px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+@media(max-width:850px){
+  .overlay{padding:8px;align-items:flex-start}
+  .menuWrap{width:100%;max-height:calc(100dvh - 16px);padding:clamp(11px,2.5vw,18px);border-radius:15px}
+  .hubTop{gap:9px;padding-bottom:11px;margin-bottom:11px}
+  .hubGrid{display:flex;flex-direction:column;gap:10px;overflow:hidden}
   .sideNav{
-    position:sticky;top:0;z-index:8;display:flex;flex:0 0 auto;flex-direction:row;
-    width:100%;max-height:none;overflow-x:auto;overflow-y:hidden;gap:7px;
-    padding:5px 2px 9px;background:#071522f7;scrollbar-width:thin;
-    overscroll-behavior-x:contain;scroll-snap-type:x proximity;
+    order:0;display:flex;flex-direction:row;gap:7px;max-height:none;min-height:0;
+    width:100%;padding:3px 2px 9px;overflow-x:auto;overflow-y:hidden;
+    scrollbar-width:thin;scroll-snap-type:x proximity;flex:0 0 auto;
   }
-  .navBtn{flex:0 0 auto;min-height:42px;white-space:nowrap;scroll-snap-align:start}
-  .hubMain{flex:1 1 auto;width:100%;height:auto;max-height:none;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 3px 16px 0}
-  #touchControls{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));gap:10px}
-  .touchCluster{grid-template-columns:repeat(3,minmax(46px,56px));grid-template-rows:repeat(2,52px);gap:6px}
-  .touchRight{grid-template-columns:repeat(2,minmax(48px,60px));grid-template-rows:repeat(2,52px)}
-  .touchCluster button{min-width:44px;min-height:48px;font-size:15px;border:1px solid #9beeffbb;background:linear-gradient(145deg,#102b40ed,#071522ed);box-shadow:0 5px 16px #0009,inset 0 1px #ffffff18;touch-action:none}
-  .touchCluster button.pressed{background:#16718b;transform:scale(.96);box-shadow:0 0 0 2px #63f3ff55,0 4px 12px #0008}
-  #mobileControlsHint{bottom:max(2px,env(safe-area-inset-bottom));font-size:8px;max-width:94vw;white-space:normal;text-align:center}
+  .sideNav .navBtn{flex:0 0 auto;width:auto;min-width:max-content;min-height:42px;
+    padding:10px 13px;text-align:center;white-space:nowrap;scroll-snap-align:start}
+  .sideNav .navBtn.active{box-shadow:inset 0 -3px var(--cyan),0 5px 14px #0005}
+  .hubMain{order:1;max-height:none;flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 3px 12px 0}
+  .hubTop>div:last-child{display:flex;flex-wrap:wrap;gap:6px}
+  .creditsPill{padding:7px 9px;font-size:8px}
+  .heroStrip{min-height:0}
 }
-@media(max-width:520px){
-  .menuWrap{padding:10px}
-  .hubTop{flex:0 0 auto}
-  .sideNav{margin:0 -2px}
-  .navBtn{padding:10px 12px;font-size:9px}
-  .hubMain{padding-bottom:22px}
-  #touchControls{bottom:max(8px,env(safe-area-inset-bottom));padding-left:7px;padding-right:7px}
-  .touchCluster{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,48px);gap:5px;padding:5px}
-  .touchRight{grid-template-columns:repeat(2,46px);grid-template-rows:repeat(2,48px)}
-  .touchCluster button{font-size:13px;border-radius:12px}
-  .bottom{bottom:132px}
+@media(max-width:560px){
+  .overlay{padding:5px}
+  .menuWrap{max-height:calc(100dvh - 10px);padding:10px;border-radius:12px}
+  .hubLogo{font-size:27px}
+  .hubTag{font-size:7px}
+  .sideNav .navBtn{font-size:9px;padding:10px 11px}
+  .modeGrid,#trackGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .modeCard{padding:11px;min-height:78px}
+  .trackCard{min-height:105px}
+  .trackArt{height:58px}
+  .featureGrid,.storyLayout,.garageGrid,.mpWrap{grid-template-columns:1fr}
+  .formRow{flex-wrap:wrap}
+  .formRow .mrInput{min-width:0;flex:1 1 100%}
+  .primaryBtn,.secondaryBtn,.goldBtn,.smallBtn{min-height:44px}
 }
-@media(orientation:landscape) and (max-height:520px) and (pointer:coarse){
-  #touchControls{bottom:4px}
-  .touchCluster{grid-template-rows:repeat(2,40px);gap:4px}
-  .touchRight{grid-template-rows:repeat(2,40px)}
-  .touchCluster button{min-height:38px}
+@media(max-width:850px),(pointer:coarse){
+  #touchControls{
+    inset:auto 0 max(10px,env(safe-area-inset-bottom)) 0;
+    padding:0 max(10px,env(safe-area-inset-left)) 0 max(10px,env(safe-area-inset-right));
+    gap:clamp(8px,2vw,18px);align-items:flex-end;
+  }
+  .touchCluster{grid-template-columns:repeat(3,clamp(48px,10vw,64px));
+    grid-template-rows:repeat(2,clamp(48px,10vw,64px));gap:6px}
+  .touchCluster button{min-width:44px;min-height:44px;border-radius:16px;
+    font-size:clamp(14px,2.5vw,18px);background:linear-gradient(145deg,#12344beF,#061321ed);
+    border:1px solid #8beeffcc;box-shadow:0 5px 18px #0009,inset 0 1px #ffffff1c;
+    touch-action:none;user-select:none;-webkit-user-select:none}
+  .touchCluster button.pressed{background:linear-gradient(145deg,#1687a4,#0c4961);
+    transform:translateY(1px);box-shadow:0 0 0 2px #69eaff44,0 2px 9px #0009}
+  .touchRight{grid-template-columns:repeat(2,clamp(48px,9vw,60px));
+    grid-template-rows:repeat(2,clamp(48px,9vw,60px))}
+  .touchLabel{font-size:8px;font-weight:900;letter-spacing:.15em;padding-bottom:2px}
   #mobileControlsHint{display:none}
+  .bottom{bottom:clamp(130px,22vh,175px)}
+  #pauseGraphic{top:max(9px,env(safe-area-inset-top));right:max(9px,env(safe-area-inset-right))}
+}
+@media(max-width:520px),(pointer:coarse){
+  #touchControls{gap:5px;padding-left:7px;padding-right:7px}
+  .touchCluster{grid-template-columns:repeat(3,clamp(43px,12vw,56px));
+    grid-template-rows:repeat(2,clamp(43px,12vw,56px));gap:4px}
+  .touchRight{grid-template-columns:repeat(2,clamp(43px,11vw,53px));
+    grid-template-rows:repeat(2,clamp(43px,11vw,53px))}
+  .touchCluster button{border-radius:13px;font-size:14px}
+  .touchLabel{font-size:7px}
+  .bottom{left:7px;right:7px;bottom:clamp(112px,20vh,150px);gap:5px}
+  .nitroPanel,.vehicleStatus{padding:6px}
+  .racePowerupPanel{max-width:38vw}
+  .top{left:7px;right:55px;top:7px}
+  .raceInfo{gap:5px;padding:6px}
+  .info small{font-size:6px}
+  .info b{font-size:13px}
+  #speed{font-size:24px}
+}
+@media(max-height:520px) and (orientation:landscape){
+  .touchCluster{grid-template-rows:repeat(2,42px);grid-template-columns:repeat(3,48px)}
+  .touchRight{grid-template-rows:repeat(2,42px);grid-template-columns:repeat(2,48px)}
+  .bottom{bottom:102px}
+  #touchControls{bottom:5px}
 }
 
+
+/* V34 · stable timer, navigation scrolling, dialogue and P2 cockpit */
+#modeTimerHud{position:fixed!important;top:clamp(64px,8.5vh,92px)!important;left:50%!important;right:auto!important;bottom:auto!important;transform:translateX(-50%)!important;z-index:24!important;width:clamp(178px,23vw,270px)!important;min-width:0!important;max-width:calc(100vw - 24px)!important;padding:9px 16px!important;border-radius:12px!important;clip-path:none!important;border:1px solid #72eaffa8!important;background:linear-gradient(135deg,#061322f2,#102b42ee)!important;box-shadow:0 8px 28px #0009,0 0 20px #39dfff25!important;backdrop-filter:blur(14px)!important}
+#modeTimerHud strong{font-size:clamp(23px,3.1vw,34px)!important;line-height:1.1!important;font-variant-numeric:tabular-nums!important}
+#modeTimerHud small{font-size:8px!important;letter-spacing:.16em!important}
+#modeTimerHud.warning{border-color:#ff647e!important;box-shadow:0 0 22px #ff4b6a55!important}
+.gameDialog{position:fixed;inset:0;z-index:220;display:flex;align-items:center;justify-content:center;padding:18px;background:#020812c9;backdrop-filter:blur(10px)}
+.gameDialogCard{width:min(440px,94vw);padding:22px;border:1px solid #67eaff88;border-radius:16px;background:linear-gradient(145deg,#102538,#07111e);box-shadow:0 18px 65px #000c,0 0 28px #32dfff22;color:#edfaff}
+.gameDialogCard h2{margin:8px 0 10px;font-size:clamp(19px,4vw,25px);letter-spacing:.07em}
+.gameDialogCard p{margin:0;color:#c6d7e4;line-height:1.6;font-size:13px}
+.gameDialogActions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+.gameDialogActions button{min-width:100px;min-height:42px}
+.gameDialogActions [hidden]{display:none!important}
+#p2RaceHud{z-index:9!important;min-width:0!important;width:min(300px,36vw)!important;padding:12px 14px!important;border-radius:14px!important;border:1px solid #ff8bbdaa!important;background:linear-gradient(145deg,#251023ee,#07101feF)!important;box-shadow:0 10px 30px #0009,0 0 22px #ff4b9126!important;backdrop-filter:blur(14px)!important}
+#p2RaceHud .p2HudHeader{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#p2RaceHud .p2HudReadout{display:flex;align-items:baseline;gap:7px;margin:5px 0}
+#p2RaceHud .p2HudReadout span{font-size:clamp(25px,3vw,38px)!important;font-variant-numeric:tabular-nums}
+#p2RaceHud .p2HudStats{display:flex;justify-content:space-between;gap:6px}
+#p2RaceHud .p2HudControls{display:block;margin-top:7px;font-size:8px;line-height:1.45;letter-spacing:.04em;color:#ffcade}
+body.local-two-player.race-active #hud .top{width:min(40vw,460px)!important}
+body.local-two-player.race-active #hud .bottom{max-width:43vw}
+#p1Touch,#p2Touch{z-index:15;touch-action:none}
+#p1Touch .touchCluster,#p2Touch .touchCluster{backdrop-filter:blur(10px);border:1px solid #76eaff44;border-radius:15px;padding:7px;background:#061321c9}
+#p2Touch .touchCluster{border-color:#ff80b166;background:#210d20d4}
+#p2Touch button{border-color:#ff86b988;background:linear-gradient(145deg,#45142f,#1d1024);color:#fff}
+#p2Touch button.pressed{background:#ff4b91;color:#fff;box-shadow:0 0 16px #ff4b9188}
+#driftControlBtn{touch-action:none;user-select:none;-webkit-user-select:none;z-index:16}
+/* Desktop nav has its own vertical scroll area; small screens get a vertically scrollable two-column nav. */
+#menu .menuWrap{display:flex!important;flex-direction:column!important;overflow:hidden!important;min-height:0!important;max-height:calc(100dvh - 22px)!important}
+#menu .hubTop{flex:0 0 auto!important}
+#menu .hubGrid{display:grid!important;grid-template-columns:minmax(150px,190px) minmax(0,1fr)!important;flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow:hidden!important;align-items:stretch!important}
+#menu .sideNav{display:flex!important;flex-direction:column!important;align-self:stretch!important;min-height:0!important;height:100%!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;touch-action:pan-y!important;padding:3px 8px 12px 0!important;scrollbar-gutter:stable!important}
+#menu .sideNav .navBtn{flex:0 0 auto!important;width:100%!important;min-height:45px!important;white-space:normal!important;text-align:left!important}
+#menu .hubMain{min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;}
+@media(max-width:850px){
+ #menu .menuWrap{max-height:calc(100dvh - 10px)!important}
+ #menu .hubGrid{display:flex!important;flex-direction:column!important;gap:8px!important}
+ #menu .sideNav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(39px,auto)!important;flex:0 1 auto!important;width:100%!important;height:auto!important;max-height:24dvh!important;min-height:72px!important;overflow-y:auto!important;overflow-x:hidden!important;padding:2px 3px 8px!important;scrollbar-width:thin!important;touch-action:pan-y!important}
+ #menu .sideNav .navBtn{width:100%!important;min-width:0!important;min-height:39px!important;padding:8px 9px!important;text-align:left!important;white-space:normal!important;font-size:9px!important}
+ #menu .hubMain{flex:1 1 auto!important;max-height:none!important;min-height:0!important;overflow-y:auto!important}
+ #modeTimerHud{top:clamp(56px,8vh,74px)!important;width:clamp(160px,36vw,220px)!important;padding:7px 10px!important}
+ #p2RaceHud{top:2%!important;right:1%!important;left:auto!important;width:47%!important;max-width:47%!important;padding:8px 9px!important}
+ body.local-two-player.race-active #hud .top{top:1%!important;left:1%!important;width:47%!important}
+ body.local-two-player.race-active #p2RaceHud{top:1%!important;right:1%!important}
+ #p2RaceHud .p2HudControls{font-size:6px!important}
+}
+@media(max-width:520px){
+ #menu .sideNav{max-height:22dvh!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #modeTimerHud{top:58px!important;width:158px!important;padding:6px 8px!important}
+ #modeTimerHud strong{font-size:22px!important}
+ #p2RaceHud{padding:6px!important;max-height:38vh!important;overflow:auto!important}
+ #p2RaceHud .p2HudReadout span{font-size:25px!important}
+ #p2RaceHud .p2PowerupSlots{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+ #p2RaceHud .p2HudControls{font-size:5px!important}
+ body.local-two-player.race-active #hud .bottom{bottom:136px!important}
+ body.local-two-player.race-active #p1Touch .touchCluster,body.local-two-player.race-active #p2Touch .touchCluster{grid-template-columns:repeat(3,35px)!important;grid-template-rows:repeat(3,35px)!important;gap:4px!important}
+ .gameDialogCard{padding:17px}
+}
+
+
+/* V35 · multiplayer tournament circuit, campaign quests, and pursuit HUD */
+.tournamentLayout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:12px;align-items:stretch}
+.tournamentFeature,.questCampaignCard,.tournamentStageCard{border:1px solid #6cecff32;border-radius:13px;background:linear-gradient(150deg,#102338,#081321);padding:16px;min-width:0}
+.tournamentFeature h3,.questCampaignCard h3{margin:6px 0 8px;font-size:clamp(16px,2vw,22px);letter-spacing:.025em}
+.tournamentFeature p,.questCampaignCard p{font-size:11px;line-height:1.6;color:#aec3d3}
+.tournamentStatGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.tournamentStat{padding:10px;border-radius:9px;background:#06111d;border:1px solid #82dfff22;min-width:0}
+.tournamentStat small{display:block;color:#89a9bd;font-size:8px;letter-spacing:.12em;font-weight:900}
+.tournamentStat b{display:block;margin-top:5px;font-size:clamp(15px,2vw,22px);color:#f1fbff;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tournamentStageGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.tournamentStageCard{padding:12px;opacity:.66}
+.tournamentStageCard.active{opacity:1;border-color:#ffd36a99;box-shadow:0 0 18px #ffc85a14}
+.tournamentStageCard.complete{opacity:1;border-color:#62edb366;background:linear-gradient(145deg,#102c2b,#081923)}
+.tournamentStageCard small{display:block;color:#8daabd;font-size:8px;letter-spacing:.12em}
+.tournamentStageCard b{display:block;margin:6px 0 4px;font-size:11px}
+.tournamentStageCard span{font-size:9px;color:#bdd0dc;line-height:1.4}
+.tournamentQueueStatus{min-height:38px;margin-top:10px;padding:10px;border-radius:8px;background:#06111d;color:#b8ccda;font-size:10px;line-height:1.5;border:1px solid #80e5ff22}
+.questCampaignGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.questCampaignCard{display:flex;flex-direction:column;gap:8px}
+.questCampaignCard .questChainSteps{display:flex;flex-direction:column;gap:6px;margin-top:3px}
+.questStage{display:grid;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;gap:8px;padding:9px;border-radius:9px;background:#06111d;border:1px solid #8cecff18}
+.questStage.active{border-color:#62efff66;background:#0b2332}
+.questStage.complete{border-color:#50e2a155;background:#0b211f}
+.questStage .stepMark{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:#20384b;color:#b9d8e8;font-size:9px;font-weight:1000}
+.questStage.complete .stepMark{background:#17503d;color:#b6ffda}
+.questStage b{display:block;font-size:9px;letter-spacing:.04em}
+.questStage small{display:block;margin-top:3px;color:#8faabd;font-size:8px;line-height:1.35}
+.questStage .stepState{font-size:8px;color:#8faabd;white-space:nowrap}
+.questProgress{height:6px;background:#162b3b;border-radius:99px;overflow:hidden;margin-top:5px}
+.questProgress i{display:block;height:100%;background:linear-gradient(90deg,#3dbdd3,#70f0ff);border-radius:99px}
+.questCampaignCard .smallBtn{align-self:flex-start;margin-top:auto}
+.questCampaignCard .smallBtn:disabled{opacity:.55;cursor:not-allowed}
+#pursuitHud{position:fixed;left:clamp(8px,2.5vw,30px);top:clamp(104px,15vh,150px);z-index:25;display:none;width:min(230px,45vw);padding:10px 12px;border:1px solid #ff556d88;border-radius:11px;background:linear-gradient(135deg,#170d19ed,#111827ed);box-shadow:0 8px 28px #0009,0 0 20px #ff345022;backdrop-filter:blur(12px);pointer-events:none}
+#pursuitHud.visible{display:block}
+.pursuitHudTop,.pursuitHudMeta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pursuitHudTop b{font-size:9px;letter-spacing:.15em;color:#fff}
+.pursuitHudTop span{font-size:9px;font-weight:1000;color:#ff8799;letter-spacing:.1em}
+.pursuitHeatTrack{height:7px;border-radius:99px;background:#35202c;overflow:hidden;margin:8px 0}
+#pursuitHeatFill{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffb34e,#ff536e,#ff1b4e);box-shadow:0 0 12px #ff426a88;transition:width .2s}
+.pursuitHudMeta{font-size:8px;color:#c7aab4;letter-spacing:.1em;font-weight:900}
+.navBtn[data-view="tournamentPanel"]{border-color:#d8ae4f66;color:#ffe2a0;background:linear-gradient(100deg,#2b2416,#101b29)}
+.navBtn[data-view="tournamentPanel"].active{border-color:#ffd36a;box-shadow:inset 3px 0 #ffd36a,0 8px 24px #0005}
+@media(max-width:850px){.tournamentLayout{grid-template-columns:1fr}.questCampaignGrid{grid-template-columns:1fr}.tournamentStageGrid{grid-template-columns:1fr 1fr 1fr}#pursuitHud{top:clamp(96px,14vh,128px);width:min(190px,44vw);padding:8px 9px}}
+@media(max-width:520px){.tournamentStatGrid{gap:5px}.tournamentStat{padding:8px}.tournamentStat small{font-size:7px}.tournamentStageGrid{gap:5px}.tournamentStageCard{padding:8px}.tournamentStageCard b{font-size:9px}.tournamentStageCard span{font-size:8px}#pursuitHud{top:100px;width:150px;padding:7px 8px}#pursuitHud .pursuitHudTop b{font-size:7px}#pursuitHud .pursuitHudMeta{font-size:6px}}
 </style>
 </head>
 <body>
@@ -674,6 +850,7 @@ button{ -webkit-tap-highlight-color:transparent }
   <div class="controlsHint">P1 LEFT VIEW · WASD / ARROWS · SPACE NITRO · C / SHIFT DRIFT · Q POWERUP · E SWITCH · P2 RIGHT VIEW · IJKL · U NITRO · B DRIFT · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
 </div>
 <div id="modeTimerHud" class="modeTimerHud" aria-live="polite"><small id="modeTimerLabel">ROUND TIMER</small><strong id="modeTimerValue">00:30</strong></div>
+<div id="pursuitHud" aria-live="polite"><div class="pursuitHudTop"><b>ACTIVE PURSUIT</b><span id="pursuitHeatLevel">HEAT 1</span></div><div class="pursuitHeatTrack"><i id="pursuitHeatFill"></i></div><div class="pursuitHudMeta"><span id="pursuitUnits">3 PATROL UNITS</span><span id="pursuitPhase">PHASE 1 / 3</span></div></div>
 <button id="driftControlBtn" type="button" data-control="drift">HOLD TO DRIFT · C / SHIFT</button>
 
 
@@ -722,6 +899,8 @@ button{ -webkit-tap-highlight-color:transparent }
         <button class="navBtn active" data-view="homePanel">▣ &nbsp; RACE HUB</button>
         <button class="navBtn" data-view="storyPanel">✦ &nbsp; STORY</button>
         <button class="navBtn" data-view="rankedPanel">🏆 &nbsp; RANKED MULTIPLAYER</button>
+        <button class="navBtn" data-view="tournamentPanel">🏁 &nbsp; TOURNAMENTS</button>
+        <button class="navBtn" data-view="questsPanel">✧ &nbsp; QUESTS</button>
         <button class="navBtn" data-view="garagePanel">◈ &nbsp; GARAGE</button>
         <button class="navBtn" data-view="storePanel">▤ &nbsp; STORE</button>
         <button class="navBtn" data-view="eventsPanel">⚑ &nbsp; EVENTS</button>
@@ -743,7 +922,7 @@ button{ -webkit-tap-highlight-color:transparent }
           <div class="modeGrid" id="modeGrid">
             <button class="modeCard active" data-mode="street"><strong>01 / STREET RACE</strong><small>3 laps · rival drivers</small></button>
             <button class="modeCard" data-mode="time"><strong>02 / TIME ATTACK</strong><small>Every 30 seconds, last place is eliminated until one racer remains</small></button>
-            <button class="modeCard" data-mode="police"><strong>03 / POLICE PURSUIT</strong><small>Survive an aggressive chase for 90 seconds</small></button>
+            <button class="modeCard" data-mode="police"><strong>03 / POLICE PURSUIT</strong><small>Outrun escalating patrol units, survive backup waves and keep your car running</small></button>
             <button class="modeCard" data-mode="ghost"><strong>04 / GHOST RUN</strong><small>Beat your best lap on an unlocked track</small></button>
             <button class="modeCard" data-mode="infected"><strong>05 / INFECTED</strong><small>Avoid the tagged racer; tagged drivers are eliminated every 30 seconds</small></button>
             <button class="modeCard" data-mode="drift"><strong>06 / DRIFT TRIAL</strong><small>Score as many clean drift points as possible in 90 seconds</small></button>
@@ -911,6 +1090,37 @@ button{ -webkit-tap-highlight-color:transparent }
             </details>
           </div>
         </section>
+        <section id="tournamentPanel" class="viewPanel hidden">
+          <div class="heroStrip"><div><div class="eyebrow">ONLINE MULTIPLAYER · THREE-ROUND SERIES</div><h2>THE MIDNIGHT <span style="color:var(--pink)">TOURNAMENT</span></h2><p>Race against real online drivers across a qualifier, semi-final and final. Earn series points at every round; your progress is saved with your player profile.</p></div></div>
+          <div class="tournamentLayout">
+            <div class="tournamentFeature">
+              <div class="eyebrow">WEEKEND ONLINE EVENT</div><h3 id="tournamentRoundTitle">ROUND 1 · QUALIFIER</h3>
+              <p id="tournamentStatus">Checking tournament schedule…</p>
+              <div class="tournamentStatGrid">
+                <div class="tournamentStat"><small>CURRENT ROUND</small><b id="tournamentRoundInfo">1 / 3</b></div>
+                <div class="tournamentStat"><small>SERIES POINTS</small><b id="tournamentPointsInfo">0 PTS</b></div>
+                <div class="tournamentStat"><small>BEST FINISH</small><b id="tournamentBestInfo">—</b></div>
+              </div>
+              <button class="goldBtn" id="tournamentBtn" style="width:100%;min-height:48px">FIND TOURNAMENT PLAYERS</button>
+              <div class="tournamentQueueStatus" id="tournamentQueueStatus">Online tournament matchmaking requires a configured Supabase connection and a signed-in account.</div>
+            </div>
+            <div class="tournamentFeature">
+              <div class="eyebrow">THREE-ROUND FORMAT</div><h3>THE ROAD TO THE FINAL</h3>
+              <p>Each round is a separate multiplayer race. Place higher to earn more points. Complete all three rounds to unlock the series completion reward.</p>
+              <div class="tournamentStageGrid" id="tournamentStageGrid"></div>
+              <div class="mutedText" style="margin-top:12px">Scoring: 1st 10 pts · 2nd 7 pts · 3rd 5 pts · 4th 3 pts · 5th 2 pts · 6th 1 pt. The online lobby requires at least two human racers.</div>
+            </div>
+          </div>
+          <div class="featureCard" style="margin-top:12px"><div class="panelTitle">YOUR TOURNAMENT RECORD</div><div id="tournamentHistory" class="dataList"><div class="mutedText">Finish tournament rounds to build your series record.</div></div></div>
+        </section>
+
+        <section id="questsPanel" class="viewPanel hidden">
+          <div class="heroStrip"><div><div class="eyebrow">MULTI-STAGE PROGRESSION · SAVED TO PROFILE</div><h2>QUEST <span style="color:var(--pink)">BOARD</span></h2><p>Complete each stage, claim its reward, then unlock the next objective. Online quests count races played through multiplayer matchmaking or private lobbies.</p></div></div>
+          <div class="panelTitle">ACTIVE QUEST CHAINS</div>
+          <div id="questCampaignGrid" class="questCampaignGrid"></div>
+          <div class="featureCard" style="margin-top:12px"><div class="panelTitle">QUEST PROGRESSION NOTES</div><div class="mutedText">Street Credentials tracks all race modes. Online Rival tracks real multiplayer races, podiums and wins. Pursuit Specialist tracks Police Pursuit results. Quest progress and claimed rewards are saved locally and included in cloud saves when signed in.</div></div>
+        </section>
+
         <section id="eventsPanel" class="viewPanel hidden">
           <div class="heroStrip"><div><div class="eyebrow">DAILY • WEEKLY • COMPETITIVE</div><h2>LIVE <span style="color:var(--pink)">EVENTS</span></h2><p>Choose a challenge category, then expand only the events you want to manage.</p></div></div>
           <div class="eventsSubgrid">
@@ -918,13 +1128,9 @@ button{ -webkit-tap-highlight-color:transparent }
               <summary><span>DAILY & WEEKLY CHALLENGES</span><small>short contracts · long-term objectives</small></summary>
               <div id="eventTierBadge" class="eventTierBadge">EVENT DIFFICULTY · STREET REP D</div><div class="featureGrid"><div class="featureCard"><h3>DAILY CONTRACTS</h3><div id="dailyQuestList" class="dataList"></div></div><div class="featureCard"><h3>WEEKLY CHALLENGES</h3><div id="weeklyQuestList" class="dataList"></div></div></div>
             </details>
-            <details class="menuGroup">
-              <summary><span>TOURNAMENTS & SPECIAL EVENTS</span><small>rotating race types · scheduled windows</small></summary>
-              <div class="featureGrid"><div class="featureCard"><h3>TOURNAMENT WINDOW</h3><p id="tournamentStatus">Checking schedule…</p><button class="goldBtn" id="tournamentBtn">ENTER TOURNAMENT</button></div><div class="featureCard"><h3>ROTATING SPECIAL EVENT</h3><p id="specialEventStatus">Loading today's event…</p><button class="primaryBtn" id="specialEventBtn">ENTER SPECIAL EVENT</button></div></div>
-            </details>
-            <details class="menuGroup">
-              <summary><span>STREET REP & CREW CONTRACTS</span><small>milestones · progression rewards</small></summary>
-              <div class="featureGrid"><div class="featureCard"><h3>STREET REP MILESTONES</h3><p id="milestoneStatus">Next reward at level 5.</p><div class="mutedText">Every 5 levels: Credits, a Ranked Ticket and a rare powerup.</div></div><div class="featureCard"><h3>NIGHTSHIFT CREW CONTRACTS</h3><p class="mutedText">Longer-term goals reward consistent racing, podium finishes and story progress.</p><div id="questBoard" class="dataList"></div></div></div>
+            <details class="menuGroup" open>
+              <summary><span>ROTATING SPECIAL EVENT</span><small>daily race type · rank-scaled rewards</small></summary>
+              <div class="featureGrid"><div class="featureCard"><h3>LIVE NIGHTSHIFT EVENT</h3><p id="specialEventStatus">Loading today's event…</p><button class="primaryBtn" id="specialEventBtn">ENTER SPECIAL EVENT</button></div><div class="featureCard"><h3>STREET REP MILESTONES</h3><p id="milestoneStatus">Next reward at level 5.</p><div class="mutedText">Every 5 levels: Credits, a Ranked Ticket and a rare powerup.</div></div></div>
             </details>
           </div>
         </section>
@@ -936,7 +1142,7 @@ button{ -webkit-tap-highlight-color:transparent }
           <div class="heroStrip"><div><div class="eyebrow">PERSONALIZE YOUR NIGHT DRIVE</div><h2>GAME <span style="color:var(--pink)">SETTINGS</span></h2></div></div>
           <div class="featureGrid">
             <div class="featureCard"><h3>PROFILE</h3><label class="eyebrow" for="usernameInput">RACER USERNAME</label><input class="mrInput" id="usernameInput" maxlength="18" placeholder="Choose a username"><button class="smallBtn" id="saveUsernameBtn">SAVE USERNAME</button><p id="accountStatus" class="mutedText">Guest profile. Sign in to sync progress across devices.</p></div>
-            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Embedded original techno soundtrack · no external music file</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Built-in engine, nitro and race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are both available in solo mode.</p></div>
+            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Bundled original electronic race soundtrack</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Enhanced synthesized engine, nitro and race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are available in solo and local 2-player modes. P1 drift: C / Shift. P2 drift: B / Numpad 0.</p></div>
             <div class="featureCard"><h3>ACCOUNT ACCESS</h3><input class="mrInput" id="accountEmail" type="email" placeholder="Email address"><input class="mrInput" id="accountPassword" type="password" placeholder="Password"><div class="formRow"><button class="smallBtn" id="signInBtn">SIGN IN</button><button class="smallBtn" id="signUpBtn">CREATE ACCOUNT</button></div><button class="smallBtn" id="signOutBtn">SIGN OUT</button><p class="mutedText" id="cloudSaveStatus">Cloud save is available after Supabase is configured.</p></div>
           </div>
         </section>
@@ -981,6 +1187,7 @@ button{ -webkit-tap-highlight-color:transparent }
   <div class="notificationHead"><div><b>NOTIFICATIONS</b><small id="notificationSummary">You're all caught up.</small></div><div class="notificationActions"><button id="markNotificationsRead" type="button">READ ALL</button><button id="closeNotifications" type="button" aria-label="Close notifications">×</button></div></div>
   <div id="notificationList" class="notificationList"><div class="notificationEmpty">No notifications yet.</div></div>
 </div>
+<div id="gameDialog" class="gameDialog hidden" role="dialog" aria-modal="true" aria-labelledby="gameDialogTitle"><section class="gameDialogCard"><div class="eyebrow">NIGHTSHIFT · IN-GAME CONFIRMATION</div><h2 id="gameDialogTitle">CONFIRM ACTION</h2><p id="gameDialogMessage"></p><div class="gameDialogActions"><button type="button" id="gameDialogCancel" class="secondaryBtn">BACK</button><button type="button" id="gameDialogConfirm" class="primaryBtn">CONFIRM</button></div></section></div>
 <div id="toastMessage" class="toastMessage" role="status" aria-live="polite"></div>
 
 
@@ -993,7 +1200,7 @@ button{ -webkit-tap-highlight-color:transparent }
   </div>
   <div class="touchCluster touchRight"><div class="touchLabel">BOOST / POWERUP</div><button data-control="p1boost">N₂</button><button data-control="p1power">Q</button><button data-control="p1swap">E</button><button data-control="p1gas">▲</button><button data-control="p1brake">▼</button></div>
 </div>
-<div id="mobileControlsHint">LOCAL 2P · P1 WASD / C OR SHIFT DRIFT · P2 IJKL / B DRIFT · U NITRO · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
+<div id="mobileControlsHint">LOCAL 2P · P1 WASD / C OR SHIFT DRIFT · P2 IJKL / B OR NUMPAD 0 DRIFT · U NITRO · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
 <div id="p2RaceHud" aria-live="polite">
   <div class="p2HudHeader"><b>PLAYER 2 · LOCAL</b><span id="p2PositionHud">GRID</span></div>
   <div class="p2HudReadout"><span id="p2SpeedHud">000</span><small>KM/H</small></div>
@@ -1069,6 +1276,8 @@ let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onl
 let notificationAutoCloseTimer=null, toastCloseTimer=null;
 let privateLobby = false, publicLobby = false, privateLobbyReady = false, isRoomHost = false, roomMetadata = null, onlineParticipants = [];
 let policeFailed = false, p2PoliceFailed = false, specialEventMode = 'infected', queuePairing = false;
+let activeTournamentStage=1, activeTournamentEventKey='', policeBackupWave1=false, policeBackupWave2=false;
+let policeSirenNodes=null;
 let authUser = null;
 let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
@@ -1218,9 +1427,24 @@ let profile = {
     garage: { paint: '176de0', engine: 0, handling: 0, nitro: 0, carId:'D-01', carLevels:{'D-01':1}, carUpgrades:{}, attachments:{spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false} },
     ownedCars:['D-01'], inventory:{boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0}, completedSides:{}, storyMain:{}, storyPath:'crew', storyChoices:{}, selectedPowerup:'boost', raceLoadout:['boost','repair'], ownedPaints:['176de0','e83e63','f0b52d','31b89c'], ownedAttachments:[], daily:{}, weekly:{}, totalRaces:0, wins:0, bestTime:null
 };
-try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.storyChoices=profile.storyChoices||{};profile.ownedPaints=Array.isArray(profile.ownedPaints)?profile.ownedPaints:[profile.garage.paint||'176de0','e83e63','f0b52d','31b89c'];profile.ownedAttachments=Array.isArray(profile.ownedAttachments)?profile.ownedAttachments:[];profile.raceLoadout=Array.isArray(profile.raceLoadout)?profile.raceLoadout:['boost','repair'];profile.garage.carUpgrades=profile.garage.carUpgrades||{};profile.garage.attachments={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(profile.garage.attachments||{})};profile.inventory={boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0,...(profile.inventory||{})};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.maxEnergy=100;profile.energy=Math.min(100,Math.max(0,Number(profile.energy)||0));profile.notifications=Array.isArray(profile.notifications)?profile.notifications.slice(0,30):[];selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];if(profile.garage.paint&&!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);profile.raceLoadout=profile.raceLoadout.filter((id,i,a)=>POWERUPS.some(p=>p.id===id)&&a.indexOf(id)===i).slice(0,2);
+try{const saved=JSON.parse(localStorage.getItem('midnight_racing_profile')||'null');if(saved) profile={...profile,...saved,garage:{...profile.garage,...(saved.garage||{}),carLevels:{...profile.garage.carLevels,...((saved.garage||{}).carLevels||{})},attachments:{...profile.garage.attachments,...((saved.garage||{}).attachments||{})}},inventory:{...profile.inventory,...(saved.inventory||{})}};}catch(e){console.warn('Profile save could not be read',e);}if(!Number.isFinite(Number(profile.rankedTickets)))profile.rankedTickets=Number(profile.tickets)||1;profile.rankedTickets=Math.max(0,Number(profile.rankedTickets)||0);profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};profile.storyMain=profile.storyMain||{};profile.storyChoices=profile.storyChoices||{};profile.ownedPaints=Array.isArray(profile.ownedPaints)?profile.ownedPaints:[profile.garage.paint||'176de0','e83e63','f0b52d','31b89c'];profile.ownedAttachments=Array.isArray(profile.ownedAttachments)?profile.ownedAttachments:[];profile.raceLoadout=Array.isArray(profile.raceLoadout)?profile.raceLoadout:['boost','repair'];profile.garage.carUpgrades=profile.garage.carUpgrades||{};profile.garage.attachments={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(profile.garage.attachments||{})};profile.garage.carAttachments=profile.garage.carAttachments||{};profile.inventory={boost:2,repair:1,shield:1,scanner:0,grip:0,pulse:0,jammer:0,overdrive:0,...(profile.inventory||{})};profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.claimed=Array.isArray(profile.questStats.claimed)?profile.questStats.claimed:[];profile.questStats.onlineRaces=Number(profile.questStats.onlineRaces)||0;profile.questStats.onlinePodiums=Number(profile.questStats.onlinePodiums)||0;profile.questStats.onlineWins=Number(profile.questStats.onlineWins)||0;profile.questStats.policeRuns=Number(profile.questStats.policeRuns)||0;profile.questStats.policeEscapes=Number(profile.questStats.policeEscapes)||0;profile.questCampaigns=profile.questCampaigns&&typeof profile.questCampaigns==='object'?profile.questCampaigns:{};profile.tournamentSeries=profile.tournamentSeries&&typeof profile.tournamentSeries==='object'?profile.tournamentSeries:null;profile.maxEnergy=100;profile.energy=Math.min(100,Math.max(0,Number(profile.energy)||0));profile.notifications=Array.isArray(profile.notifications)?profile.notifications.slice(0,30):[];selectedStoryPath=profile.storyPath||'crew';profile.ownedCars=profile.ownedCars||['D-01'];if(profile.garage.paint&&!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);profile.raceLoadout=profile.raceLoadout.filter((id,i,a)=>POWERUPS.some(p=>p.id===id)&&a.indexOf(id)===i).slice(0,2);
 const LEGACY_UPGRADE_CAR_ID=profile.garage.carId||'D-01';
-DECOR_ITEMS.forEach(item=>{if(profile.garage.attachments[item.id]&&!profile.ownedAttachments.includes(item.id))profile.ownedAttachments.push(item.id);});
+// Migrate legacy shared attachments to the currently selected car only. New purchases are per vehicle.
+if(!profile.garage.carAttachments[LEGACY_UPGRADE_CAR_ID]){
+  const legacyOwned=new Set(profile.ownedAttachments||[]);
+  const legacyEquipped={};
+  DECOR_ITEMS.forEach(item=>{legacyEquipped[item.id]=!!profile.garage.attachments?.[item.id];if(legacyEquipped[item.id])legacyOwned.add(item.id);});
+  profile.garage.carAttachments[LEGACY_UPGRADE_CAR_ID]={owned:[...legacyOwned],equipped:legacyEquipped};
+}
+function getCarAttachmentState(carId=profile.garage.carId){
+  const id=String(carId||'D-01');profile.garage.carAttachments=profile.garage.carAttachments||{};
+  let state=profile.garage.carAttachments[id];
+  if(!state||typeof state!=='object')state=profile.garage.carAttachments[id]={owned:[],equipped:{}};
+  state.owned=Array.isArray(state.owned)?state.owned:[];
+  state.equipped={spoiler:false,underglow:false,rims:false,splitter:false,widebody:false,hoodVents:false,neonTrim:false,exhaust:false,roofScoop:false,...(state.equipped||{})};
+  DECOR_ITEMS.forEach(item=>{if(!state.owned.includes(item.id))state.equipped[item.id]=false;});
+  profile.garage.carAttachments[id]=state;return state;
+}
 // Energy restores by one point every five minutes, both online and while the game is closed.
 function applyEnergyRegen(now=Date.now()){
   try{
@@ -1256,10 +1480,10 @@ const TRACKS = {
   coast:{name:'COASTAL RUN',ground:0xc5a56f,road:0x343a3d,fog:0x91c8d5,sky:0x75c7e9,points:[[-95,-116],[0,-145],[112,-112],[151,-24],[124,78],[38,142],[-72,132],[-151,55],[-144,-50]],theme:'coast'},
   alpine:{name:'ALPINE PASS',ground:0xc7d6d9,road:0x343f49,fog:0xa7c3d0,sky:0x9ac8df,points:[[-75,-145],[36,-153],[130,-83],[76,-4],[147,86],[48,151],[-53,127],[-139,52],[-119,-52]],theme:'alpine'},
   desert:{name:'DESERT CANYON',ground:0xa65b3c,road:0x343133,fog:0xd38b62,sky:0xd98c60,points:[[-125,-104],[-26,-153],[87,-132],[151,-57],[102,37],[144,126],[37,151],[-79,103],[-151,23],[-151,-63]],theme:'desert'},
-  industrial:{name:'IRONWORKS',ground:0x343a3d,road:0x252a31,fog:0x59636c,sky:0x192533,points:[[-145,-102],[-45,-158],[82,-139],[158,-70],[133,28],[153,112],[44,158],[-86,135],[-158,42],[-132,-48]],theme:'industrial'},
-  forest:{name:'BLACKPINE FOREST',ground:0x234638,road:0x242e2c,fog:0x82978c,sky:0x243e4c,points:[[-116,-138],[-5,-151],[118,-114],[151,-9],[102,100],[14,151],[-104,126],[-158,27],[-143,-69]],theme:'forest'},
-  skyway:{name:'SKYLINE EXPRESS',ground:0x243041,road:0x303943,fog:0x8caab9,sky:0x6b9ab8,points:[[-148,-84],[-63,-150],[65,-145],[151,-75],[145,49],[73,150],[-43,145],[-151,75],[-122,-16]],theme:'skyway'},
-  harbor:{name:'HARBOR CIRCUIT',ground:0x526b70,road:0x30383d,fog:0x7196a0,sky:0x6e9ba8,points:[[-150,-111],[-52,-157],[78,-132],[157,-50],[135,58],[55,148],[-66,154],[-154,64],[-133,-34]],theme:'harbor'},
+  industrial:{name:'IRONWORKS',ground:0x343a3d,road:0x252a31,fog:0x59636c,sky:0x192533,points:[[-130,-125],[-40,-145],[30,-126],[54,-82],[18,-42],[70,-8],[18,34],[88,74],[145,88],[128,145],[35,132],[-30,82],[-115,96],[-145,25],[-100,-30]],theme:'industrial'},
+  forest:{name:'BLACKPINE FOREST',ground:0x234638,road:0x242e2c,fog:0x82978c,sky:0x243e4c,points:[[-125,-120],[-36,-145],[45,-105],[125,-125],[145,-45],[82,-8],[132,45],[72,94],[5,65],[-55,120],[-140,82],[-105,8],[-145,-48]],theme:'forest'},
+  skyway:{name:'SKYLINE EXPRESS',ground:0x243041,road:0x303943,fog:0x8caab9,sky:0x6b9ab8,points:[[-140,-130],[-42,-155],[62,-130],[132,-82],[105,-28],[150,18],[99,70],[25,115],[-40,95],[-98,142],[-145,70],[-96,12],[-145,-42]],theme:'skyway'},
+  harbor:{name:'HARBOR CIRCUIT',ground:0x526b70,road:0x30383d,fog:0x7196a0,sky:0x6e9ba8,points:[[-140,-110],[-40,-150],[62,-123],[136,-65],[88,-15],[142,25],[100,90],[12,132],[-78,113],[-135,62],[-82,15],[-132,-38]],theme:'harbor'},
   volcanic:{name:'EMBER RIDGE',ground:0x342322,road:0x242328,fog:0x743d35,sky:0x301c2a,points:[[-144,-112],[-39,-158],[88,-137],[154,-44],[112,48],[151,128],[27,158],[-85,120],[-158,28],[-124,-54]],theme:'volcanic'},
   moon:{name:'LUNAR TEST CIRCUIT',ground:0x565d68,road:0x242a34,fog:0x697580,sky:0x080d18,points:[[-152,-92],[-80,-155],[43,-148],[150,-73],[125,43],[69,151],[-49,145],[-151,67],[-123,-19]],theme:'lunar'},
   neonport:{name:'NEON PORT',ground:0x152a37,road:0x252b38,fog:0x173747,sky:0x101a34,points:[[-158,-106],[-64,-162],[74,-145],[159,-58],[137,70],[46,153],[-91,147],[-160,44],[-130,-47]],theme:'city'},
@@ -1314,7 +1538,7 @@ for(let i=STORY_CHAPTERS.length;i<TRACK_ORDER.length;i++){
   const trackId=TRACK_ORDER[i],track=TRACKS[trackId],arc=EXTRA_STORY_ARCS[i-8]||[`Nightshift ${i+1}`,`A new rival threatens the crew’s place on the circuit.`];
   const modes=['street','checkpoint','police','drift','duel','traffic','time','infected'];
   const mode=modes[(i-8)%modes.length],contact=EXTRA_STORY_CONTACTS[(i-8)%EXTRA_STORY_CONTACTS.length];
-  const objectiveByMode={street:'Win the circuit and finish ahead of the crew rival.',checkpoint:'Reach four checkpoints before time expires. Start with 48 seconds; each checkpoint adds 14 seconds.',police:'Evade the patrol fleet for a randomized 72–110 seconds. Police follow behind and make staggered attack runs.',drift:'Hold SHIFT (or the on-screen DRIFT button) while steering through slides on the dedicated Drift Arena.',duel:'Beat the single elite rival over three laps.',traffic:'Complete two laps with less than 40% vehicle damage.',time:'Survive the elimination rounds and be the last driver standing.',infected:'Avoid the tagged racer. The tagged driver is eliminated every 30 seconds until one racer remains.'};
+  const objectiveByMode={street:'Win the circuit and finish ahead of the crew rival.',checkpoint:'Reach four checkpoints before time expires. Start with a randomized 10–20 second timer; each checkpoint adds 5–7 seconds.',police:'Evade the patrol fleet for a randomized 72–110 seconds. Police follow behind and make staggered attack runs.',drift:'Use SHIFT or C (P1), B or NUMPAD 0 (P2), or the on-screen DRIFT control while steering through slides on the Drift Arena.',duel:'Beat the single elite rival over three laps.',traffic:'Complete two laps with less than 40% vehicle damage.',time:'Survive the elimination rounds and be the last driver standing.',infected:'Avoid the tagged racer. The tagged driver is eliminated every 30 seconds until one racer remains.'};
   STORY_CHAPTERS.push({title:arc[0],tag:`NIGHTSHIFT FILE ${String(i+1).padStart(2,'0')}`,track:trackId,mode,objective:objectiveByMode[mode],reward:900+i*55,unlock:i+1<TRACK_ORDER.length?TRACKS[TRACK_ORDER[i+1]].name:'CAMPAIGN COMPLETE',contact,dialogue:`“${arc[1]} We need your call before the next run.” — ${contact.split(' ·')[0].toUpperCase()}`,story:`${arc[1]} ${track.name} becomes the next chapter in the Nightshift campaign. The crew has gathered around the route map. Mara checks the build, Juno studies the timing data, Vex scouts the rival lineup, and Rook warns that the syndicate is changing its tactics. Your decision will shape the crew’s next move.`,desc:''});
   const names=['The Crew Room','Signal Check','After Hours Debrief'];
   STORY_THREADS.push(names.map((name,j)=>({title:`${name} · ${arc[0]}`,body:[`Before the event, ${contact.split(' ·')[0]} brings you into the workshop. The crew compares notes and explains what is at stake. A small detail in the route map suggests the rival knows more than they should. You can take time to listen or go straight to the starting grid.`,`The first run exposes a clue that changes the crew’s theory. Juno wants to preserve the evidence, Mara wants to protect the cars, and Vex believes the rival is trying to provoke a mistake. You have to prove you can stay composed when the pressure rises.`,`After the race, the team reviews the result together. The episode closes one lead and opens another, with a new route marked on the campaign board. Your progress here is required before the next chapter can begin.`][j],dialogue:[`“We’re not just racing a route. We’re finding out who keeps moving the finish line.” — ${contact.split(' ·')[0].toUpperCase()}`,`“Watch the next corner. The obvious line is not always the safe one.” — JUNO`,`“Every decision has a result. Make yours count.” — NIGHTSHIFT`][j]})));
@@ -1348,66 +1572,82 @@ function playSfx(frequency=120,duration=.12){
  try{const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(Math.max(35,frequency*.58),t+duration);f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(.055,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(f);f.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration);}catch(e){}
 }
 const engineVoices={};
+const nitroVoices={};
 function updateEngineSound(speed=0,throttle=false,dt=.016,player=1){
- if(!audioCtx)return;
- if(!soundEnabled){Object.values(engineVoices).forEach(v=>{try{v.master.gain.setTargetAtTime(0,audioCtx.currentTime,.025);}catch(e){}});return;}
+ if(!audioCtx||!soundEnabled)return;
  try{
   let v=engineVoices[player],t=audioCtx.currentTime;
   if(!v){
    const master=audioCtx.createGain();master.gain.value=0;master.connect(audioCtx.destination);
-   const low=audioCtx.createOscillator(),mid=audioCtx.createOscillator(),high=audioCtx.createOscillator();
-   const lowFilter=audioCtx.createBiquadFilter(),midFilter=audioCtx.createBiquadFilter(),highFilter=audioCtx.createBiquadFilter();
-   const lowGain=audioCtx.createGain(),midGain=audioCtx.createGain(),highGain=audioCtx.createGain();
-   low.type='sawtooth';mid.type='triangle';high.type='square';
-   lowFilter.type='lowpass';lowFilter.frequency.value=430;lowFilter.Q.value=.7;
-   midFilter.type='bandpass';midFilter.frequency.value=680;midFilter.Q.value=.8;
-   highFilter.type='lowpass';highFilter.frequency.value=1450;highFilter.Q.value=.6;
-   lowGain.gain.value=.34;midGain.gain.value=.16;highGain.gain.value=.025;
-   low.connect(lowFilter);lowFilter.connect(lowGain);lowGain.connect(master);
-   mid.connect(midFilter);midFilter.connect(midGain);midGain.connect(master);
-   high.connect(highFilter);highFilter.connect(highGain);highGain.connect(master);
-   // A quiet filtered combustion layer adds the rough, pulsing texture of an engine.
+   const body=audioCtx.createOscillator(),harm=audioCtx.createOscillator(),sub=audioCtx.createOscillator();
+   const bodyFilter=audioCtx.createBiquadFilter(),harmFilter=audioCtx.createBiquadFilter(),subFilter=audioCtx.createBiquadFilter();
+   const bodyGain=audioCtx.createGain(),harmGain=audioCtx.createGain(),subGain=audioCtx.createGain();
+   body.type='sawtooth';harm.type='triangle';sub.type='sine';
+   bodyFilter.type='lowpass';bodyFilter.frequency.value=820;bodyFilter.Q.value=.9;
+   harmFilter.type='bandpass';harmFilter.frequency.value=1250;harmFilter.Q.value=.72;
+   subFilter.type='lowpass';subFilter.frequency.value=180;subFilter.Q.value=.65;
+   bodyGain.gain.value=.25;harmGain.gain.value=.055;subGain.gain.value=.32;
+   body.connect(bodyFilter);bodyFilter.connect(bodyGain);bodyGain.connect(master);
+   harm.connect(harmFilter);harmFilter.connect(harmGain);harmGain.connect(master);
+   sub.connect(subFilter);subFilter.connect(subGain);subGain.connect(master);
+   body.start();harm.start();sub.start();
+   // Intake/exhaust texture: filtered noise follows throttle load and engine speed.
    const noiseBuffer=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),noiseData=noiseBuffer.getChannelData(0);
-   for(let i=0;i<noiseData.length;i++)noiseData[i]=(Math.random()*2-1)*.45;
+   for(let i=0;i<noiseData.length;i++)noiseData[i]=(Math.random()*2-1)*.2;
    const noise=audioCtx.createBufferSource(),noiseFilter=audioCtx.createBiquadFilter(),noiseGain=audioCtx.createGain();
-   noise.buffer=noiseBuffer;noise.loop=true;noiseFilter.type='bandpass';noiseFilter.frequency.value=520;noiseFilter.Q.value=.55;
-   noiseGain.gain.value=.018;noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(master);
-   const pulse=audioCtx.createOscillator(),pulseGain=audioCtx.createGain();
-   pulse.type='sine';pulse.frequency.value=18;pulseGain.gain.value=.006;pulse.connect(pulseGain);pulseGain.connect(master);
-   low.start();mid.start();high.start();noise.start();pulse.start();
-   v=engineVoices[player]={master,low,mid,high,noiseFilter,noiseGain,pulse};
+   noise.buffer=noiseBuffer;noise.loop=true;noiseFilter.type='bandpass';noiseFilter.frequency.value=1150;noiseFilter.Q.value=.5;
+   noiseGain.gain.value=.012;noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(master);noise.start();
+   const pulse=audioCtx.createOscillator(),pulseGain=audioCtx.createGain();pulse.type='sine';pulse.frequency.value=8;pulseGain.gain.value=.018;pulse.connect(pulseGain);pulseGain.connect(bodyGain.gain);pulse.start();
+   v=engineVoices[player]={master,body,harm,sub,bodyFilter,harmFilter,subFilter,noiseFilter,noiseGain,pulse,pulseGain,lastGear:0,lastShift:0};
   }
-  const kmh=Math.max(0,Number(speed)||0),normalized=clamp(kmh/245,0,1);
-  // RPM rises with road speed, with a throttle blip and a believable idle when stationary.
-  const rpm=clamp(34+normalized*142+(throttle?24:0),34,225);
-  const load=throttle?1:.48,volume=kmh<2&&!throttle?.018:(.045+normalized*.048);
-  v.low.frequency.setTargetAtTime(rpm,t,.09);
-  v.mid.frequency.setTargetAtTime(rpm*2.01,t,.075);
-  v.high.frequency.setTargetAtTime(rpm*3.02,t,.065);
-  v.noiseFilter.frequency.setTargetAtTime(360+normalized*900+(throttle?260:0),t,.12);
-  v.noiseGain.gain.setTargetAtTime(.009+normalized*.018+(throttle?.012:0),t,.1);
-  v.pulse.frequency.setTargetAtTime(clamp(rpm*.42,14,92),t,.08);
-  v.master.gain.setTargetAtTime(volume*load,t,.12);
+  const velocity=clamp((Number(speed)||0)/250,0,1),rpm=clamp(820+velocity*4300+(throttle?440:0),760,5850);
+  const firingHz=rpm/30,gear=Math.min(6,Math.floor(velocity*6.2));
+  const shifted=gear!==v.lastGear&&velocity>.1&&t-v.lastShift>.48;
+  if(shifted){v.lastGear=gear;v.lastShift=t;v.master.gain.cancelScheduledValues(t);v.master.gain.setTargetAtTime(.022,t,.018);v.body.frequency.setTargetAtTime(firingHz*.78,t,.025);v.master.gain.setTargetAtTime(throttle?.17:(speed>4?.105:.06),t+.1,.1);}
+  v.body.frequency.setTargetAtTime(firingHz*(throttle?1.015:.985),t,.045);
+  v.harm.frequency.setTargetAtTime(firingHz*2.02,t,.05);
+  v.sub.frequency.setTargetAtTime(Math.max(24,firingHz*.48),t,.07);
+  v.pulse.frequency.setTargetAtTime(Math.max(5,firingHz*.22),t,.09);
+  v.bodyFilter.frequency.setTargetAtTime(430+velocity*1420+(throttle?680:0),t,.075);
+  v.harmFilter.frequency.setTargetAtTime(850+velocity*2100+(throttle?900:0),t,.09);
+  v.noiseFilter.frequency.setTargetAtTime(720+velocity*1650+(throttle?850:0),t,.1);
+  v.noiseGain.gain.setTargetAtTime(throttle?.025:.009,t,.11);
+  const target=speed>2?(throttle?.19:.105):(throttle?.135:.055);
+  if(!shifted)v.master.gain.setTargetAtTime(target,t,.12);
  }catch(e){}
 }
-function playNoiseBurst(duration=.18,volume=.12,filterHz=1200){
+function playNitroIgnition(player=1){
  if(!audioCtx||!soundEnabled)return;
- try{const n=Math.max(1,Math.floor(audioCtx.sampleRate*duration)),b=audioCtx.createBuffer(1,n,audioCtx.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
- const src=audioCtx.createBufferSource(),f=audioCtx.createBiquadFilter(),g=audioCtx.createGain(),t=audioCtx.currentTime;src.buffer=b;f.type='lowpass';f.frequency.value=filterHz;g.gain.setValueAtTime(volume,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);src.connect(f);f.connect(g);g.connect(audioCtx.destination);src.start(t);
+ playNoiseBurst(.48,.14,4200);playSfx(player===2?118:105,.24);
+ try{const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(68,t);o.frequency.exponentialRampToValueAtTime(410,t+.22);o.frequency.exponentialRampToValueAtTime(155,t+.48);f.type='lowpass';f.frequency.setValueAtTime(900,t);f.frequency.linearRampToValueAtTime(2600,t+.2);g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.085,t+.035);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.connect(f);f.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.52);}catch(e){}
+}
+function updateNitroSound(active,speed=0,player=1){
+ if(!audioCtx||!soundEnabled)return;
+ try{
+  let v=nitroVoices[player],t=audioCtx.currentTime;
+  if(!v){const buffer=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*.5;
+   const src=audioCtx.createBufferSource(),high=audioCtx.createBiquadFilter(),band=audioCtx.createBiquadFilter(),gain=audioCtx.createGain(),osc=audioCtx.createOscillator(),oscFilter=audioCtx.createBiquadFilter(),oscGain=audioCtx.createGain();
+   src.buffer=buffer;src.loop=true;high.type='highpass';high.frequency.value=700;band.type='bandpass';band.frequency.value=1800;band.Q.value=.45;gain.gain.value=.0001;src.connect(high);high.connect(band);band.connect(gain);gain.connect(audioCtx.destination);
+   osc.type='sawtooth';osc.frequency.value=90;oscFilter.type='lowpass';oscFilter.frequency.value=600;oscGain.gain.value=.0001;osc.connect(oscFilter);oscFilter.connect(oscGain);oscGain.connect(audioCtx.destination);src.start();osc.start();
+   v=nitroVoices[player]={src,high,band,gain,osc,oscFilter,oscGain};
+  }
+  const level=active?.042:0.0001,velocity=clamp((Number(speed)||0)/230,0,1);
+  v.gain.gain.setTargetAtTime(level,t,active?.07:.16);v.oscGain.gain.setTargetAtTime(active?.018:.0001,t,active?.08:.14);
+  v.band.frequency.setTargetAtTime(1450+velocity*1700,t,.12);v.high.frequency.setTargetAtTime(520+velocity*600,t,.12);v.osc.frequency.setTargetAtTime(65+velocity*95,t,.1);v.oscFilter.frequency.setTargetAtTime(500+velocity*1200,t,.12);
  }catch(e){}
 }
 function playPowerupSound(id){
  if(!audioCtx||!soundEnabled)return;
  const t=audioCtx.currentTime;
- const tone=(freq,end,shape='sine',vol=.07,delay=0)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=shape;o.frequency.setValueAtTime(freq,t+delay);o.frequency.exponentialRampToValueAtTime(Math.max(40,end),t+delay+.24);g.gain.setValueAtTime(.001,t+delay);g.gain.linearRampToValueAtTime(vol,t+delay+.025);g.gain.exponentialRampToValueAtTime(.001,t+delay+.28);o.connect(g);g.connect(audioCtx.destination);o.start(t+delay);o.stop(t+delay+.3);};
+ const tone=(freq,end,shape='sine',vol=.07,delay=0,duration=.3)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type=shape;o.frequency.setValueAtTime(freq,t+delay);o.frequency.exponentialRampToValueAtTime(Math.max(35,end),t+delay+duration*.75);f.type='lowpass';f.frequency.value=shape==='sawtooth'?2200:3600;g.gain.setValueAtTime(.001,t+delay);g.gain.linearRampToValueAtTime(vol,t+delay+.025);g.gain.exponentialRampToValueAtTime(.001,t+delay+duration);o.connect(f);f.connect(g);g.connect(audioCtx.destination);o.start(t+delay);o.stop(t+delay+duration+.02);};
  switch(id){
-  case 'boost': case 'overdrive': playNoiseBurst(.42,.10,2100);tone(180,620,'sawtooth',.045);tone(95,210,'sine',.07,.04);break;
-  case 'shield': tone(420,980,'sine',.06);tone(630,1180,'triangle',.04,.07);break;
-  case 'repair': tone(260,520,'sine',.055);tone(390,780,'sine',.04,.11);break;
-  case 'grip': playNoiseBurst(.22,.055,850);tone(145,95,'triangle',.05);break;
-  case 'scanner': tone(880,440,'sine',.045);tone(660,990,'sine',.035,.16);break;
-  case 'pulse': case 'jammer': tone(1200,180,'sawtooth',.055);playNoiseBurst(.32,.07,700);break;
-  default: tone(330,660,'triangle',.05);
+  case 'boost':case 'overdrive':playNoiseBurst(.55,.13,3300);tone(105,520,'sawtooth',.04,0,.4);tone(72,180,'sine',.09,.03,.36);tone(330,760,'triangle',.035,.08,.32);break;
+  case 'shield':tone(175,420,'sine',.05,0,.42);tone(460,1060,'sine',.055,.08,.36);tone(720,1180,'triangle',.028,.19,.26);break;
+  case 'repair':tone(235,480,'sine',.06,0,.32);tone(392,784,'sine',.045,.1,.38);playNoiseBurst(.18,.035,1500);break;
+  case 'grip':playNoiseBurst(.28,.075,1050);tone(155,82,'triangle',.06,0,.3);tone(780,520,'sine',.025,.08,.22);break;
+  case 'scanner':tone(560,1450,'sine',.04,0,.24);tone(960,680,'sine',.035,.18,.3);tone(1380,1150,'sine',.022,.3,.2);break;
+  case 'pulse':case 'jammer':tone(62,210,'sawtooth',.07,0,.48);tone(1120,145,'triangle',.045,.03,.42);playNoiseBurst(.4,.09,950);break;
+  default:tone(330,660,'triangle',.05);
  }
 }
 function playCrashSound(intensity=1){
@@ -1415,15 +1655,14 @@ function playCrashSound(intensity=1){
  playSfx(92,.2);
 }
 function initAudio() {
-    // Original soundtrack is embedded directly in this HTML; no external music URL or file is needed.
+    // Original, procedurally composed soundtrack is bundled locally in ./audio; embedded audio remains a fallback.
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
     if(!audioCtx&&AudioContextClass){try{audioCtx=new AudioContextClass();}catch(e){console.warn('Audio unavailable:',e.message);}}
     if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume?.().catch(()=>{});
     if(!musicAudio){
-      musicAudio=new Audio(BUILTIN_MUSIC_DATA);
-      musicAudio.loop=true;
-      musicAudio.preload='auto';
-      musicAudio.volume=musicVolume;
+      musicAudio=new Audio('./audio/midnight-racing-loop.mp3');
+      musicAudio.loop=true;musicAudio.preload='auto';musicAudio.volume=musicVolume;
+      musicAudio.addEventListener('error',()=>{if(musicAudio?.dataset.fallback==='1')return;const fallback=new Audio(BUILTIN_MUSIC_DATA);fallback.loop=true;fallback.volume=musicVolume;fallback.dataset.fallback='1';musicAudio=fallback;if(musicEnabled&&gameState!=='paused')musicAudio.play().catch(()=>{});},{once:true});
     }
     musicAudio.volume=musicVolume;
     if(musicEnabled&&gameState!=='paused')musicAudio.play().catch(()=>{});
@@ -1864,7 +2103,8 @@ function buildWorld(id,startRace=true){
 // --- CAR MODEL ---
 function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival"){
   const root=new THREE.Group();
-  const spec=isPlayer?(CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0]):null;
+  const spec=isPlayer&&detailLevel!=='p2'?(CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0]):null;
+  const carAttachments=isPlayer&&detailLevel!=='p2'?getCarAttachmentState(profile.garage.carId).equipped:{};
   const style=spec?.body||bodyStyle||1;
   const widthScale=style===3?0.94:style===4?1.08:style===2?1.02:1;
   const lengthScale=style===2?1.08:style===4?1.04:style===3?.96:1;
@@ -2007,16 +2247,32 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival"){
     add(new THREE.BoxGeometry(2.05,.075,.36),makeMat(0x151d27,.22,.85),[0,1.9,-1.82*lengthScale]);
     for(const x of [-.73,.73])add(new THREE.CylinderGeometry(.035,.055,.42,8),darkMat,[x*widthScale,1.68,-1.8*lengthScale]);
   }
+  // Distinct body-style details, blended from the earlier Midnight Run model variants.
+  if(style===2){ // muscle: raised hood scoop and broad rear haunches
+    add(new THREE.BoxGeometry(.58,.16,.72),darkMat,[0,1.12,1.13*lengthScale]);
+    add(new THREE.BoxGeometry(1.86,.08,.2),trimMat,[0,.92,-1.7*lengthScale]);
+    for(const x of [-.82,.82])add(new THREE.BoxGeometry(.1,.12,.72),darkMat,[x*widthScale,.93,1.38*lengthScale]);
+  }else if(style===3){ // hyper: low nose canards and sculpted aero fins
+    for(const side of [-1,1]){
+      add(new THREE.BoxGeometry(.52,.07,.42),darkMat,[side*1.04*widthScale,.48,1.88*lengthScale],[0,side*.18,side*.12]);
+      add(new THREE.BoxGeometry(.12,.28,1.22),trimMat,[side*.91*widthScale,.72,-.12*lengthScale],[0,side*.12,0]);
+    }
+    add(new THREE.BoxGeometry(1.35,.08,.24),darkMat,[0,.52,-2.28*lengthScale]);
+  }else if(style===4){ // rally / tuner: roof intake and tall rear wing supports
+    add(new THREE.BoxGeometry(.48,.17,.58),darkMat,[0,1.98,-.12*lengthScale]);
+    for(const x of [-.72,.72])add(new THREE.CylinderGeometry(.045,.065,.48,8),darkMat,[x*widthScale,1.38,-1.82*lengthScale]);
+    add(new THREE.BoxGeometry(2.02,.105,.32),darkMat,[0,1.62,-1.86*lengthScale]);
+  }
   // Player garage attachments are also visible on the in-race model.
-  if(isPlayer&&profile.garage.attachments?.spoiler){add(new THREE.BoxGeometry(2.05,.1,.34),darkMat,[0,1.7,-1.82*lengthScale]);for(const x of [-.68,.68])add(new THREE.CylinderGeometry(.04,.05,.38,8),darkMat,[x,1.48,-1.8*lengthScale]);}
-  if(isPlayer&&profile.garage.attachments?.underglow){add(new THREE.BoxGeometry(1.7,.025,3.55),new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.75}),[0,.28,0]);}
-  if(isPlayer&&profile.garage.attachments?.rims){root.children.filter(o=>o.geometry?.type==='CylinderGeometry').forEach(w=>{w.material=makeMat(0x63eaff,.2,.95);});}
-  if(isPlayer&&profile.garage.attachments?.splitter)add(new THREE.BoxGeometry(2.12,.09,.42),darkMat,[0,.48,2.26*lengthScale]);
-  if(isPlayer&&profile.garage.attachments?.widebody){for(const side of [-1,1])for(const z of [-1.38,1.38])add(new THREE.SphereGeometry(.47,18,12),bodyMat,[side*1.02*widthScale,.58,z*lengthScale],null,[.18,.36,.72]);}
-  if(isPlayer&&profile.garage.attachments?.hoodVents){for(const x of [-.38,.38])add(new THREE.BoxGeometry(.25,.025,.52),darkMat,[x,.93,1.18*lengthScale]);}
-  if(isPlayer&&profile.garage.attachments?.neonTrim){const glow=new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.9});for(const side of [-1,1])add(new THREE.BoxGeometry(.035,.045,3.3*lengthScale),glow,[side*1.02*widthScale,.42,0]);}
-  if(isPlayer&&profile.garage.attachments?.exhaust){for(const x of [-.48,.48])add(new THREE.CylinderGeometry(.085,.095,.28,12),makeMat(0xb7c7cf,.2,.92),[x,.48,-2.2*lengthScale],[Math.PI/2,0,0]);}
-  if(isPlayer&&profile.garage.attachments?.roofScoop)add(new THREE.BoxGeometry(.44,.18,.62),darkMat,[0,2.0,-.18*lengthScale]);
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.spoiler){add(new THREE.BoxGeometry(2.05,.1,.34),darkMat,[0,1.7,-1.82*lengthScale]);for(const x of [-.68,.68])add(new THREE.CylinderGeometry(.04,.05,.38,8),darkMat,[x,1.48,-1.8*lengthScale]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.underglow){add(new THREE.BoxGeometry(1.7,.025,3.55),new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.75}),[0,.28,0]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.rims){root.children.filter(o=>o.geometry?.type==='CylinderGeometry').forEach(w=>{w.material=makeMat(0x63eaff,.2,.95);});}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.splitter)add(new THREE.BoxGeometry(2.12,.09,.42),darkMat,[0,.48,2.26*lengthScale]);
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.widebody){for(const side of [-1,1])for(const z of [-1.38,1.38])add(new THREE.SphereGeometry(.47,18,12),bodyMat,[side*1.02*widthScale,.58,z*lengthScale],null,[.18,.36,.72]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.hoodVents){for(const x of [-.38,.38])add(new THREE.BoxGeometry(.25,.025,.52),darkMat,[x,.93,1.18*lengthScale]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.neonTrim){const glow=new THREE.MeshBasicMaterial({color:parseInt(profile.garage.paint,16),transparent:true,opacity:.9});for(const side of [-1,1])add(new THREE.BoxGeometry(.035,.045,3.3*lengthScale),glow,[side*1.02*widthScale,.42,0]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.exhaust){for(const x of [-.48,.48])add(new THREE.CylinderGeometry(.085,.095,.28,12),makeMat(0xb7c7cf,.2,.92),[x,.48,-2.2*lengthScale],[Math.PI/2,0,0]);}
+  if(isPlayer&&detailLevel!=='p2'&&carAttachments.roofScoop)add(new THREE.BoxGeometry(.44,.18,.62),darkMat,[0,2.0,-.18*lengthScale]);
   // Individual body styles alter proportions for AI variety as well as player cars.
   if(style===2)root.scale.set(1.02,1,1.06);
   else if(style===3)root.scale.set(.95,.99,.97);
@@ -2048,22 +2304,37 @@ function animateCarWheels(car,speed,dt){
   if(!car?.userData?.wheels)return;const spin=clamp(Number(speed)||0,-40,340)*dt*.42;
   car.userData.wheels.forEach(w=>{w.rotation.x+=spin;});
 }
+function addPoliceLightbar(car){
+ if(!car)return;const base=new THREE.Mesh(new THREE.BoxGeometry(.82,.09,.23),new THREE.MeshStandardMaterial({color:0x111923,metalness:.65,roughness:.3}));base.position.set(0,1.73,-.12);car.add(base);
+ const red=new THREE.Mesh(new THREE.BoxGeometry(.34,.15,.2),new THREE.MeshBasicMaterial({color:0xff214d,toneMapped:false}));red.position.set(-.22,1.82,-.12);car.add(red);
+ const blue=new THREE.Mesh(new THREE.BoxGeometry(.34,.15,.2),new THREE.MeshBasicMaterial({color:0x238dff,toneMapped:false}));blue.position.set(.22,1.82,-.12);car.add(blue);
+ car.userData.sirenLights=[{mesh:red,phase:0},{mesh:blue,phase:Math.PI}];
+ const frontGlow=new THREE.PointLight(0x347fff,0,8,2);frontGlow.position.set(0,1.75,-.35);car.add(frontGlow);car.userData.sirenGlow=frontGlow;
+}
+function setPoliceSiren(enabled){
+ if(!audioCtx||!soundEnabled||!enabled){if(policeSirenNodes){try{const n=policeSirenNodes;const t=audioCtx?.currentTime||0;n.gain.gain.setTargetAtTime(0,t,.08);setTimeout(()=>{try{n.osc.stop();n.lfo.stop();n.osc.disconnect();n.lfo.disconnect();n.gain.disconnect();}catch(_){}},350); }catch(_){} policeSirenNodes=null;}return;}
+ if(policeSirenNodes)return;
+ try{const osc=audioCtx.createOscillator(),lfo=audioCtx.createOscillator(),depth=audioCtx.createGain(),filter=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();osc.type='sawtooth';osc.frequency.value=720;lfo.type='sine';lfo.frequency.value=.82;depth.gain.value=285;lfo.connect(depth);depth.connect(osc.frequency);filter.type='lowpass';filter.frequency.value=1500;gain.gain.value=.0001;osc.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);const t=audioCtx.currentTime;gain.gain.setTargetAtTime(.032,t,.18);osc.start();lfo.start();policeSirenNodes={osc,lfo,gain};}catch(e){console.warn('Pursuit siren unavailable',e);}
+}
 function addHumanPowerupGlow(car,color=0x5cecff){
   if(!car)return;
   const ring=new THREE.Mesh(new THREE.TorusGeometry(1.72,.075,8,36),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.9,depthWrite:false,toneMapped:false}));
   ring.rotation.x=Math.PI/2;ring.position.y=.18;ring.visible=false;car.add(ring);car.userData.humanPowerupGlow=ring;
   const boostFlames=[];
   for(const side of [-1,1]){
-    const flame=new THREE.Mesh(new THREE.ConeGeometry(.21,1.55,12),new THREE.MeshBasicMaterial({color:0x39dfff,transparent:true,opacity:.92,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
-    flame.rotation.x=-Math.PI/2;flame.position.set(side*.46,.68,-2.28);flame.visible=false;car.add(flame);boostFlames.push(flame);
+    const outer=new THREE.Mesh(new THREE.ConeGeometry(.24,1.62,16),new THREE.MeshBasicMaterial({color:0xff8a32,transparent:true,opacity:.88,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
+    const inner=new THREE.Mesh(new THREE.ConeGeometry(.115,1.16,14),new THREE.MeshBasicMaterial({color:0xb9f7ff,transparent:true,opacity:.98,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
+    outer.rotation.x=-Math.PI/2;inner.rotation.x=-Math.PI/2;outer.position.set(side*.46,.66,-2.34);inner.position.set(side*.46,.66,-2.52);
+    outer.visible=false;inner.visible=false;car.add(outer,inner);boostFlames.push({outer,inner});
   }
+  const nitroGlow=new THREE.PointLight(0x42dfff,0,5,2);nitroGlow.position.set(0,.7,-2.1);car.add(nitroGlow);
   const shieldField=new THREE.Mesh(new THREE.SphereGeometry(1,20,14),new THREE.MeshBasicMaterial({color:0x9d79ff,wireframe:true,transparent:true,opacity:.26,depthWrite:false,toneMapped:false}));
   shieldField.position.y=.94;shieldField.scale.set(1.28,.72,2.05);shieldField.visible=false;car.add(shieldField);
   const pulseWave=new THREE.Mesh(new THREE.TorusGeometry(2.12,.075,7,40),new THREE.MeshBasicMaterial({color:0xff5caa,transparent:true,opacity:.88,depthWrite:false,toneMapped:false}));
   pulseWave.rotation.x=Math.PI/2;pulseWave.position.y=.32;pulseWave.visible=false;car.add(pulseWave);
   const repairPulse=new THREE.Mesh(new THREE.TorusGeometry(1.35,.11,8,32),new THREE.MeshBasicMaterial({color:0x52ff9c,transparent:true,opacity:.8,depthWrite:false,toneMapped:false}));repairPulse.rotation.x=Math.PI/2;repairPulse.position.y=.38;repairPulse.visible=false;car.add(repairPulse);
   const gripRings=[];for(const x of [-.92,.92])for(const z of [-1.35,1.35]){const g=new THREE.Mesh(new THREE.TorusGeometry(.39,.035,6,18),new THREE.MeshBasicMaterial({color:0x5dffb1,transparent:true,opacity:.9,depthWrite:false,toneMapped:false}));g.rotation.y=Math.PI/2;g.position.set(x,.43,z);g.visible=false;car.add(g);gripRings.push(g);}
-  car.userData.powerupVisuals={boostFlames,shieldField,pulseWave,repairPulse,gripRings};
+  car.userData.powerupVisuals={boostFlames,nitroGlow,shieldField,pulseWave,repairPulse,gripRings};
 }
 function updateHumanPowerupGlow(car,effects){
   const ring=car?.userData?.humanPowerupGlow;if(!ring)return;
@@ -2073,7 +2344,8 @@ function updateHumanPowerupGlow(car,effects){
   if(ring.visible){ring.material.color.setHex(colors[key]||0x4eeaff);ring.rotation.z+=.045;ring.scale.setScalar(1+.045*Math.sin(raceTime*8));}
   const visual=car.userData.powerupVisuals;if(!visual)return;
   const boostActive=(effects.boost||0)>0,overdriveActive=(effects.overdrive||0)>0;
-  visual.boostFlames.forEach((flame,i)=>{flame.visible=boostActive||overdriveActive;flame.material.color.setHex(overdriveActive?0xffc64d:0x39dfff);flame.material.opacity=.72+.25*Math.sin(raceTime*34+i*.8);flame.scale.set(.82+.22*Math.sin(raceTime*19+i),.82+.62*Math.sin(raceTime*31+i),.82+.22*Math.sin(raceTime*19+i));});
+  visual.boostFlames.forEach((pair,i)=>{const activeBoost=boostActive||overdriveActive,flutter=.78+.22*Math.sin(raceTime*31+i*1.7),length=.82+.36*Math.sin(raceTime*22+i);pair.outer.visible=activeBoost;pair.inner.visible=activeBoost;pair.outer.material.color.setHex(overdriveActive?0xffd15a:0xff7d2e);pair.inner.material.color.setHex(overdriveActive?0xfff0b1:0xb9f7ff);pair.outer.material.opacity=.68+.24*flutter;pair.inner.material.opacity=.78+.2*flutter;pair.outer.scale.set(.88+.15*flutter,length, .88+.15*flutter);pair.inner.scale.set(.92+.12*flutter,.78+length*.3,.92+.12*flutter);});
+  if(visual.nitroGlow){visual.nitroGlow.intensity=boostActive||overdriveActive?2.2+1.4*Math.sin(raceTime*30):0;visual.nitroGlow.color.setHex(overdriveActive?0xffbd50:0x42dfff);}
   visual.shieldField.visible=(effects.shield||0)>0;
   visual.shieldField.rotation.y+=.012;visual.shieldField.material.opacity=.18+.1*Math.sin(raceTime*7);
   visual.pulseWave.visible=(effects.pulse||0)>0||(effects.jammer||0)>0;
@@ -2082,6 +2354,17 @@ function updateHumanPowerupGlow(car,effects){
   visual.gripRings.forEach(g=>{g.visible=(effects.grip||0)>0;if(g.visible)g.material.opacity=.55+.35*Math.sin(raceTime*16);});
 }
 function setInfectedVisual(car,infected){if(!car)return;car.traverse(obj=>{if(!obj.isMesh||!obj.material)return;const mats=Array.isArray(obj.material)?obj.material:[obj.material];mats.forEach(mat=>{if(!mat.emissive)return;if(mat.userData.infectedBase===undefined)mat.userData.infectedBase=mat.emissive.getHex();mat.emissive.setHex(infected?0xff164f:mat.userData.infectedBase);mat.emissiveIntensity=infected?1.15:0;});});}
+function spawnPoliceBackupWave(wave=1){
+ if(!isPoliceMode||!scene)return;const carSpec=getSelectedCar(),stats=carStatsWithUpgrades(carSpec),baseSpeed=stats.speed/1.5;
+ const count=wave===1?1:1;
+ for(let n=0;n<count;n++){
+  const index=rivals.filter(r=>r.isPolice).length,mesh=createCar(wave===1?0xd8e1ea:0xbecbdb,false,(index%2)?3:2,'rival');addPoliceLightbar(mesh);scene.add(mesh);
+  const start=playerDistance-34-index*10,offset=clamp(playerOffset+(index%2?3.1:-3.1),-6.6,6.6);
+  const unit={mesh,index,username:wave===1?'BACKUP UNIT':'INTERCEPTOR',isBot:true,carId:carSpec.id,carName:carSpec.name,rank:carSpec.rank,rankIndex:Math.max(0,CAR_RANKS.findIndex(x=>x.name===carSpec.rank)),driverLevel:profile.level,stats,maxSpeed:baseSpeed*1.02,acceleration:stats.acceleration*.82,handling:stats.handling,durability:stats.durability,damageScale:clamp(1.25-stats.durability*.0045,.78,1),dist:start,startDist:start,offset,speed:baseSpeed*.72,damage:0,ability:1.15,adapt:1.04,isPolice:true,respawn:0,active:true,aiInventory:{boost:1,shield:1},aiEffects:{},aiPowerupCooldown:4+index,fxRing:null,lastPowerupUsed:null};
+  const f=frameAt(start);mesh.position.copy(f.p).addScaledVector(f.side,offset);mesh.position.y=.2;mesh.lookAt(frameAt(start+5).p);rivals.push(unit);
+ }
+ showToast(wave===1?'POLICE BACKUP ARRIVING · HEAT INCREASED':'INTERCEPTOR UNIT JOINED THE PURSUIT','danger');playSfx(480,.16);
+}
 function createRacers(){
   if(player)dispose3DObject(player);
   if(localPlayer2)dispose3DObject(localPlayer2);
@@ -2096,10 +2379,10 @@ function createRacers(){
   $('p2Touch').style.display=playerMode==='local2'?'block':'none';
   $('p1Touch').style.display='block';
   if(playerMode==='local2'){
-    localPlayer2=createCar(0xff4b91,true,1+Math.floor(Math.random()*4));scene.add(localPlayer2);addHumanPowerupGlow(localPlayer2,0xff83b0);
+    localPlayer2=createCar(0xff4b91,true,1+Math.floor(Math.random()*4),'p2');scene.add(localPlayer2);addHumanPowerupGlow(localPlayer2,0xff83b0);
     p2State={dist:-7,offset:3,speed:0,nitro:100,damage:0};p2ActivePowerupSlot=0;p2PowerupCooldown=false;p2ActiveEffects={};p2PowerupInputWasDown=false;p2SwapInputWasDown=false;
   } else {localPlayer2=null;p2State={dist:0,offset:3,speed:0,nitro:100,damage:0};p2ActiveEffects={};}
-  $('p2RaceHud')?.classList.toggle('visible',!!localPlayer2);
+  $('p2RaceHud')?.classList.toggle('visible',!!localPlayer2);$('pursuitHud')?.classList.toggle('visible',isPoliceMode);setPoliceSiren(false);
   const colors=Array.from({length:12},()=>new THREE.Color().setHSL(Math.random(),.78,.55).getHex());
   const playerSpec=CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0];
   const playerStats=carStatsWithUpgrades(playerSpec);
@@ -2118,7 +2401,7 @@ function createRacers(){
     const botHandling=botStats.handling;
     const botDurability=botStats.durability;
     const rMesh=createCar(isCop?0x9bb8d0:(bot?parseInt(bot.paint,16):colors[Math.floor(Math.random()*colors.length)]),false,bot?.bodyStyle||1+Math.floor(Math.random()*4),'rival');
-    if(isCop){const lightBlue=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0x1d88ff}));lightBlue.position.set(-.2,1.55,-.2);rMesh.add(lightBlue);const lightRed=new THREE.Mesh(new THREE.BoxGeometry(.36,.12,.18),new THREE.MeshBasicMaterial({color:0xff254b}));lightRed.position.set(.2,1.55,-.2);rMesh.add(lightRed);}
+    if(isCop)addPoliceLightbar(rMesh);
     scene.add(rMesh);
     const modeAbility=gameMode==='duel'?1.13:(isCop?1.12:1);
     const aiSecondaryPower=isCop?(['shield','pulse','jammer'][i%3]):(['repair','shield','grip','pulse','overdrive','jammer','scanner'][i%7]);
@@ -2126,7 +2409,7 @@ function createRacers(){
     const aiRival={mesh:rMesh,index:i,username:bot?.username||(gameMode==='duel'?'ELITE RIVAL':`RIVAL ${i+1}`),isBot:!!bot,carId:bot?.carId||playerSpec.id,carName:bot?.carName||playerSpec.name,rank:botRank,rankIndex:bot?.rankIndex??Math.max(0,CAR_RANKS.findIndex(x=>x.name===botRank)),driverLevel:bot?.driverLevel||profile.level,stats:botStats,maxSpeed:botMaxSpeed,acceleration:botAccel,handling:botHandling,durability:botDurability,damageScale:clamp(1.25-botDurability*.0045,.78,1),dist:-25-i*17,offset:(Math.random()-.5)*8,speed:0,damage:0,ability:bot?.ability||clamp(modeAbility+.02+eventAiBoost,.92,1.28),adapt:bot?.adapt||(playerPace*(1+eventAiBoost*.22)),isPolice:isCop,infected:gameMode==='infected'&&i===0,respawn:0,active:true,aiInventory,aiEffects:{},aiPowerupCooldown:1.0+i*.47,fxRing:rMesh.userData.powerupGlow||null,lastPowerupUsed:null};
     rivals.push(aiRival);
   }
-  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;p2PoliceFailed=false;trafficFailed=false;powerupCooldown=false;activeEffects={};p2ActiveEffects={};impactCooldowns.clear();playerImpactNextAt={p1:0,p2:0};driftScore=0;p2DriftScore=0;driftComboTime=0;p2DriftComboTime=0;checkpointProgress=0;p2CheckpointProgress=0;activePowerupSlot=0;
+  playerDistance=0;playerSpeed=0;playerOffset=0;nitro=100;damage=0;raceTime=0;raceLapsCompleted=0;raceAwarded=false;policeHeat=0;policeFailed=false;p2PoliceFailed=false;policeBackupWave1=false;policeBackupWave2=false;trafficFailed=false;powerupCooldown=false;activeEffects={};p2ActiveEffects={};impactCooldowns.clear();playerImpactNextAt={p1:0,p2:0};driftScore=0;p2DriftScore=0;driftComboTime=0;p2DriftComboTime=0;checkpointProgress=0;p2CheckpointProgress=0;activePowerupSlot=0;
   racePowerupLoadout=(profile.raceLoadout||[]).filter(id=>(Number(profile.inventory[id])||0)>0).slice(0,2);
   p2RacePowerupLoadout=localPlayer2?(p2BriefingLoadout||[]).filter(id=>(Number(profile.inventory[id])||0)>0).slice(0,2):[];
   const startingCharges=allocateLocalRacePowerupCharges(racePowerupLoadout,p2RacePowerupLoadout);
@@ -2161,25 +2444,20 @@ function createRacers(){
     if(localPlayer2){p2StartDistance=-7;p2State.dist=p2StartDistance;p2State.offset=3;}
     rivals.forEach(r=>{r.startDist=Number(r.dist)||0;});
   }
-  // Straight, parallel starting grid: calculate every car from ONE shared start-line frame.
-  // This prevents cars from following the track's curvature while waiting for the countdown.
-  const gridAnchor=frameAt(0);
-  const gridForward=gridAnchor.tangent.clone().normalize();
-  const gridSide=gridAnchor.side.clone().normalize();
-  const placeOnStraightGrid=(mesh,dist,offset)=>{
-    const longitudinal=Number(dist)+6.5; // front row (-6.5) sits on the start line
-    mesh.position.copy(gridAnchor.p).addScaledVector(gridForward,longitudinal).addScaledVector(gridSide,Number(offset)||0);
-    mesh.position.y=.2;
-    mesh.rotation.set(0,Math.atan2(gridForward.x,gridForward.z),0);
+  // Place cars on the exact track frames used by the live race update. This prevents the
+  // countdown-to-GO snap and keeps grid collisions aligned with the road geometry.
+  const placeOnGrid=(mesh,dist,offset)=>{
+    const d=Number(dist)||0,frame=frameAt(d),look=frameAt(d+5);
+    mesh.position.copy(frame.p).addScaledVector(frame.side,Number(offset)||0);mesh.position.y=.2;
+    mesh.lookAt(look.p.clone().addScaledVector(look.side,Number(offset)||0));
   };
-  const start=frameAt(playerDistance);
-  placeOnStraightGrid(player,playerDistance,playerOffset);
-  if(localPlayer2)placeOnStraightGrid(localPlayer2,p2State.dist,p2State.offset);
-  // Place all AI cars on the same straight, parallel grid before countdown begins.
-  rivals.forEach(r=>placeOnStraightGrid(r.mesh,r.dist,r.offset));
+  const gridForward=frameAt(playerDistance).tangent.clone().normalize();
+  placeOnGrid(player,playerDistance,playerOffset);
+  if(localPlayer2)placeOnGrid(localPlayer2,p2State.dist,p2State.offset);
+  rivals.forEach(r=>placeOnGrid(r.mesh,r.dist,r.offset));
   const cameraFocus=player.position.clone();
   const cameraBack=gridForward.clone().multiplyScalar(-17);camera.position.copy(cameraFocus).add(new THREE.Vector3(0,8,0)).add(cameraBack);camera.lookAt(cameraFocus.clone().addScaledVector(gridForward,5).add(new THREE.Vector3(0,1.2,0)));
-  if(localPlayer2&&camera2){camera2.position.copy(localPlayer2.position).add(new THREE.Vector3(0,8,0)).addScaledVector(gridForward,-17);camera2.lookAt(localPlayer2.position.clone().addScaledVector(gridForward,5).add(new THREE.Vector3(0,1.2,0)));}
+  if(localPlayer2&&camera2){const p2Forward=frameAt(p2State.dist).tangent.clone().normalize();camera2.position.copy(localPlayer2.position).add(new THREE.Vector3(0,8,0)).addScaledVector(p2Forward,-17);camera2.lookAt(localPlayer2.position.clone().addScaledVector(p2Forward,5).add(new THREE.Vector3(0,1.2,0)));}
   $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${Math.min(6,rivals.length+1+(localPlayer2?1:0)+Math.max(remotePlayers.size||0,onlineParticipants.length?onlineParticipants.length-1:0))}/6`;
   gameState='countdown';renderRacePowerupHud();renderP2RacePowerupHud();$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
   if(raceCountdownTimer)clearInterval(raceCountdownTimer);
@@ -2191,7 +2469,7 @@ function createRacers(){
       if(cd===0){$('countdown').innerText='GO!';return;}
       clearInterval(raceCountdownTimer);raceCountdownTimer=null;$('countdown').classList.remove('show');
       raceLaunchStage='entering race';gameState='racing';document.body.classList.add('race-active');$('pauseGraphic').classList.add('visible');
-      if(!commitRaceEntryAtGo())return;
+      if(!commitRaceEntryAtGo())return;setPoliceSiren(isPoliceMode);
       if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
     }catch(error){abortRaceLaunch(error);}
   },1000);
@@ -2215,10 +2493,10 @@ function update(dt){
   const nitroActiveNow=!!(!playerEliminated&&!playerFinished&&boost&&nitro>0);
   const playerSpeedLimit=maxSpeed*(nitroActiveNow?1.24:1)*(activeEffects.boost>0?1.28:1)*(activeEffects.overdrive>0?1.18:1);
   if(playerEliminated||playerFinished){playerSpeed=0;}else if(gas)playerSpeed+=accel*(activeEffects.boost>0?1.38:1)*(activeEffects.overdrive>0?1.16:1)*dt;else if(brake)playerSpeed-=accel*1.45*dt;else playerSpeed*=Math.pow(.986,dt*60);
-  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(112+up.nitro*2.8+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(25-up.nitro*1.2)*dt);if(!nitroWasActive){playNoiseBurst(.42,.12,2400);playSfx(165,.3);}}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);nitroWasActive=nitroActiveNow;
-  updateEngineSound(playerSpeed,!!gas,dt,1);engineSoundCooldown=Math.max(0,engineSoundCooldown-dt);nitroSoundCooldown=Math.max(0,nitroSoundCooldown-dt);if(nitroActiveNow&&nitroSoundCooldown<=0){playNoiseBurst(.34,.085,2600);playSfx(230,.22);nitroSoundCooldown=.48;}
+  if(!playerEliminated&&!playerFinished&&boost&&nitro>0){playerSpeed+=(112+up.nitro*2.8+(activeEffects.overdrive>0?35:0))*dt;nitro=Math.max(0,nitro-(25-up.nitro*1.2)*dt);if(!nitroWasActive)playNitroIgnition(1);}else if(!playerEliminated&&!playerFinished)nitro=Math.min(100,nitro+5.5*dt);nitroWasActive=nitroActiveNow;
+  updateEngineSound(playerSpeed,!!gas,dt,1);updateNitroSound(nitroActiveNow,playerSpeed,1);engineSoundCooldown=Math.max(0,engineSoundCooldown-dt);nitroSoundCooldown=Math.max(0,nitroSoundCooldown-dt);
   if(gameMode==='drift'&&!playerEliminated&&!playerFinished&&driftHeld&&(left||right)&&playerSpeed>38&&Math.abs(playerOffset)>0.9&&Math.abs(playerOffset)<7.5){driftComboTime+=dt;driftScore+=(playerSpeed*.55*Math.abs(playerOffset))*dt*(1+Math.min(.8,driftComboTime*.18));driftSoundCooldown=Math.max(0,driftSoundCooldown-dt);if(driftSoundCooldown<=0){playNoiseBurst(.22,.045,1100);playSfx(115+Math.min(70,Math.abs(playerOffset)*8),.12);driftSoundCooldown=.34;}}else driftComboTime=Math.max(0,driftComboTime-dt*1.5);
-  if(gameMode==='checkpoint'&&!playerEliminated&&!playerFinished)while(checkpointProgress<4&&playerDistance>=trackLength*(checkpointProgress+1)/5&&Math.abs(playerOffset)<=7.6){checkpointProgress++;checkpointDeadline+=14;showToast(`CHECKPOINT ${checkpointProgress}/4 · +14 SECONDS`,'success');playSfx(660,.16);}
+  if(gameMode==='checkpoint'&&!playerEliminated&&!playerFinished)while(checkpointProgress<4&&playerDistance>=trackLength*(checkpointProgress+1)/5&&Math.abs(playerOffset)<=7.6){checkpointProgress++;const checkpointBonus=5+Math.floor(raceRandom()*3);checkpointDeadline+=checkpointBonus;showToast(`CHECKPOINT ${checkpointProgress}/4 · +${checkpointBonus} SECONDS`,'success');playSfx(660,.16);}
   const steer=(10+effective.handling*.085+up.handling*.4+(activeEffects.grip>0?2.2:0))*weatherGrip;
   if(!playerEliminated&&!playerFinished){if(left)playerOffset-=steer*dt;if(right)playerOffset+=steer*dt;if(gameMode==='drift'&&driftHeld&&(left||right))playerOffset+=(right?1:-1)*2.6*dt;}
   playerOffset=clamp(playerOffset,-8,8);playerSpeed=clamp(playerSpeed,-35,playerSpeedLimit);
@@ -2228,7 +2506,15 @@ function update(dt){
   // Adapt AI pace to the selected car and player's upgrade profile. Skilled rivals learn from the player's current pace.
   const finishLineMode=['street','duel','ghost','checkpoint','traffic'].includes(gameMode);
   const finishDistance=gameMode==='traffic'?trackLength*2:trackLength*raceLaps;
-  if(isPoliceMode)policeHeat=clamp(policeHeat+dt*((activeEffects.jammer>0||p2ActiveEffects.jammer>0)?.018:.045),0,1);
+  if(isPoliceMode){
+    const jammed=activeEffects.jammer>0||p2ActiveEffects.jammer>0;
+    const heatRate=raceTime<24?.012:raceTime<52?.018:.022;
+    policeHeat=clamp(policeHeat+dt*(jammed?heatRate*.42:heatRate),0,1);
+    if(raceTime>=28&&!policeBackupWave1){policeBackupWave1=true;spawnPoliceBackupWave(1);}
+    if(raceTime>=56&&!policeBackupWave2){policeBackupWave2=true;spawnPoliceBackupWave(2);}
+    const unitCount=rivals.filter(r=>r.isPolice&&r.active).length,phase=raceTime<28?1:raceTime<56?2:3;
+    $('pursuitHeatFill').style.width=`${Math.round(policeHeat*100)}%`;$('pursuitHeatLevel').textContent=`HEAT ${Math.min(5,1+Math.floor(policeHeat*4.99))}`;$('pursuitUnits').textContent=`${unitCount} PATROL UNITS`;$('pursuitPhase').textContent=`PHASE ${phase} / 3`;
+  }
   rivals.forEach(r=>{
     if(!r.active||r.finished)return;
     if(r.respawn>0){r.respawn-=dt;return;}
@@ -2265,8 +2551,9 @@ function update(dt){
       const nextPoliceDist=r.dist+r.speed*dt;
       // Patrols trail at a readable gap, then make staggered attack runs rather than sitting on the bumper.
       const attackWindow=((Math.floor(raceTime/7)+r.index)%3===0)&&(raceTime%7<1.35);
-      const desiredGap=attackWindow?7.2:12.5+(r.index%3)*1.8;
+      const interceptor=r.index>=3;const desiredGap=interceptor?(attackWindow?5.8:9.6):attackWindow?7.2:12.5+(r.index%3)*1.8;
       r.dist=Math.min(nextPoliceDist,targetDist-desiredGap);
+      const sirenLights=r.mesh.userData.sirenLights||[];sirenLights.forEach(l=>{const flash=Math.sin(raceTime*13+l.phase)>0;l.mesh.material.color.setHex(flash?(l.phase===0?0xff214d:0x238dff):0x111923);});if(r.mesh.userData.sirenGlow)r.mesh.userData.sirenGlow.intensity=2.5+Math.max(0,Math.sin(raceTime*13+r.index))*3;
       const contactGap=Math.abs(targetDist-r.dist);
       if(contactGap<8.5&&Math.abs(r.offset-targetOffset)<4.2&&canApplyPlayerImpact(targetP2?'p2':'p1',.92)){
         const ramDamage=(5.4+policeHeat*1.65)*impactDamageScale;
@@ -2334,12 +2621,12 @@ function update(dt){
     const p2max=maxSpeed*(p2NitroActive?1.22:1)*(p2ActiveEffects.boost>0?1.28:1)*(p2ActiveEffects.overdrive>0?1.18:1);
     const p2Steer=(10+effective.handling*.085+up.handling*.4+(p2ActiveEffects.grip>0?2.2:0))*weatherGrip;
     if(p2Eliminated||p2Finished)p2State.speed=0;else if(p2gas)p2State.speed+=accel*.98*(p2ActiveEffects.boost>0?1.38:1)*(p2ActiveEffects.overdrive>0?1.16:1)*dt;else if(p2brake)p2State.speed-=accel*1.35*dt;else p2State.speed*=Math.pow(.986,dt*60);
-    updateEngineSound(p2State.speed,!!(keys.KeyI||mobilePressed.has('p2gas')),dt,2);if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=108*dt;p2State.nitro=Math.max(0,p2State.nitro-26*dt);if(!p2NitroWasActive){playNoiseBurst(.42,.10,2400);playSfx(160,.28);}if(p2NitroSoundCooldown<=0){playNoiseBurst(.28,.065,2300);p2NitroSoundCooldown=.48;}}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);p2NitroWasActive=p2NitroActive;p2NitroSoundCooldown=Math.max(0,p2NitroSoundCooldown-dt);
+    updateEngineSound(p2State.speed,!!(keys.KeyI||mobilePressed.has('p2gas')),dt,2);if(!p2Eliminated&&!p2Finished&&p2boost&&p2State.nitro>0){p2State.speed+=108*dt;p2State.nitro=Math.max(0,p2State.nitro-26*dt);if(!p2NitroWasActive)playNitroIgnition(2);}else if(!p2Eliminated&&!p2Finished)p2State.nitro=Math.min(100,p2State.nitro+5*dt);p2NitroWasActive=p2NitroActive;updateNitroSound(p2NitroActive,p2State.speed,2);p2NitroSoundCooldown=Math.max(0,p2NitroSoundCooldown-dt);
     if(!p2Eliminated&&!p2Finished){if(p2left)p2State.offset-=p2Steer*dt;if(p2right)p2State.offset+=p2Steer*dt;}
     p2State.offset=clamp(p2State.offset,-8,8);p2State.speed=clamp(p2State.speed,-30,p2max);if(!p2Eliminated&&!p2Finished)p2State.dist+=Math.max(0,p2State.speed)*dt;
     trafficCars.forEach((t,ti)=>{if(t.active&&!p2Eliminated&&!p2Finished&&trackGap(t.dist,p2State.dist)<4.2&&Math.abs(t.offset-p2State.offset)<2.6&&canApplyPlayerImpact('p2',.86)){if(!(p2ActiveEffects.shield>0))p2State.damage+=3.2*impactDamageScale;p2State.speed=Math.max(0,p2State.speed-11);}});
     if(gameMode==='drift'&&!p2Eliminated&&!p2Finished&&(keys.Numpad0||keys.KeyB||mobilePressed.has('p2drift'))&&(p2left||p2right)&&p2State.speed>38&&Math.abs(p2State.offset)>1.2&&Math.abs(p2State.offset)<7.2){p2DriftComboTime+=dt;p2DriftScore+=(p2State.speed*.55*Math.abs(p2State.offset))*dt*(1+Math.min(.8,p2DriftComboTime*.18));}else p2DriftComboTime=Math.max(0,p2DriftComboTime-dt*1.5);
-    if(gameMode==='checkpoint'&&!p2Eliminated&&!p2Finished)while(p2CheckpointProgress<4&&p2State.dist>=trackLength*(p2CheckpointProgress+1)/5&&Math.abs(p2State.offset)<=7.6){p2CheckpointProgress++;p2CheckpointDeadline+=14;showToast(`PLAYER 2 CHECKPOINT ${p2CheckpointProgress}/4 · +14 SECONDS`,'success');playSfx(660,.16);}
+    if(gameMode==='checkpoint'&&!p2Eliminated&&!p2Finished)while(p2CheckpointProgress<4&&p2State.dist>=trackLength*(p2CheckpointProgress+1)/5&&Math.abs(p2State.offset)<=7.6){p2CheckpointProgress++;const p2CheckpointBonus=5+Math.floor(raceRandom()*3);p2CheckpointDeadline+=p2CheckpointBonus;showToast(`PLAYER 2 CHECKPOINT ${p2CheckpointProgress}/4 · +${p2CheckpointBonus} SECONDS`,'success');playSfx(660,.16);}
     const f2=frameAt(p2State.dist);localPlayer2.position.copy(f2.p).addScaledVector(f2.side,p2State.offset);localPlayer2.position.y=.2;localPlayer2.lookAt(frameAt(p2State.dist+5).p.clone().addScaledVector(frameAt(p2State.dist+5).side,p2State.offset));animateCarWheels(localPlayer2,p2State.speed,dt);
     // Camera centers between the two racers so both remain in view.
   }
@@ -2460,7 +2747,7 @@ function update(dt){
   else if(gameMode==='drift')$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()} · COMBO x${(1+Math.min(.8,driftComboTime*.18)).toFixed(1)}`;
   else if(gameMode==='checkpoint')$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4 · ${Math.max(0,Math.ceil(checkpointDeadline-raceTime))}s LEFT${localPlayer2?` · P2 ${p2CheckpointProgress}/4`:''}`;
   else if(gameMode==='traffic')$('powerStatus').innerText=`TRAFFIC RUN · DAMAGE ${Math.floor(damage)}% / ${trafficDamageLimit}% LIMIT`;
-  else if(isPoliceMode){$('powerStatus').innerText=`POLICE PURSUIT · SURVIVE ${Math.max(0,Math.ceil(policeTargetTime-raceTime))}s · HEAT ${Math.floor(policeHeat*100)}%`;if(raceTime>=policeTargetTime){finishRace();return;}}
+  else if(isPoliceMode){const phase=raceTime<28?'PATROL RESPONSE':raceTime<56?'BACKUP ARRIVING':'MAXIMUM PURSUIT';$('powerStatus').innerText=`${phase} · SURVIVE ${Math.max(0,Math.ceil(policeTargetTime-raceTime))}s · HEAT ${Math.floor(policeHeat*100)}%`;if(raceTime>=policeTargetTime){finishRace();return;}}
   else if(gameMode==='ghost'&&!ghostCar)$('powerStatus').innerText='NO PERSONAL BEST YET · SET A TIME';
   if(gameMode==='checkpoint'&&raceTime>=checkpointDeadline){finishRace();return;}
   if(gameMode==='checkpoint'&&localPlayer2&&!p2Eliminated&&raceTime>=p2CheckpointDeadline){p2Eliminated=true;p2State.speed=0;if(localPlayer2)localPlayer2.visible=false;showToast('PLAYER 2 · CHECKPOINT TIME EXPIRED','danger');}
@@ -2619,6 +2906,17 @@ function pushNotification(title,body,type='info'){
   const panel=$('notificationMenu');if(panel){panel.classList.remove('hidden');if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>{if(panel.dataset.pinned!=='1')panel.classList.add('hidden');},8500);}
 }
 function showToast(message,kind='info'){const node=$('toastMessage');if(!node)return;node.textContent=String(message);node.classList.toggle('powerupToast',kind==='powerup');node.classList.add('visible');if(toastCloseTimer)clearTimeout(toastCloseTimer);toastCloseTimer=setTimeout(()=>{node.classList.remove('visible','powerupToast');},kind==='powerup'?2800:2300);}
+let gameDialogCallback=null;
+function openGameDialog(message,{title='NIGHTSHIFT',confirmLabel='OK',onConfirm=null}={}){
+ const modal=$('gameDialog');if(!modal){showToast(String(message));return;}
+ $('gameDialogTitle').textContent=String(title);$('gameDialogMessage').textContent=String(message);
+ $('gameDialogCancel').hidden=!onConfirm;$('gameDialogConfirm').textContent=String(confirmLabel);
+ gameDialogCallback=typeof onConfirm==='function'?onConfirm:null;modal.classList.remove('hidden');$('gameDialogConfirm').focus();
+}
+function closeGameDialog(accept=false){const modal=$('gameDialog');if(modal)modal.classList.add('hidden');const action=gameDialogCallback;gameDialogCallback=null;if(accept&&action)action();}
+function gameAlert(message){openGameDialog(message,{title:'NIGHTSHIFT'});}
+function gameConfirm(message,onConfirm,title='CONFIRM ACTION'){openGameDialog(message,{title,confirmLabel:'CONFIRM',onConfirm});}
+
 function toggleNotificationMenu(force){const panel=$('notificationMenu');if(!panel)return;const open=typeof force==='boolean'?force:panel.classList.contains('hidden');panel.classList.toggle('hidden',!open);panel.dataset.pinned=open?'1':'0';if(open&&notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);if(open)renderNotificationCenter();}
 function markNotificationsRead(){(profile.notifications||[]).forEach(n=>n.read=true);saveProfile();renderNotificationCenter();}
 function getEventTierIndex(){
@@ -2766,9 +3064,9 @@ function renderStory(){
 }
 function startStory(sideIndex=-1){
   const ch=STORY_CHAPTERS[selectedChapter];if(!ch)return;
-  if(profile.energy<RACE_ENTRY_ENERGY){alert('Not enough energy.');return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){gameAlert('Not enough energy.');return;}
   if(sideIndex>=0){
-    if(!profile.storyMain[storyKey(selectedChapter)]){alert('Complete the main chapter race before playing its side stories.');return;}
+    if(!profile.storyMain[storyKey(selectedChapter)]){gameAlert('Complete the main chapter race before playing its side stories.');return;}
     storySideIndex=sideIndex;gameMode=sideIndex===2?'police':(sideIndex===1?'time':'street');
   }else{storySideIndex=-1;gameMode=profile.storyPath==='solo'?(ch.mode==='street'?'ghost':ch.mode):ch.mode;}
   currentTrack=ch.track==='skyline'?'skyway':ch.track;
@@ -2840,8 +3138,8 @@ function allocateLocalRacePowerupCharges(p1Loadout,p2Loadout){
 }
 function selectGarageCar(id){
   const car=CAR_CATALOG.find(c=>c.id===id);if(!car||(profile.ownedCars||[]).indexOf(id)<0)return;
-  profile.garage.carId=id;profile.garage.carLevels[id]=profile.garage.carLevels[id]||1;getCarUpgrades(id);
-  renderCarSelect();updateUI();refreshGarageCar();renderRaceCarSelector();saveProfile();
+  profile.garage.carId=id;profile.garage.carLevels[id]=profile.garage.carLevels[id]||1;getCarUpgrades(id);getCarAttachmentState(id);
+  renderCarSelect();renderGarageAttachments();renderStore();updateUI();refreshGarageCar();renderRaceCarSelector();saveProfile();
 }
 function renderRaceCarSelector(){
   const host=$('raceCarSelectGrid');if(!host)return;host.innerHTML='';
@@ -2870,48 +3168,44 @@ function renderCarSelect(){
   sel.innerHTML='';host.innerHTML='';
   owned.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});
   if(!owned.some(c=>c.id===profile.garage.carId))profile.garage.carId='D-01';sel.value=profile.garage.carId;
-  visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.rank)} CLASS · LVL ${st.level} · ${Math.round(st.speed)} SPD · ${Math.round(st.acceleration)} ACC · ${Math.round(st.handling)} HND · ${Math.round(st.durability)} DUR</small><small class="carCardPrice">MODEL VALUE · ${carValueLabel(c)}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarUpgrades(c.id);renderCarSelect();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
+  visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<b>${escapeHtml(c.name)}</b><small>${escapeHtml(c.rank)} CLASS · LVL ${st.level} · ${Math.round(st.speed)} SPD · ${Math.round(st.acceleration)} ACC · ${Math.round(st.handling)} HND · ${Math.round(st.durability)} DUR</small><small class="carCardPrice">MODEL VALUE · ${carValueLabel(c)}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarAttachmentState(c.id);getCarUpgrades(c.id);renderCarSelect();renderGarageAttachments();renderStore();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
   if(!visible.length)host.innerHTML='<div class="mutedText">No owned vehicles in this rank yet. Visit the Store to buy one.</div>';
   if($('ownedCarCount'))$('ownedCarCount').textContent=`${owned.length} owned`;
   const c=getSelectedCar(),st=carStatsWithUpgrades(c);$('carStats').innerText=`${c.rank}-Class · Speed ${st.speed.toFixed(1)} · Acceleration ${st.acceleration.toFixed(1)} · Handling ${st.handling.toFixed(1)} · Durability ${st.durability.toFixed(1)} · Nitro ${st.nitro}% · Level ${st.level} · Model value ${carValueLabel(c)}`;$('carLevelText').innerText=`CAR LEVEL ${st.level} · ${c.rank} CLASS · ${carValueLabel(c)}`;if($('garageSelectionSummary'))$('garageSelectionSummary').textContent=`SELECTED · ${c.name} · ${c.rank} CLASS · LVL ${st.level} · SPD ${st.speed.toFixed(1)} · ACC ${st.acceleration.toFixed(1)} · HND ${st.handling.toFixed(1)} · DUR ${st.durability.toFixed(1)} · ${carValueLabel(c)}`;
   renderRaceCarSelector();renderHubPowerupPicker();
 }
 function sellOwnedCar(carId){
-  const owned=[...(profile.ownedCars||['D-01'])];
-  if(!owned.includes(carId))return;
+  const owned=[...(profile.ownedCars||['D-01'])];if(!owned.includes(carId))return;
   if(owned.length<=1){showToast('KEEP AT LEAST ONE CAR IN YOUR GARAGE');return;}
-  const car=CAR_CATALOG.find(c=>c.id===carId);if(!car)return;
-  const resale=Math.max(1,Math.floor(car.price*.55));
-  if(!window.confirm(`Sell ${car.name} for ${resale.toLocaleString()} Credits? This vehicle and its upgrades will be removed from your garage.`))return;
-  profile.ownedCars=owned.filter(id=>id!==carId);
-  if(profile.garage.carId===carId){profile.garage.carId=profile.ownedCars.includes('D-01')?'D-01':profile.ownedCars[0];profile.garage.paint=profile.garage.paint||'176de0';}
-  if(profile.garage.carUpgrades)delete profile.garage.carUpgrades[carId];
-  if(profile.garage.carLevels)delete profile.garage.carLevels[carId];
-  profile.credits+=resale;pushNotification('VEHICLE SOLD',`${car.name} sold for ${resale.toLocaleString()} Credits.`,'store');
-  renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();showToast(`CAR SOLD · +${resale.toLocaleString()} CR`);
+  const car=CAR_CATALOG.find(c=>c.id===carId);if(!car)return;const resale=Math.max(1,Math.floor(car.price*.55));
+  gameConfirm(`Sell ${car.name} for ${resale.toLocaleString()} Credits? This vehicle, its per-car attachments and its upgrades will be removed from your garage.`,()=>{
+    profile.ownedCars=owned.filter(id=>id!==carId);
+    if(profile.garage.carId===carId){profile.garage.carId=profile.ownedCars.includes('D-01')?'D-01':profile.ownedCars[0];profile.garage.paint=profile.garage.paint||'176de0';}
+    if(profile.garage.carUpgrades)delete profile.garage.carUpgrades[carId];if(profile.garage.carLevels)delete profile.garage.carLevels[carId];
+    if(profile.garage.carAttachments)delete profile.garage.carAttachments[carId];
+    profile.credits+=resale;pushNotification('VEHICLE SOLD',`${car.name} sold for ${resale.toLocaleString()} Credits.`,'store');
+    renderStore();renderCarSelect();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();showToast(`CAR SOLD · +${resale.toLocaleString()} CR`);
+  },'SELL VEHICLE');
 }
 function sellPowerupItem(powerId){
-  const power=POWERUPS.find(p=>p.id===powerId),qty=Number(profile.inventory[powerId])||0;if(!power||qty<=0)return;
-  const resale=Math.max(1,Math.floor(power.price*.5));
-  if(!window.confirm(`Sell one ${power.name} for ${resale.toLocaleString()} Credits?`))return;
-  profile.inventory[powerId]=Math.max(0,qty-1);
-  if(profile.inventory[powerId]===0){profile.raceLoadout=(profile.raceLoadout||[]).filter(id=>id!==powerId);if(profile.selectedPowerup===powerId)profile.selectedPowerup=profile.raceLoadout[0]||'';}
-  profile.credits+=resale;pushNotification('ITEM SOLD',`${power.name} sold for ${resale.toLocaleString()} Credits.`,'store');
-  renderStore();renderRacePowerupHud();renderHubPowerupPicker();updateUI();saveProfile();showToast(`ITEM SOLD · +${resale.toLocaleString()} CR`);
+  const power=POWERUPS.find(p=>p.id===powerId),qty=Number(profile.inventory[powerId])||0;if(!power||qty<=0)return;const resale=Math.max(1,Math.floor(power.price*.5));
+  gameConfirm(`Sell one ${power.name} for ${resale.toLocaleString()} Credits?`,()=>{
+    profile.inventory[powerId]=Math.max(0,qty-1);
+    if(profile.inventory[powerId]===0){profile.raceLoadout=(profile.raceLoadout||[]).filter(id=>id!==powerId);if(profile.selectedPowerup===powerId)profile.selectedPowerup=profile.raceLoadout[0]||'';}
+    profile.credits+=resale;pushNotification('ITEM SOLD',`${power.name} sold for ${resale.toLocaleString()} Credits.`,'store');renderStore();renderRacePowerupHud();renderHubPowerupPicker();updateUI();saveProfile();showToast(`ITEM SOLD · +${resale.toLocaleString()} CR`);
+  },'SELL ITEM');
 }
 function sellPaintFinish(hex){
   if(hex==='176de0'||profile.garage.paint===hex){showToast('EQUIPPED / DEFAULT PAINT CANNOT BE SOLD');return;}
-  const owned=profile.ownedPaints||['176de0'];if(!owned.includes(hex))return;
-  const index=PAINT_CATALOG.findIndex(p=>p.hex===hex),price=320+Math.floor(Math.max(0,index)/4)*80,resale=Math.max(1,Math.floor(price*.5));
-  if(!window.confirm(`Sell this paint finish for ${resale.toLocaleString()} Credits?`))return;
-  profile.ownedPaints=owned.filter(x=>x!==hex);profile.credits+=resale;
-  pushNotification('PAINT SOLD',`Paint finish sold for ${resale.toLocaleString()} Credits.`,'store');renderStore();renderPaintSwatches();updateUI();saveProfile();
+  const owned=profile.ownedPaints||['176de0'];if(!owned.includes(hex))return;const index=PAINT_CATALOG.findIndex(p=>p.hex===hex),price=320+Math.floor(Math.max(0,index)/4)*80,resale=Math.max(1,Math.floor(price*.5));
+  gameConfirm(`Sell this paint finish for ${resale.toLocaleString()} Credits?`,()=>{profile.ownedPaints=owned.filter(x=>x!==hex);profile.credits+=resale;pushNotification('PAINT SOLD',`Paint finish sold for ${resale.toLocaleString()} Credits.`,'store');renderStore();renderPaintSwatches();updateUI();saveProfile();},'SELL PAINT');
 }
 function sellAttachmentItem(id){
-  const item=DECOR_ITEMS.find(x=>x.id===id),owned=profile.ownedAttachments||[];if(!item||!owned.includes(id))return;
-  const resale=Math.max(1,Math.floor(item.price*.5));if(!window.confirm(`Sell ${item.name} for ${resale.toLocaleString()} Credits?`))return;
-  profile.ownedAttachments=owned.filter(x=>x!==id);profile.garage.attachments[id]=false;profile.credits+=resale;
-  pushNotification('ATTACHMENT SOLD',`${item.name} sold for ${resale.toLocaleString()} Credits.`,'store');renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();
+  const item=DECOR_ITEMS.find(x=>x.id===id),state=getCarAttachmentState();if(!item||!state.owned.includes(id))return;const resale=Math.max(1,Math.floor(item.price*.5));
+  const selected=getSelectedCar();gameConfirm(`Sell ${item.name} from ${selected.name} for ${resale.toLocaleString()} Credits? This attachment will not be owned by any other car.`,()=>{
+    state.owned=state.owned.filter(x=>x!==id);state.equipped[id]=false;profile.credits+=resale;
+    pushNotification('ATTACHMENT SOLD',`${item.name} removed from ${selected.name} and sold for ${resale.toLocaleString()} Credits.`,'store');renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();
+  },'SELL ATTACHMENT');
 }
 
 function renderStore(){
@@ -2926,7 +3220,7 @@ function renderStore(){
       const resale=Math.max(1,Math.floor(c.price*.55)),sell=document.createElement('button');sell.className='smallBtn sellBtn';sell.textContent=`SELL · ${resale.toLocaleString()} CR`;sell.disabled=(profile.ownedCars||['D-01']).length<=1;sell.title=sell.disabled?'You must keep at least one car.':'Sell this vehicle';sell.addEventListener('click',()=>sellOwnedCar(c.id));actions.appendChild(sell);
     }else{
       const buy=document.createElement('button');buy.className='smallBtn';buy.textContent=`BUY · ${Math.floor(c.price).toLocaleString()} CR`;buy.disabled=!unlocked||profile.credits<c.price;buy.title=unlocked?'Purchase this vehicle':`Requires Street Rep level ${c.level}`;
-      buy.addEventListener('click',()=>{if(!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;profile.garage.paint=c.color.toString(16).padStart(6,'0');profile.ownedPaints=profile.ownedPaints||['176de0'];if(!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);pushNotification('NEW CAR ACQUIRED',`${c.name} · ${c.rank} class added to your garage.`,'store');getCarUpgrades(c.id);renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});actions.appendChild(buy);
+      buy.addEventListener('click',()=>{if(!unlocked||profile.credits<c.price)return;profile.credits-=Math.floor(c.price);profile.ownedCars=profile.ownedCars||['D-01'];profile.ownedCars.push(c.id);profile.garage.carId=c.id;getCarAttachmentState(c.id);profile.garage.paint=c.color.toString(16).padStart(6,'0');profile.ownedPaints=profile.ownedPaints||['176de0'];if(!profile.ownedPaints.includes(profile.garage.paint))profile.ownedPaints.push(profile.garage.paint);pushNotification('NEW CAR ACQUIRED',`${c.name} · ${c.rank} class added to your garage.`,'store');getCarUpgrades(c.id);renderStore();renderCarSelect();refreshGarageCar();updateUI();saveProfile();});actions.appendChild(buy);
     }
     row.append(info,actions);host.appendChild(row);
   });
@@ -2943,18 +3237,20 @@ function renderStore(){
     else{const buy=document.createElement('button');buy.className='smallBtn';buy.textContent=`BUY ${price}`;buy.disabled=profile.credits<price;buy.addEventListener('click',()=>{if(profile.credits<price)return;profile.credits-=price;profile.ownedPaints.push(paint.hex);pushNotification('NEW PAINT UNLOCKED',`${paint.name} is now available in your garage.`,'store');renderStore();renderPaintSwatches();updateUI();saveProfile();});actions.appendChild(buy);}
     tile.appendChild(actions);paintHost.appendChild(tile);
   });
-  const decor=$('decorStoreList');decor.innerHTML='';DECOR_ITEMS.forEach(item=>{
-    const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.desc)} · ${owned?(equipped?'EQUIPPED':'OWNED'):`${item.price.toLocaleString()} CREDITS`}</small>`;
+  const selectedCar=getSelectedCar(),attachmentState=getCarAttachmentState();
+  const decor=$('decorStoreList');decor.innerHTML='';const carLabel=document.createElement('div');carLabel.className='mutedText';carLabel.textContent=`VISUAL ATTACHMENTS · ${selectedCar.name} ONLY`;decor.appendChild(carLabel);DECOR_ITEMS.forEach(item=>{
+    const owned=attachmentState.owned.includes(item.id),equipped=!!attachmentState.equipped[item.id],tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${escapeHtml(item.desc)} · ${owned?(equipped?'EQUIPPED ON THIS CAR':'OWNED FOR THIS CAR'):`${item.price.toLocaleString()} CREDITS · BUY FOR THIS CAR`}</small>`;
     const actions=document.createElement('div');actions.className='shopActions';
-    if(owned){const toggle=document.createElement('button');toggle.className='smallBtn';toggle.textContent=equipped?'UNEQUIP':'EQUIP';toggle.addEventListener('click',()=>{profile.garage.attachments[item.id]=!equipped;renderStore();renderGarageAttachments();refreshGarageCar();saveProfile();});actions.appendChild(toggle);const sell=document.createElement('button');sell.className='smallBtn sellBtn';sell.textContent=`SELL · ${Math.floor(item.price*.5)} CR`;sell.addEventListener('click',()=>sellAttachmentItem(item.id));actions.appendChild(sell);}
-    else{const buy=document.createElement('button');buy.className='smallBtn';buy.textContent=`BUY ${item.price.toLocaleString()}`;buy.disabled=profile.credits<item.price;buy.addEventListener('click',()=>{if(profile.credits<item.price)return;profile.credits-=item.price;profile.ownedAttachments.push(item.id);profile.garage.attachments[item.id]=true;pushNotification('NEW ATTACHMENT UNLOCKED',`${item.name} is now owned and equipped.`,'store');renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();});actions.appendChild(buy);}
+    if(owned){const toggle=document.createElement('button');toggle.className='smallBtn';toggle.textContent=equipped?'UNEQUIP':'EQUIP';toggle.addEventListener('click',()=>{attachmentState.equipped[item.id]=!equipped;renderStore();renderGarageAttachments();refreshGarageCar();saveProfile();});actions.appendChild(toggle);const sell=document.createElement('button');sell.className='smallBtn sellBtn';sell.textContent=`SELL · ${Math.floor(item.price*.5)} CR`;sell.addEventListener('click',()=>sellAttachmentItem(item.id));actions.appendChild(sell);}
+    else{const buy=document.createElement('button');buy.className='smallBtn';buy.textContent=`BUY ${item.price.toLocaleString()}`;buy.disabled=profile.credits<item.price;buy.addEventListener('click',()=>{if(profile.credits<item.price)return;profile.credits-=item.price;const currentState=getCarAttachmentState();if(!currentState.owned.includes(item.id))currentState.owned.push(item.id);currentState.equipped[item.id]=true;pushNotification('NEW ATTACHMENT UNLOCKED',`${item.name} is now owned and equipped for ${selectedCar.name}.`,'store');renderStore();renderGarageAttachments();refreshGarageCar();updateUI();saveProfile();});actions.appendChild(buy);}
     tile.appendChild(actions);decor.appendChild(tile);
   });
 }
 
 function renderGarageAttachments(){
- const host=$('garageAttachments');if(!host)return;host.innerHTML='';
- DECOR_ITEMS.forEach(item=>{const owned=(profile.ownedAttachments||[]).includes(item.id),equipped=!!profile.garage.attachments[item.id],row=document.createElement('div');row.className='attachmentTile';const info=document.createElement('div');info.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${owned?(equipped?'EQUIPPED':'OWNED'):'LOCKED · BUY IN STORE'}</small>`;const btn=document.createElement('button');btn.className='smallBtn';btn.textContent=owned?(equipped?'ON':'OFF'):'STORE';btn.disabled=!owned;btn.addEventListener('click',()=>{if(!owned)return;profile.garage.attachments[item.id]=!equipped;renderGarageAttachments();refreshGarageCar();renderStore();saveProfile();});row.append(info,btn);host.appendChild(row);});
+ const host=$('garageAttachments');if(!host)return;host.innerHTML='';const state=getCarAttachmentState(),car=getSelectedCar();
+ const caption=document.createElement('div');caption.className='mutedText';caption.textContent=`ATTACHMENTS FOR ${car.name} · OWNERSHIP IS PER CAR`;host.appendChild(caption);
+ DECOR_ITEMS.forEach(item=>{const owned=state.owned.includes(item.id),equipped=!!state.equipped[item.id],row=document.createElement('div');row.className='attachmentTile';const info=document.createElement('div');info.innerHTML=`<b>${escapeHtml(item.name)}</b><small>${owned?(equipped?'EQUIPPED ON THIS CAR':'OWNED FOR THIS CAR'):'NOT OWNED · BUY IN STORE'}</small>`;const btn=document.createElement('button');btn.className='smallBtn';btn.textContent=owned?(equipped?'ON':'OFF'):'STORE';btn.disabled=!owned;btn.addEventListener('click',()=>{if(!owned)return;state.equipped[item.id]=!equipped;renderGarageAttachments();refreshGarageCar();renderStore();saveProfile();});row.append(info,btn);host.appendChild(row);});
 }
 function renderPaintSwatches(){
  const host=$('paintSwatches');if(!host)return;host.innerHTML='';
@@ -2978,6 +3274,72 @@ function renderQuestBoard(){
     btn.addEventListener('click',()=>{if(!done||claimed)return;q.claimed.push(x.id);addCredits(x.reward);saveProfile();renderQuestBoard();updateUI();});
     row.append(info,btn);host.appendChild(row);
   });
+}
+
+const QUEST_CAMPAIGNS=[
+ {id:'street',title:'STREET CREDENTIALS',tag:'SOLO OR MULTIPLAYER',description:'Build a record that makes the city remember your name.',stages:[
+  {title:'First Laps',desc:'Complete 3 races in any mode.',goal:3,metric:'race',reward:350},
+  {title:'Podium Regular',desc:'Finish on the podium in 2 races.',goal:2,metric:'podium',reward:550},
+  {title:'Nightshift Winner',desc:'Win 1 race.',goal:1,metric:'win',reward:850}]},
+ {id:'online',title:'ONLINE RIVAL',tag:'MULTIPLAYER ONLY',description:'Prove yourself against real drivers in online lobbies.',stages:[
+  {title:'Connect to the Grid',desc:'Complete 1 online multiplayer race.',goal:1,metric:'online',reward:500},
+  {title:'Online Contender',desc:'Earn 2 online podium finishes.',goal:2,metric:'onlinePodium',reward:800},
+  {title:'Take the Lobby',desc:'Win 1 online multiplayer race.',goal:1,metric:'onlineWin',reward:1200}]},
+ {id:'pursuit',title:'PURSUIT SPECIALIST',tag:'POLICE PURSUIT',description:'Survive escalating patrol pressure and bring the car home.',stages:[
+  {title:'On the Radar',desc:'Complete 1 Police Pursuit.',goal:1,metric:'police',reward:400},
+  {title:'Still Running',desc:'Escape 2 Police Pursuits.',goal:2,metric:'escape',reward:750},
+  {title:'Clean Getaway',desc:'Escape a pursuit with 25% damage or less.',goal:1,metric:'cleanEscape',reward:1100}]}
+];
+function ensureQuestCampaignState(){
+ profile.questCampaigns=profile.questCampaigns&&typeof profile.questCampaigns==='object'?profile.questCampaigns:{};
+ QUEST_CAMPAIGNS.forEach(c=>{const st=profile.questCampaigns[c.id]||{};profile.questCampaigns[c.id]={stage:Math.max(0,Math.min(c.stages.length,Number(st.stage)||0)),progress:Math.max(0,Number(st.progress)||0)};});
+ return profile.questCampaigns;
+}
+function progressQuestCampaigns(context){
+ const states=ensureQuestCampaignState();
+ const matches={
+  street:[true,context.place<=3,context.won],
+  online:[context.online,context.online&&context.place<=3,context.online&&context.won],
+  pursuit:[context.mode==='police',context.mode==='police'&&context.won,context.mode==='police'&&context.won&&context.damage<=25]
+ };
+ QUEST_CAMPAIGNS.forEach(c=>{const st=states[c.id],idx=st.stage;if(idx>=c.stages.length)return;if(matches[c.id][idx]){st.progress=Math.min(c.stages[idx].goal,st.progress+1);if(st.progress>=c.stages[idx].goal)pushNotification('QUEST STAGE COMPLETE',`${c.title}: ${c.stages[idx].title}. Claim your reward in the Quest Board.`,'quest');}});
+}
+function renderQuestCampaigns(){
+ const host=$('questCampaignGrid');if(!host)return;const states=ensureQuestCampaignState();host.innerHTML='';
+ QUEST_CAMPAIGNS.forEach(c=>{
+  const st=states[c.id],card=document.createElement('article');card.className='questCampaignCard';
+  const completed=st.stage>=c.stages.length,active=c.stages[st.stage],earned=completed?c.stages.reduce((a,x)=>a+x.reward,0):c.stages.slice(0,st.stage).reduce((a,x)=>a+x.reward,0);
+  const head=document.createElement('div');head.innerHTML=`<div class="eyebrow">${escapeHtml(c.tag)}</div><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.description)}</p>`;card.appendChild(head);
+  const chain=document.createElement('div');chain.className='questChainSteps';
+  c.stages.forEach((step,i)=>{const done=i<st.stage,current=i===st.stage&&!completed,row=document.createElement('div');row.className='questStage'+(done?' complete':current?' active':'');const mark=document.createElement('span');mark.className='stepMark';mark.textContent=done?'✓':String(i+1);const info=document.createElement('div');const title=document.createElement('b');title.textContent=step.title;const desc=document.createElement('small');desc.textContent=`${step.desc} · ${step.reward.toLocaleString()} CR`;info.append(title,desc);const state=document.createElement('span');state.className='stepState';state.textContent=done?'CLAIMED':current?`${Math.min(st.progress,step.goal)}/${step.goal}`:'LOCKED';row.append(mark,info,state);if(current){const bar=document.createElement('div');bar.className='questProgress';const fill=document.createElement('i');fill.style.width=`${Math.min(100,st.progress/step.goal*100)}%`;bar.appendChild(fill);info.appendChild(bar);}chain.appendChild(row);});
+  card.appendChild(chain);const footer=document.createElement('div');footer.className='mutedText';footer.textContent=`REWARDS CLAIMED · ${earned.toLocaleString()} CREDITS`;card.appendChild(footer);
+  const btn=document.createElement('button');btn.className='smallBtn';btn.textContent=completed?'QUEST LINE COMPLETE':active&&st.progress>=active.goal?`CLAIM ${active.reward.toLocaleString()} CR`:'STAGE IN PROGRESS';btn.disabled=completed||!active||st.progress<active.goal;
+  btn.addEventListener('click',()=>{if(!active||st.progress<active.goal||completed)return;addCredits(active.reward);st.stage++;st.progress=0;pushNotification('QUEST REWARD CLAIMED',`${active.title} complete. You earned ${active.reward.toLocaleString()} Credits.`,'reward');saveProfile();updateUI();renderQuestCampaigns();});card.appendChild(btn);host.appendChild(card);
+ });
+}
+
+const TOURNAMENT_STAGE_DEFS=[
+ {name:'QUALIFIER',track:'neon',laps:2,detail:'2 laps · Neon District'},
+ {name:'SEMI-FINAL',track:'coast',laps:3,detail:'3 laps · Coastal Run'},
+ {name:'GRAND FINAL',track:'alpine',laps:4,detail:'4 laps · Alpine Pass'}
+];
+function tournamentSeasonKey(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.toISOString().slice(0,10);}
+function getTournamentSeries(){const season=tournamentSeasonKey();if(!profile.tournamentSeries||profile.tournamentSeries.season!==season){profile.tournamentSeries={season,round:1,points:0,placements:[],completed:false};saveProfile();}const t=profile.tournamentSeries;t.round=clamp(Math.floor(Number(t.round)||1),1,3);t.points=Math.max(0,Number(t.points)||0);t.placements=Array.isArray(t.placements)?t.placements:[];t.completed=!!t.completed;return t;}
+function getTournamentStageMeta(){const series=getTournamentSeries(),idx=Math.max(0,Math.min(2,series.round-1)),d=TOURNAMENT_STAGE_DEFS[idx];return {event_key:`${series.season}-ROUND-${series.round}`,event_stage:series.round,track:d.track,laps:d.laps,tournament_stage_name:d.name};}
+function renderTournamentPanel(){
+ const host=$('tournamentStageGrid');if(!host)return;const series=getTournamentSeries(),today=new Date(),open=[0,5,6].includes(today.getDay()),stage=Math.min(3,series.round),best=series.placements.length?`${Math.min(...series.placements)}${['TH','ST','ND','RD'][Math.min(...series.placements)===1?1:Math.min(...series.placements)===2?2:Math.min(...series.placements)===3?3:0]} PLACE`:'—';
+ $('tournamentRoundTitle').textContent=series.completed?'SERIES COMPLETE':`ROUND ${series.round} · ${TOURNAMENT_STAGE_DEFS[stage-1].name}`;
+ $('tournamentRoundInfo').textContent=series.completed?'3 / 3':`${series.round} / 3`; $('tournamentPointsInfo').textContent=`${series.points} PTS`; $('tournamentBestInfo').textContent=best;
+ $('tournamentStatus').textContent=series.completed?'You have completed this week’s three-round online series. Your next series unlocks when the new week begins.':open?`OPEN NOW · ${today.toLocaleDateString('en-US',{weekday:'long'})}. Enter the current round to race against other online players.`:'WEEKEND WINDOW · Tournament matchmaking opens Friday, Saturday and Sunday. Your current round and points are saved.';
+ const btn=$('tournamentBtn');btn.disabled=series.completed||!open;btn.textContent=series.completed?'SERIES COMPLETE':`FIND PLAYERS · ROUND ${series.round}`;
+ host.innerHTML='';TOURNAMENT_STAGE_DEFS.forEach((d,i)=>{const card=document.createElement('div');card.className='tournamentStageCard'+(i<series.round-1||series.completed?' complete':i===series.round-1&&!series.completed?' active':'');const status=i<series.round-1||series.completed?'COMPLETED':i===series.round-1?'CURRENT ROUND':'LOCKED';const place=series.placements[i];card.innerHTML=`<small>ROUND ${i+1} · ${status}</small><b>${d.name}</b><span>${d.detail}${place?` · FINISH #${place}`:''}</span>`;host.appendChild(card);});
+ const history=$('tournamentHistory');if(history){history.innerHTML='';if(!series.placements.length)history.innerHTML='<div class="mutedText">Your tournament finishes will appear here after each round.</div>';else series.placements.forEach((place,i)=>{const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<b>ROUND ${i+1} · ${TOURNAMENT_STAGE_DEFS[i].name}</b><span>#${place} · +${[10,7,5,3,2,1][Math.max(0,Math.min(5,place-1))]} PTS</span>`;history.appendChild(row);});if(series.completed){const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<b>WEEKLY SERIES SCORE</b><span>${series.points} POINTS · COMPLETED</span>`;history.appendChild(row);}}
+}
+function joinTournamentQueue(){
+ const series=getTournamentSeries();if(series.completed){$('tournamentQueueStatus').textContent='This week’s three rounds are complete. Your progress is saved.';return;}
+ const days=new Date().getDay();if(![0,5,6].includes(days)){ $('tournamentQueueStatus').textContent='Tournament queue opens Friday, Saturday and Sunday. Your round is saved until then.';return;}
+ const meta=getTournamentStageMeta();$('tournamentQueueStatus').textContent=`Searching for online tournament drivers · ${meta.tournament_stage_name} · ${meta.laps} laps.`;
+ findOnlineMatch('tournament',meta);
 }
 
 function refreshQuests(){
@@ -3004,15 +3366,16 @@ function refreshQuests(){
   if($('eventTierBadge'))$('eventTierBadge').textContent=`EVENT DIFFICULTY · ${tierName} TIER ${tier+1}/7 · REWARD MULTIPLIER ×${multiplier.toFixed(2)} · AI PACE ADAPTS TO YOUR REP`;
   if(tierChanged)pushNotification('EVENT DIFFICULTY UPDATED',`Your Street Rep is now ${tierName}. Daily and weekly challenges have scaled to your current rank.`,'event');
   const next=(Math.floor(profile.level/5)+1)*5;$('milestoneStatus').innerText=`Level ${next} reward: credits, a tournament ticket and a shield powerup.`;
-  const dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=dayName==='Friday'||dayName==='Sunday';const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);
-  $('tournamentStatus').innerText=available?`OPEN TODAY · ${dayName} · ${tierName} tier rewards: ${Math.round(3000*multiplier).toLocaleString()} Credits and 2 Ranked Tickets.`:`Next tournament window: Friday or Sunday. Today's challenge tier is ${tierName}.`;$('tournamentBtn').disabled=!available;$('tournamentBtn').dataset.open=available?'1':'0';
+  const dayName=now.toLocaleDateString('en-US',{weekday:'long'}),open=['Friday','Saturday','Sunday'].includes(dayName);const dateKey=now.toISOString().slice(0,10);const seed=[...dateKey].reduce((a,c)=>a+c.charCodeAt(0),0);const available=open&&(seed%100<72);
+  const tournamentMessage=available?`OPEN TODAY · ${dayName} · ${tierName} tier rewards scale with your Street Rep.`:`Next online tournament window: Friday, Saturday or Sunday. Today's challenge tier is ${tierName}.`;if($('tournamentStatus')&&$('tournamentStatus').closest('#eventsPanel'))$('tournamentStatus').innerText=tournamentMessage;
+  if($('tournamentBtn'))$('tournamentBtn').dataset.open=available?'1':'0';
   const specialModes=['infected','police','time','random','drift','checkpoint','duel','traffic'];specialEventMode=specialModes[seed%specialModes.length];const eventNames={infected:'INFECTED ELIMINATION',police:'PATROL BREAKOUT',time:'NIGHTSHIFT TIME ATTACK',random:'CHAOS CIRCUIT',drift:'DRIFT SCORE ATTACK',checkpoint:'CHECKPOINT RUN',duel:'RIVAL DUEL',traffic:'TRAFFIC RUN'};
   $('specialEventStatus').innerText=`TODAY'S ${tierName}-TIER EVENT: ${eventNames[specialEventMode]}. AI difficulty, objective targets and rewards scale with your Street Rep.`;$('specialEventBtn').dataset.mode=specialEventMode;
-  saveProfile();
+  renderQuestCampaigns();renderTournamentPanel();saveProfile();
 }
 function renderLocalLeaderboard(){const host=$('localLeaderboard');if(!host)return;host.innerHTML='';const rows=leaderboardLocal.slice().sort((a,b)=>a.time-b.time).slice(0,10);if(!rows.length)host.innerHTML='<div class="mutedText">Finish a time trial to set your first record.</div>';rows.forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${r.username}</b><span>${formatTime(r.time)}</span>`;host.appendChild(el);});}
 function showTutorial(){const step=TUTORIAL_STEPS[tutorialStep];$('tutorialTitle').innerText=step[0];$('tutorialText').innerText=step[1];$('tutorialBack').disabled=tutorialStep===0;$('tutorialNext').innerText=tutorialStep===TUTORIAL_STEPS.length-1?'FINISH':'NEXT ↗';$('tutorialModal').classList.remove('hidden');}
-function renderAll(){updateUI();renderRacePowerupHud();renderCarSelect();renderRaceCarSelector();renderHubPowerupPicker();renderStore();renderPaintSwatches();renderGarageAttachments();renderStory();renderTrackGrid();refreshQuests();renderLocalLeaderboard();}
+function renderAll(){updateUI();renderRacePowerupHud();renderCarSelect();renderRaceCarSelector();renderHubPowerupPicker();renderStore();renderPaintSwatches();renderGarageAttachments();renderStory();renderTrackGrid();refreshQuests();renderQuestCampaigns();renderTournamentPanel();renderLocalLeaderboard();}
 function activatePowerup(){
  if(powerupCooldown||playerEliminated||playerFinished)return;
  const load=getRaceLoadout(false),stock=racePowerupCharges;let id=load[activePowerupSlot]||'';
@@ -3034,8 +3397,8 @@ function activatePowerup(){
 function currentRaceObjective(){
  if(document.body.dataset.storyRace==='1')return STORY_CHAPTERS[selectedChapter]?.objective||'Complete the chapter objective.';
  if(storySideIndex>=0)return sideMissionBrief(selectedChapter,storySideIndex);
- const tier=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const objectives={street:'Finish in the top three. Win for the full reward.',time:'Every 30 seconds the racer in last place is eliminated. Be the final racer remaining.',police:'Evade the actively pursuing patrol cars for a randomized 72–110 seconds. They follow behind at a visible gap and make staggered attack runs.',ghost:bestTimes[currentTrack]?`Beat your ${formatTime(bestTimes[currentTrack])} personal best on this unlocked track while racing its ghost.`:'Set your first lap record on this unlocked track; your ghost will appear on future runs.',infected:'Stay untagged. The tagged racer can pass the tag by contact and is eliminated when the 30-second round timer expires. Rounds continue until one racer remains.',drift:`Earn at least ${(3000+tier*650).toLocaleString()} drift points on Drift Arena. Hold LEFT SHIFT or the on-screen DRIFT button while steering to initiate a scored slide.`,checkpoint:'Start with 48 seconds. Reach each of four checkpoints to earn 14 additional seconds, then cross the finish line.',duel:'Beat the single elite rival in a three-lap head-to-head race.',traffic:`Complete two laps through heavy traffic while keeping damage below ${Math.max(20,40-tier*3)}%.`,random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
- if(document.body.dataset.tournament==='1')return 'Tournament final: finish as high as possible. First place earns the champion reward.';
+ const tier=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const objectives={street:'Finish in the top three. Win for the full reward.',time:'Every 30 seconds the racer in last place is eliminated. Be the final racer remaining.',police:'Survive a 72–110 second cinematic pursuit. Patrol units pressure from behind, backup joins in waves, the heat meter rises, and sirens and flashing lightbars intensify as the chase escalates.',ghost:bestTimes[currentTrack]?`Beat your ${formatTime(bestTimes[currentTrack])} personal best on this unlocked track while racing its ghost.`:'Set your first lap record on this unlocked track; your ghost will appear on future runs.',infected:'Stay untagged. The tagged racer can pass the tag by contact and is eliminated when the 30-second round timer expires. Rounds continue until one racer remains.',drift:`Earn at least ${(3000+tier*650).toLocaleString()} drift points on Drift Arena. Hold LEFT SHIFT or the on-screen DRIFT button while steering to initiate a scored slide.`,checkpoint:'Start with a randomized 10–20 second timer. Each of the four checkpoints adds 5–7 seconds; reach the finish before time expires.',duel:'Beat the single elite rival in a three-lap head-to-head race.',traffic:`Complete two laps through heavy traffic while keeping damage below ${Math.max(20,40-tier*3)}%.`,random:'Complete the randomly selected race type on a randomly selected unlocked track.'};
+ if(document.body.dataset.tournament==='1'){const stage=TOURNAMENT_STAGE_DEFS[Math.max(0,Math.min(2,(activeTournamentStage||1)-1))];return `${stage?.name||'TOURNAMENT ROUND'}: finish as high as possible. Series points carry into your next online round.`;}
  if(document.body.dataset.specialEvent==='1')return `Rotating special event: ${objectives[gameMode]||'Complete the event objective.'}`;
  return objectives[gameMode]||'Finish the race and earn Street Rep.';
 }
@@ -3054,7 +3417,7 @@ function fillBriefingPowerupSelects(){
  renderBriefingPowerupCards();renderP2BriefingPowerupCards();updateBriefingLoadoutPreview();
 }
 function openRaceBriefing(){
- if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}; energy restores one point every five minutes.`);return;}
+ if(profile.energy<RACE_ENTRY_ENERGY){gameAlert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}; energy restores one point every five minutes.`);return;}
  if(!TRACKS[currentTrack]||!isTrackUnlocked(currentTrack)){currentTrack=TRACK_ORDER.find(isTrackUnlocked)||TRACK_ORDER[0];}
  if(gameMode==='random'){
   const unlocked=TRACK_ORDER.filter(isTrackUnlocked);currentTrack=unlocked[Math.floor(Math.random()*unlocked.length)]||'neon';
@@ -3076,7 +3439,7 @@ function openRaceBriefing(){
  if(forcedRaceWeather){currentWeather=forcedRaceWeather;}else setRaceWeather();
  $('briefingTitle').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?`SIDE STORY ${storySideIndex+1} · ${STORY_THREADS[selectedChapter]?.[storySideIndex]?.title||'CREW EPISODE'}`:`CHAPTER ${String(selectedChapter+1).padStart(2,'0')} · ${STORY_CHAPTERS[selectedChapter]?.title||'NIGHTSHIFT'}`):`${gameMode.toUpperCase().replaceAll('_',' ')} BRIEFING`;
  $('briefingStory').innerText=document.body.dataset.storyRace==='1'?(storySideIndex>=0?STORY_THREADS[selectedChapter]?.[storySideIndex]?.body:STORY_CHAPTERS[selectedChapter]?.story)||'The crew is waiting on your call.':'The crew has checked the route, weather and vehicle. Review the mission and select your equipment before the start.';
- $('briefingMode').innerText=gameMode.toUpperCase();$('briefingTrack').innerText=TRACKS[currentTrack]?.name||'NEON DISTRICT';$('briefingWeather').innerText=`${currentWeather} · ${gameMode==='time'?`ELIMINATION · ${TIME_ATTACK_ROUND_SECONDS}s ROUNDS`:gameMode==='police'?'SURVIVE THE RANDOMIZED 72–110 SECOND PURSUIT':gameMode==='checkpoint'?'48s START · +14s PER CHECKPOINT':gameMode==='ghost'?'PERSONAL BEST':gameMode==='drift'?'DRIFT ARENA':`${raceLaps} LAPS`}`;$('briefingObjective').innerText=currentRaceObjective();
+ $('briefingMode').innerText=gameMode.toUpperCase();$('briefingTrack').innerText=TRACKS[currentTrack]?.name||'NEON DISTRICT';$('briefingWeather').innerText=`${currentWeather} · ${gameMode==='time'?`ELIMINATION · ${TIME_ATTACK_ROUND_SECONDS}s ROUNDS`:gameMode==='police'?'SURVIVE THE RANDOMIZED 72–110 SECOND PURSUIT':gameMode==='checkpoint'?'10–20s START · +5–7s PER CHECKPOINT':gameMode==='ghost'?'PERSONAL BEST':gameMode==='drift'?'DRIFT ARENA':`${raceLaps} LAPS`}`;$('briefingObjective').innerText=currentRaceObjective();
  fillBriefingPowerupSelects();$('raceBriefingModal').classList.remove('hidden');
 }
 function confirmRaceBriefing(){
@@ -3243,7 +3606,7 @@ function abortRaceLaunch(error){
   if($('lobbyStatus'))$('lobbyStatus').innerText=message;
   if($('mmStatus')&&lobbyChannel)$('mmStatus').innerText=message;
   updateUI();console.error('Race launch aborted:',{stage:raceLaunchStage,error});
-  alert(`Race could not start. No energy was charged.
+  gameAlert(`Race could not start. No energy was charged.
 
 Stage: ${raceLaunchStage||'setup'}
 ${detail}
@@ -3278,15 +3641,15 @@ function beginRace(skipBriefing=false){
   raceBriefingConfirmed=false;
   applyEnergyRegen();updateUI();
   if(!isRaceRendererReady()){
-    alert(`The 3D race engine is not ready. No energy was charged.
+    gameAlert(`The 3D race engine is not ready. No energy was charged.
 
 ${graphicsInitError?.message||'WebGL could not be initialized.'}
 
 Enable hardware acceleration/WebGL or try another browser, then refresh.`);
     return;
   }
-  if(profile.energy<RACE_ENTRY_ENERGY){alert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}. Energy restores one point every five minutes.`);return;}
-  if(lobbyChannel&&onlineRoomMode==='ranked'&&(Number(profile.rankedTickets)||0)<1){alert('A Ranked Ticket is required. No energy was charged.');return;}
+  if(profile.energy<RACE_ENTRY_ENERGY){gameAlert(`Not enough energy. You need ${RACE_ENTRY_ENERGY}. Energy restores one point every five minutes.`);return;}
+  if(lobbyChannel&&onlineRoomMode==='ranked'&&(Number(profile.rankedTickets)||0)<1){gameAlert('A Ranked Ticket is required. No energy was charged.');return;}
   raceLaunchPending=true;pendingRankedTicket=!!(lobbyChannel&&onlineRoomMode==='ranked');raceLaunchStage='preparing track';
   try{
     initAudio();lastNetworkSync=0;
@@ -3317,9 +3680,9 @@ Enable hardware acceleration/WebGL or try another browser, then refresh.`);
 
 function finishRace(){
   if(raceAwarded)return;
-  $('modeTimerHud')?.classList.remove('visible');$('driftControlBtn')?.classList.remove('visible');
+  setPoliceSiren(false);$('pursuitHud')?.classList.remove('visible');$('modeTimerHud')?.classList.remove('visible');$('driftControlBtn')?.classList.remove('visible');
   raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
-  const eventTier=getEventTierIndex(),isSpecialEvent=document.body.dataset.specialEvent==='1',isTournament=document.body.dataset.tournament==='1';
+  const eventTier=getEventTierIndex(),isSpecialEvent=document.body.dataset.specialEvent==='1',isTournament=document.body.dataset.tournament==='1',wasOnlineRace=!!(lobbyChannel&&onlineRaceStarted);
   const eventRewardScale=1+eventTier*.12;
   const trafficLimit=Math.max(20,40-((isSpecialEvent||isTournament)?eventTier*3:0));
   const driftTarget=3000+((isSpecialEvent||isTournament)?eventTier*650:0);
@@ -3328,7 +3691,7 @@ function finishRace(){
   const finishRows=[
     {id:'player',name:getDisplayUsername(),dist:raceDistanceProgress(playerDistance,playerStartDistance),finished:playerFinished,finishTime:playerFinishTime,eliminated:playerEliminated},
     ...(localPlayer2?[{id:'player2',name:'PLAYER 2',dist:raceDistanceProgress(p2State.dist,p2StartDistance),finished:p2Finished,finishTime:p2FinishTime,eliminated:p2Eliminated}]:[]),
-    ...Array.from(remotePlayers.entries()).map(([id,r])=>({id:`online:${id}`,name:r.username||'ONLINE RACER',dist:raceDistanceProgress(r.dist,r.startDist||0),finished:!!r.finished,finishTime:r.finishTime??null,eliminated:!!r.eliminated})),
+    ...Array.from(new Set([...remotePlayers.keys(),...onlineFinishers.keys()])).filter(id=>id!==authUser?.id).map(id=>{const r=remotePlayers.get(id)||{},f=onlineFinishers.get(id);return {id:`online:${id}`,name:f?.username||r.username||'ONLINE RACER',dist:raceDistanceProgress(Number(r.dist)||0,Number(r.startDist)||0),finished:!!f||!!r.finished,finishTime:f?.race_time??r.finishTime??null,eliminated:!!r.eliminated};}),
     ...rivals.filter(r=>r.active||r.finished).map((r,i)=>({id:`rival:${r.index??i}`,name:r.isPolice?'PATROL':(r.username||'RIVAL'),dist:raceDistanceProgress(r.dist,r.startDist||0),finished:!!r.finished,finishTime:r.finishTime??null,eliminated:!r.active&&!r.finished}))
   ];
   const rankScore=row=>row.finished?1000000-(Number(row.finishTime)||0):Number(row.dist)||0;
@@ -3365,6 +3728,9 @@ function finishRace(){
   const xp=won?Math.round(xpBase*1.35):xpBase;
   profile.totalRaces++;if(won)profile.wins++;
   profile.questStats=profile.questStats||{races:0,podiums:0,storyWins:0,claimed:[]};profile.questStats.races=(profile.questStats.races||0)+1;if(place<=3)profile.questStats.podiums=(profile.questStats.podiums||0)+1;
+  if(wasOnlineRace){profile.questStats.onlineRaces=(profile.questStats.onlineRaces||0)+1;if(place<=3)profile.questStats.onlinePodiums=(profile.questStats.onlinePodiums||0)+1;if(won)profile.questStats.onlineWins=(profile.questStats.onlineWins||0)+1;}
+  if(gameMode==='police'){profile.questStats.policeRuns=(profile.questStats.policeRuns||0)+1;if(won)profile.questStats.policeEscapes=(profile.questStats.policeEscapes||0)+1;}
+  progressQuestCampaigns({mode:gameMode,online:wasOnlineRace,place,won,damage});
   addCredits(reward);addXP(xp);
   if(isSpecialEvent&&won){addCredits(Math.round(900*eventRewardScale));profile.rankedTickets=(profile.rankedTickets||0)+1;pushNotification('SPECIAL EVENT WON',`You earned bonus Credits and a Ranked Ticket for winning the ${eventTierLabel()}-tier event.`,'event');}
   if(profile.daily.date===new Date().toISOString().slice(0,10)){
@@ -3384,7 +3750,7 @@ function finishRace(){
       leaderboardLocal.push({username:getDisplayUsername(),time:raceTime,track:currentTrack,mode:'time-attack'});localStorage.setItem('mr_local_leaderboard',JSON.stringify(leaderboardLocal));
     }
   }
-  let storyMissionResult='';
+  let storyMissionResult='',tournamentSummary='';
   profile.chapterStars=profile.chapterStars||{};profile.sideStoryStars=profile.sideStoryStars||{};profile.completedSides=profile.completedSides||{};
   if(storySideIndex>=0){
     const sideSuccess=gameMode==='police'?won:gameMode==='time'?won:place<=3;
@@ -3408,7 +3774,15 @@ function finishRace(){
     document.body.dataset.storyRace='0';
   }
   if(gameMode==='police'&&won)addCredits(250);
-  if(isTournament&&place===1){addCredits(Math.round(3000*eventRewardScale));profile.rankedTickets=(profile.rankedTickets||0)+2;pushNotification('TOURNAMENT CHAMPION',`You won the tournament and earned ${Math.round(3000*eventRewardScale).toLocaleString()} Credits plus 2 Ranked Tickets.`,'tournament');}
+  if(isTournament){
+    const series=getTournamentSeries(),round=Math.max(1,Math.min(3,activeTournamentStage||series.round)),points=[10,7,5,3,2,1][Math.max(0,Math.min(5,place-1))]||0;
+    if(series.placements.length<round)series.placements[round-1]=place;else series.placements[round-1]=Math.min(Number(series.placements[round-1])||place,place);
+    series.points+=points;
+    addCredits(Math.round((350+points*70)*eventRewardScale));
+    if(round>=3){series.completed=true;const tierLabel=series.points>=27?'GOLD SERIES':series.points>=20?'SILVER SERIES':'BRONZE SERIES';const finalReward=Math.round((1400+series.points*65)*eventRewardScale);addCredits(finalReward);profile.rankedTickets=(profile.rankedTickets||0)+(series.points>=27?2:1);tournamentSummary=`THREE-ROUND ${tierLabel} COMPLETE · ${series.points} SERIES POINTS · +${finalReward.toLocaleString()} SERIES CREDITS.`;pushNotification('TOURNAMENT SERIES COMPLETE',`${tierLabel} · ${series.points} points. Your weekly result is saved.`,'tournament');}
+    else{series.round=round+1;tournamentSummary=`ROUND ${round} COMPLETE · +${points} TOURNAMENT POINTS · ROUND ${series.round} UNLOCKED.`;pushNotification('TOURNAMENT ROUND CLEARED',`${TOURNAMENT_STAGE_DEFS[round-1].name} finished #${place}. Round ${series.round} is ready.`,'tournament');}
+    saveProfile();renderTournamentPanel();
+  }
   document.body.dataset.tournament='0';
   if(lobbyChannel&&onlineRaceStarted&&authUser&&!onlineLocalFinishSent){
     onlineLocalFinishSent=true;onlineFinishers.set(authUser.id,{user_id:authUser.id,username:getDisplayUsername(),race_time:raceTime,lap:Math.floor(playerDistance/Math.max(1,trackLength)),place});
@@ -3425,14 +3799,14 @@ function finishRace(){
   else if(gameMode==='duel')$('finishTitle').innerText=won?'RIVAL DEFEATED':'RIVAL DUEL LOST';
   else $('finishTitle').innerText=won?'RACE WON':`FINISHED · #${place}`;
   const localResults=localPlayer2?`PLAYER 1 #${place}${playerFinishTime?` (${formatTime(playerFinishTime)})`:''} · PLAYER 2 #${p2Place}${p2FinishTime?` (${formatTime(p2FinishTime)})`:''} · ${p2Won?'PLAYER 2 WINS':won?'PLAYER 1 WINS':'NO LOCAL WINNER'}. `:'';
-  const objectiveText=gameMode==='time'?(won?'You survived every elimination and were the final racer remaining.':`You were eliminated in position ${place}.`):isPoliceMode?(localPlayer2?`Player 1: ${policeFailed?'busted':'escaped'} · Player 2: ${p2PoliceFailed?'busted':'escaped'}.`:(policeFailed?'Your vehicle was disabled before the pursuit timer ended.':`You survived the full ${Math.ceil(policeTargetTime)}-second pursuit.`)):gameMode==='ghost'?(ghostTargetTime<=0?'First lap record saved.':ghostBeat?'Your personal-best lap was beaten.':'Your ghost remained ahead this time.'):gameMode==='drift'?`Drift score: ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()}.`:gameMode==='checkpoint'?`Checkpoints: ${checkpointProgress}/4. Starting time: 48 seconds; each checkpoint adds 14 seconds.`:gameMode==='traffic'?`Vehicle damage: ${Math.floor(damage)}% / ${trafficLimit}% allowed.`:gameMode==='infected'?(won?'You remained untagged and outlasted every racer.':'You were tagged and eliminated.'):`${place===1?'1st place':`Place ${place}`}.`;
-  $('finishSummary').innerText=localResults+`${formatTime(raceTime)} · ${objectiveText} · +${reward} credits · +${xp} Street Rep.`+(isTournament?(place===1?' Tournament champion reward added.':` Tournament placement: #${place}.`):'')+(isSpecialEvent?' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
+  const objectiveText=gameMode==='time'?(won?'You survived every elimination and were the final racer remaining.':`You were eliminated in position ${place}.`):isPoliceMode?(localPlayer2?`Player 1: ${policeFailed?'busted':'escaped'} · Player 2: ${p2PoliceFailed?'busted':'escaped'}.`:(policeFailed?'Your vehicle was disabled before the pursuit timer ended.':`You survived the full ${Math.ceil(policeTargetTime)}-second pursuit.`)):gameMode==='ghost'?(ghostTargetTime<=0?'First lap record saved.':ghostBeat?'Your personal-best lap was beaten.':'Your ghost remained ahead this time.'):gameMode==='drift'?`Drift score: ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()}.`:gameMode==='checkpoint'?`Checkpoints: ${checkpointProgress}/4. Starting time: 10–20 seconds; each checkpoint adds 5–7 seconds.`:gameMode==='traffic'?`Vehicle damage: ${Math.floor(damage)}% / ${trafficLimit}% allowed.`:gameMode==='infected'?(won?'You remained untagged and outlasted every racer.':'You were tagged and eliminated.'):`${place===1?'1st place':`Place ${place}`}.`;
+  $('finishSummary').innerText=localResults+`${formatTime(raceTime)} · ${objectiveText} · +${reward} credits · +${xp} Street Rep.`+(isTournament?` ${tournamentSummary}`:'')+(isSpecialEvent?' Special event bonus applied.':'')+(storyMissionResult?' '+storyMissionResult:'')+' Your profile and story progress have been saved.';
   $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText=lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
   $('finishMenu').classList.remove('hidden');if(lobbyChannel&&onlineRaceStarted)updateOnlineFinishSummary();saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
-function pauseRace(){if(gameState!=='racing')return;gameState='paused';if(musicAudio)musicAudio.pause();document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
-function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(musicEnabled)initAudio();document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
-async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const resultMode=onlineRoomMode==='ranked'&&lobbyChannel?'ranked':gameMode;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:getDisplayUsername(),track:currentTrack,mode:resultMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
+function pauseRace(){if(gameState!=='racing')return;gameState='paused';setPoliceSiren(false);if(musicAudio)musicAudio.pause();document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
+function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(musicEnabled)initAudio();setPoliceSiren(isPoliceMode);document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
+async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const resultMode=lobbyChannel&&onlineRoomMode==='ranked'?'ranked':lobbyChannel&&onlineRoomMode==='tournament'?'tournament':gameMode;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:getDisplayUsername(),track:currentTrack,mode:resultMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
 async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';
   const ranked=$('rankedLeaderboard');if(ranked){ranked.innerHTML='<div class="mutedText">Loading Ranked standings…</div>';const {data:rankedData,error:rankedError}=await supabase.from('race_leaderboard').select('username,track,race_time,placement').eq('mode','ranked').order('race_time',{ascending:true}).limit(20);if(rankedError){ranked.innerHTML=`<div class="mutedText">Ranked standings unavailable: ${escapeHtml(rankedError.message)}</div>`;}else{ranked.innerHTML='';(rankedData||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)} · ${escapeHtml(r.track||'')}</span>`;ranked.appendChild(el);});if(!rankedData?.length)ranked.innerHTML='<div class="mutedText">No Ranked results yet. Complete an online Ranked race while signed in.</div>';}}
 }
@@ -3472,7 +3846,7 @@ function renderLobbyPlayers(members){
 }
 function roomMemberList(){
   if(!lobbyChannel)return[];
-  return Object.values(lobbyChannel.presenceState()).flat().filter(m=>m&&m.user_id&&m.room_code===roomMetadata?.room_code&&m.mode===onlineRoomMode).sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
+  return Object.values(lobbyChannel.presenceState()).flat().filter(m=>m&&m.user_id&&m.room_code===roomMetadata?.room_code&&m.mode===onlineRoomMode&&(onlineRoomMode!=='tournament'||m.event_key===roomMetadata?.event_key)).sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
 }
 function applyRemoteImpact(payload){
   if(activeEffects.shield>0){delete activeEffects.shield;playerSpeed*=.94;showToast('SHIELD BLOCKED ONLINE IMPACT');}
@@ -3488,9 +3862,9 @@ function launchOnlineRace(payload){
   onlineRaceStarted=true;onlineRaceId=String(payload.race_id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`);onlineLocalFinishSent=false;onlineFinishers.clear();onlineCollisionCooldown=0;
   onlineRoomMode=payload.mode||onlineRoomMode;
   // Ranked Ticket is charged with race energy only after the local countdown reaches GO.
-  currentTrack=TRACKS[payload.track]?payload.track:currentTrack;gameMode='street';playerMode='solo';isPoliceMode=false;
+  currentTrack=TRACKS[payload.track]?payload.track:currentTrack;gameMode='street';playerMode='solo';isPoliceMode=false;activeTournamentStage=Math.max(1,Math.min(3,Number(payload.event_stage)||1));activeTournamentEventKey=String(payload.event_key||'');
   forcedRaceLaps=clamp(Math.floor(Number(payload.laps)||3),2,6);forcedRaceWeather=payload.weather||'CLEAR';forcedRaceSeed=Number(payload.seed)||null;
-  document.body.dataset.returnView=onlineRoomMode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament='0';document.body.dataset.storyRace='0';
+  document.body.dataset.returnView=onlineRoomMode==='tournament'?'tournamentPanel':onlineRoomMode==='ranked'?'rankedPanel':'multiplayerPanel';document.body.dataset.specialEvent='0';document.body.dataset.tournament=onlineRoomMode==='tournament'?'1':'0';document.body.dataset.storyRace='0';
   $('matchmakingModal').classList.add('hidden');
   if(onlineStartTimer)clearTimeout(onlineStartTimer);
   const startAt=Number(payload.start_at)||Date.now()+3500;
@@ -3550,7 +3924,7 @@ async function sendOnlineRaceStart(mode,hostRecord){
   const seed=Number(host.seed)||Math.floor(Math.random()*4294967295);
   const humanProfiles=members.map(m=>({level:m.level,rankIndex:m.rankIndex,carRank:m.carRank,carLevel:m.carLevel,carStats:m.carStats}));
   const botRoster=mode==='ranked'?buildRankedBotRoster(6-members.length,seed,humanProfiles):[];
-  const payload={user_id:authUser.id,mode,humans:members.map(m=>({user_id:m.user_id,username:m.username||'RACER'})),botRoster,track:TRACKS[host.track]?host.track:currentTrack,laps:clamp(Math.floor(Number(host.laps)||3),2,6),weather:host.weather||'CLEAR',seed,race_id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,start_at:Date.now()+5200};
+  const payload={user_id:authUser.id,mode,humans:members.map(m=>({user_id:m.user_id,username:m.username||'RACER'})),botRoster,track:TRACKS[host.track]?host.track:currentTrack,laps:clamp(Math.floor(Number(host.laps)||3),2,6),weather:host.weather||'CLEAR',seed,race_id:`${Date.now()}-${Math.random().toString(36).slice(2,8)}`,start_at:Date.now()+5200,event_key:host.event_key||'',event_stage:Number(host.event_stage)||0,tournament_stage_name:host.tournament_stage_name||''};
   await lobbyChannel.send({type:'broadcast',event:'race_start',payload});
   launchOnlineRace(payload);
 }
@@ -3568,7 +3942,7 @@ async function leaveOnlineRoom(){
   ['lobbyReadyBtn','lobbyStartBtn','lobbyLeaveBtn'].forEach(id=>{if($(id))$(id).disabled=true;});
   if($('lobbyReadyBtn'))$('lobbyReadyBtn').innerText='I’M READY';
 }
-async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=false){
+async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=false,eventMeta={}){
   if(!supabaseReady||!authUser)return;
   if(lobbyChannel){try{await supabase.removeChannel(lobbyChannel);}catch(e){console.warn(e);}lobbyChannel=null;}
   onlineRaceStarted=false;onlineRaceId=null;onlineFinishers.clear();onlineLocalFinishSent=false;remoteOpponentState=null;onlineRoomMode=mode;privateLobby=!!privateRoom;publicLobby=!!isPublic;privateLobbyReady=false;isRoomHost=!!isHost;
@@ -3576,10 +3950,10 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
   if(remoteOpponentMesh&&scene){scene.remove(remoteOpponentMesh);remoteOpponentMesh=null;}
   $('roomCodeInput').value=roomCode;
   if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connecting to the public casual lobby…':`Room ${roomCode} · share this code with up to five other drivers.`;
-  $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':isPublic?'PUBLIC CASUAL LOBBY':'CASUAL LOBBY';
+  $('mmTitle').innerText=mode==='ranked'?'RANKED MATCH FOUND':mode==='tournament'?'TOURNAMENT GRID FOUND':isPublic?'PUBLIC CASUAL LOBBY':'CASUAL LOBBY';
   $('mmStatus').innerText=`Connecting to ${mode} room…`;
   const driverProfile=currentDriverMatchProfile();
-  roomMetadata={user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:2+Math.floor(Math.random()*5),weather:['CLEAR','RAIN','STORM','FOG','SNOW'][Math.floor(Math.random()*5)],seed:Math.floor(Math.random()*4294967295),isHost:!!isHost,ready:false,level:driverProfile.level,carId:driverProfile.carId,carRank:driverProfile.carRank,rankIndex:driverProfile.rankIndex,carLevel:driverProfile.carLevel,carPrice:driverProfile.carPrice,carStats:driverProfile.carStats,paint:profile.garage.paint,bodyStyle:getSelectedCar().body};
+  roomMetadata={user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,room_code:roomCode,track:currentTrack,laps:2+Math.floor(Math.random()*5),weather:['CLEAR','RAIN','STORM','FOG','SNOW'][Math.floor(Math.random()*5)],seed:Math.floor(Math.random()*4294967295),isHost:!!isHost,ready:false,level:driverProfile.level,carId:driverProfile.carId,carRank:driverProfile.carRank,rankIndex:driverProfile.rankIndex,carLevel:driverProfile.carLevel,carPrice:driverProfile.carPrice,carStats:driverProfile.carStats,paint:profile.garage.paint,bodyStyle:getSelectedCar().body,...(eventMeta||{})};
   lobbyChannel=supabase.channel(`race:${roomCode}`,{config:{broadcast:{self:false},presence:{key:authUser.id}}});
   lobbyChannel.on('broadcast',{event:'player_pos'},({payload})=>{
     if(!payload||!payload.user_id||payload.user_id===authUser?.id)return;
@@ -3621,7 +3995,7 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
       $('lobbyStartBtn').disabled=!isRoomHost||!allReady||onlineRaceStarted;$('lobbyStartBtn').style.display=isRoomHost?'block':'none';$('lobbyLeaveBtn').disabled=false;
       return;
     }
-    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 human racers connected. Pairing complete.`:mode==='ranked'?'Ranked fallback will fill the remaining grid with AI racers.':`Searching for another racer (${activeMembers.length}/6).`;
+    $('mmStatus').innerText=activeMembers.length>=2?`${activeMembers.length}/6 human racers connected. Pairing complete.`:mode==='ranked'?'Ranked fallback will fill the remaining grid with AI racers.':mode==='tournament'?'Waiting for another tournament driver on the same round…':`Searching for another racer (${activeMembers.length}/6).`;
     if(activeMembers.length>=(mode==='ranked'?1:2)&&!onlineRaceStarted&&!lobbyStartTimer){
       lobbyStartTimer=setTimeout(async()=>{
         lobbyStartTimer=null;if(!lobbyChannel||onlineRaceStarted)return;
@@ -3639,7 +4013,7 @@ async function startRaceRoom(roomCode,mode,isHost,privateRoom=false,isPublic=fal
       await lobbyChannel.track({...roomMetadata});
       if(privateLobby){$('lobbyReadyBtn').disabled=false;$('lobbyLeaveBtn').disabled=false;$('lobbyStartBtn').disabled=true;$('lobbyStartBtn').style.display=isHost?'block':'none';}
       if(mode==='casual')$('lobbyStatus').innerText=isPublic?'Connected to public casual lobby.':`Room ${roomCode} is open. Share the code with up to five other drivers.`;
-      $('mmStatus').innerText=privateLobby?'Lobby connected. Ready up when everyone is here.':mode==='ranked'?'Connected to the Ranked queue room. Waiting for the shared start signal.':'Casual match connected. Waiting for the shared start signal.';
+      $('mmStatus').innerText=privateLobby?'Lobby connected. Ready up when everyone is here.':mode==='ranked'?'Connected to the Ranked queue room. Waiting for the shared start signal.':mode==='tournament'?'Connected to the tournament round lobby. Waiting for the shared start signal.':'Casual match connected. Waiting for the shared start signal.';
     }else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){$('mmStatus').innerText='Lobby connection failed. Check Supabase Realtime settings.';}
   });
 }
@@ -3668,33 +4042,34 @@ async function connectPublicLobby(){
   $('matchmakingModal').classList.remove('hidden');
   await startRaceRoom('PUBLIC','casual',false,true,true);
 }
-async function findOnlineMatch(mode){
-  const status=mode==='ranked'?'rankedQueueStatus':'casualQueueStatus';
+async function findOnlineMatch(mode,eventMeta={}){
+  const status=mode==='ranked'?'rankedQueueStatus':mode==='tournament'?'tournamentQueueStatus':'casualQueueStatus';
   if(!supabaseReady||!authUser){$(status).innerText='Sign in and configure Supabase Realtime to search for online players.';return;}
   if(profile.energy<RACE_ENTRY_ENERGY){$(status).innerText=`Not enough energy. You need ${RACE_ENTRY_ENERGY} energy to race.`;return;}
   if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$(status).innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
+  if(mode==='tournament'&&(!eventMeta.event_key||!eventMeta.event_stage)){$(status).innerText='The tournament round could not be loaded. Refresh the Tournament tab.';return;}
   await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';
-  $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':'SEARCHING FOR CASUAL PLAYERS';
-  $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?'Searching for humans first. AI grid fillers activate after 18 seconds.':'Searching for up to six online racers…';
+  $('matchmakingModal').classList.remove('hidden');$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':mode==='tournament'?'SEARCHING FOR TOURNAMENT DRIVERS':'SEARCHING FOR CASUAL PLAYERS';
+  $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?'Searching for humans first. AI grid fillers activate after 18 seconds.':mode==='tournament'?`Finding human racers for ${eventMeta.tournament_stage_name||'this round'}…`:'Searching for up to six online racers…';
   try{
     matchmakingChannel=supabase.channel(`matchmaking:${mode}`,{config:{presence:{key:authUser.id}}});
     const tryPair=async(forceBots=false)=>{
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
-      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0)));
+      const members=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
       members.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
       const myIndex=members.findIndex(m=>m.user_id===authUser.id);if(myIndex<0){$(status).innerText='Waiting to enter the queue…';return;}
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
       if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`Searching for humans · ${group.length}/6 found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
-      if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
+      if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':mode==='tournament'?'Waiting for another human driver in the same tournament round…':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
       queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
-      $(status).innerText=`${group.length} human player${group.length===1?'':'s'} found. Filling to six with AI where needed…`;$('mmStatus').innerText=$(status).innerText;
-      try{await startRaceRoom(code,mode,authUser.id===hostId,false,false);if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}setTimeout(()=>{if(matchmakingChannel)leaveQueue();},18000);}catch(e){queuePairing=false;throw e;}
+      $(status).innerText=mode==='tournament'?`${group.length} tournament drivers found. Preparing the shared ${eventMeta.tournament_stage_name||'round'}…`:`${group.length} human player${group.length===1?'':'s'} found. Filling to six with AI where needed…`;$('mmStatus').innerText=$(status).innerText;
+      try{await startRaceRoom(code,mode,authUser.id===hostId,false,false,eventMeta);if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}setTimeout(()=>{if(matchmakingChannel)leaveQueue();},18000);}catch(e){queuePairing=false;throw e;}
     };
     matchmakingChannel.on('presence',{event:'sync'},()=>{tryPair().catch(e=>{$(status).innerText=`Matchmaking error: ${e.message}`;});});
     await matchmakingChannel.subscribe(async state=>{
       if(state==='SUBSCRIBED'){
         const queueDriver=currentDriverMatchProfile();
-        await matchmakingChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,energy:profile.energy,level:queueDriver.level,tickets:profile.rankedTickets||0,carId:queueDriver.carId,carRank:queueDriver.carRank,rankIndex:queueDriver.rankIndex,carLevel:queueDriver.carLevel,carPrice:queueDriver.carPrice,carStats:queueDriver.carStats});
+        await matchmakingChannel.track({user_id:authUser.id,username:getDisplayUsername(),joined_at:new Date().toISOString(),mode,energy:profile.energy,level:queueDriver.level,tickets:profile.rankedTickets||0,carId:queueDriver.carId,carRank:queueDriver.carRank,rankIndex:queueDriver.rankIndex,carLevel:queueDriver.carLevel,carPrice:queueDriver.carPrice,carStats:queueDriver.carStats,...(eventMeta||{})});
         if(mode==='ranked'){
           rankedFallbackTimer=setTimeout(()=>{rankedQueueReady=true;tryPair(true).catch(e=>{$(status).innerText=`Ranked fallback error: ${e.message}`;});},18000);
         }
@@ -3714,17 +4089,20 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);
   // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
   applyEnergyRegen();updateUI();
-  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(btn.dataset.view==='eventsPanel')refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
+  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(['eventsPanel','tournamentPanel','questsPanel'].includes(btn.dataset.view))refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
+  $('gameDialogCancel').addEventListener('click',()=>closeGameDialog(false));$('gameDialogConfirm').addEventListener('click',()=>closeGameDialog(true));$('gameDialog').addEventListener('click',e=>{if(e.target===$('gameDialog'))closeGameDialog(false);});
+  const unlockGameAudio=()=>{try{initAudio();if(audioCtx?.state==='suspended')audioCtx.resume?.().catch(()=>{});if(musicEnabled&&musicAudio&&gameState!=='paused')musicAudio.play().catch(()=>{});}catch(e){console.warn('Audio start deferred until next interaction',e);}};
+  document.addEventListener('pointerdown',unlockGameAudio,{passive:true});document.addEventListener('keydown',unlockGameAudio);
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
-  $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){alert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
+  $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){gameAlert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
   $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
   $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
   $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
   $('signInBtn').addEventListener('click',async()=>{if(await handleAuth(false,$('accountEmail').value,$('accountPassword').value,profile.username)){$('cloudSaveStatus').innerText='Signed in. Cloud save is active.';}});
   $('signUpBtn').addEventListener('click',async()=>{if(await handleAuth(true,$('accountEmail').value,$('accountPassword').value,profile.username))$('cloudSaveStatus').innerText='Account created. Check your email if verification is required.';});
   $('signOutBtn').addEventListener('click',async()=>{if(supabaseReady)await supabase.auth.signOut();authUser=null;$('accountStatus').innerText='Signed out. Guest progress remains on this device.';});
-  $('saveUsernameBtn').addEventListener('click',async()=>{const v=$('usernameInput').value.trim();if(!/^[a-zA-Z0-9_ -]{3,18}$/.test(v)){alert('Use 3–18 letters, numbers, spaces or underscores.');return;}profile.username=v;updateUI();saveProfile();if(authUser&&supabaseReady){try{const meta=await supabase.auth.updateUser({data:{username:v}});if(meta.error)throw meta.error;const {error}=await supabase.from('player_profiles').upsert({user_id:authUser.id,username:v,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('accountStatus').innerText=`Public racer username saved: ${v}`;}catch(e){$('accountStatus').innerText=`Username saved on this device; cloud update failed: ${e.message}`;}}});
+  $('saveUsernameBtn').addEventListener('click',async()=>{const v=$('usernameInput').value.trim();if(!/^[a-zA-Z0-9_ -]{3,18}$/.test(v)){gameAlert('Use 3–18 letters, numbers, spaces or underscores.');return;}profile.username=v;updateUI();saveProfile();if(authUser&&supabaseReady){try{const meta=await supabase.auth.updateUser({data:{username:v}});if(meta.error)throw meta.error;const {error}=await supabase.from('player_profiles').upsert({user_id:authUser.id,username:v,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;$('accountStatus').innerText=`Public racer username saved: ${v}`;}catch(e){$('accountStatus').innerText=`Username saved on this device; cloud update failed: ${e.message}`;}}});
   const buyUpgrade=(type)=>{const car=getSelectedCar(),u=getCarUpgrades(car.id),cost=upgradePrice(type,car);if(profile.credits<cost||u[type]>=5)return;profile.credits-=cost;u[type]++;profile.garage.carUpgrades[car.id]=u;profile.garage.carLevels[car.id]=(profile.garage.carLevels[car.id]||1)+1;profile.garage.engine=u.engine;profile.garage.handling=u.handling;profile.garage.nitro=u.nitro;updateUI();renderCarSelect();refreshGarageCar();saveProfile();};
   $('engineBuy').addEventListener('click',()=>buyUpgrade('engine'));$('handlingBuy').addEventListener('click',()=>buyUpgrade('handling'));$('nitroBuy').addEventListener('click',()=>buyUpgrade('nitro'));
   renderPaintSwatches();
@@ -3737,7 +4115,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('sideStoryList').addEventListener('click',e=>{const b=e.target.closest('button[data-side]');if(!b)return;const n=Number(b.dataset.side);if(!profile.storyMain[storyKey(selectedChapter)])return;document.body.dataset.storyRace='0';document.body.dataset.returnView='storyPanel';startStory(n);});
   $('mpCasualBtn').addEventListener('click',()=>findOnlineMatch('casual'));
   $('createRoomBtn').addEventListener('click',()=>{const code=Math.random().toString(36).slice(2,8).toUpperCase();connectPrivateRoom('casual',code,true);});
-  $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){alert('Enter a six-character room code.');return;}connectPrivateRoom('casual',code,false);});
+  $('joinRoomBtn').addEventListener('click',()=>{const code=$('roomCodeInput').value.trim().toUpperCase();if(!/^[A-Z0-9]{6}$/.test(code)){gameAlert('Enter a six-character room code.');return;}connectPrivateRoom('casual',code,false);});
   $('publicLobbyBtn').addEventListener('click',connectPublicLobby);$('lobbyReadyBtn').addEventListener('click',setLobbyReady);$('lobbyStartBtn').addEventListener('click',startPrivateLobbyRace);$('lobbyLeaveBtn').addEventListener('click',async()=>{await leaveOnlineRoom();$('matchmakingModal').classList.add('hidden');$('lobbyStatus').innerText='You left the lobby.';});
   $('mpRankedBtn').addEventListener('click',()=>findOnlineMatch('ranked'));
   $('refreshRankedLeaderboard').addEventListener('click',loadServerLeaderboard);
@@ -3747,18 +4125,18 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('pauseGraphic').addEventListener('click',pauseRace);$('resumeBtn').addEventListener('click',resumeRace);
   $('quitBtn').addEventListener('click',async()=>{$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;$('menu').classList.remove('hidden');$('hud').classList.remove('live');await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');updateUI();});
   $('menuBtn').addEventListener('click',async()=>{$('finishMenu').classList.add('hidden');$('weatherOverlay').className='';$('weatherLabel').innerText='WEATHER · CLEAR';$('menu').classList.remove('hidden');$('hud').classList.remove('live');$('pauseGraphic').classList.remove('visible');document.body.classList.remove('race-active');gameState='menu';if(world)world.visible=false;await leaveOnlineRoom();setView(document.body.dataset.returnView||'homePanel');document.body.dataset.storyRace='0';document.body.dataset.returnView='homePanel';updateUI();});
-  $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<RACE_ENTRY_ENERGY){alert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
-  $('tournamentBtn').addEventListener('click',()=>{storySideIndex=-1;if($('tournamentBtn').dataset.open!=='1')return;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='1';document.body.dataset.storyRace='0';document.body.dataset.specialEvent='0';gameMode='street';raceLaps=5;playerMode='solo';openRaceBriefing();});
+  $('againBtn').addEventListener('click',()=>{storySideIndex=-1;if(profile.energy<RACE_ENTRY_ENERGY){gameAlert('Not enough energy for another race.');return;}if(document.body.dataset.returnView==='homePanel')gameMode=document.querySelector('.modeCard.active')?.dataset.mode||gameMode;$('finishMenu').classList.add('hidden');openRaceBriefing();});
+  $('tournamentBtn').addEventListener('click',joinTournamentQueue);
   $('specialEventBtn').addEventListener('click',()=>{storySideIndex=-1;document.body.dataset.returnView='eventsPanel';document.body.dataset.tournament='0';document.body.dataset.specialEvent='1';document.body.dataset.storyRace='0';gameMode=specialEventMode;raceLaps=gameMode==='time'?999:(['ghost','police','checkpoint','drift'].includes(gameMode)?1:gameMode==='duel'?3:gameMode==='traffic'?2:3);playerMode='solo';openRaceBriefing();});
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('tutorialBtn').addEventListener('click',()=>{tutorialStep=0;showTutorial();});$('tutorialNext').addEventListener('click',()=>{if(tutorialStep<TUTORIAL_STEPS.length-1){tutorialStep++;showTutorial();}else{$('tutorialModal').classList.add('hidden');}});$('tutorialBack').addEventListener('click',()=>{tutorialStep=Math.max(0,tutorialStep-1);showTutorial();});$('tutorialClose').addEventListener('click',()=>$('tutorialModal').classList.add('hidden'));
   $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;if(musicAudio)musicAudio.volume=musicVolume;});
-  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}else if(musicAudio)musicAudio.pause();});$('soundToggle').addEventListener('change',e=>soundEnabled=e.target.checked);
+  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}else if(musicAudio)musicAudio.pause();});$('soundToggle').addEventListener('change',e=>{soundEnabled=e.target.checked;if(!soundEnabled)setPoliceSiren(false);else if(gameState==='racing'&&isPoliceMode){initAudio();setPoliceSiren(true);}});
   $('touchStyle').addEventListener('change',e=>document.body.dataset.touchStyle=e.target.value);
   window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
   window.addEventListener('keyup',e=>keys[e.code]=false);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
-  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();try{btn.setPointerCapture(e.pointerId);}catch(err){}mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('pointerleave',up);});
+  document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();try{btn.setPointerCapture?.(e.pointerId);}catch(_){}mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{if(e)e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);});
   $('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').style.display=$('playerModeSelect').value==='local2'?'block':'none';$('p2LoadoutSetup').hidden=$('playerModeSelect').value!=='local2';$('p1Touch').style.display='block';document.body.classList.toggle('local-two-player',$('playerModeSelect').value==='local2');});
   const energyTimer=setInterval(()=>{const gained=applyEnergyRegen();updateUI();if(gained)saveProfile();},10000);
   window.addEventListener('beforeunload',saveProfile);

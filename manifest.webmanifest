@@ -1,8 +1,26 @@
 {
+  "id": "./",
   "name": "Midnight Racing",
   "short_name": "Midnight Racing",
-  "start_url": "./index.html",
+  "description": "Build your garage, race the night, and compete in online tournaments.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#050914",
-  "theme_color": "#07111f"
+  "orientation": "landscape",
+  "background_color": "#060b16",
+  "theme_color": "#060b16",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
