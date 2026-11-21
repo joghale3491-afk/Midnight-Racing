@@ -1,9 +1,9 @@
-const CACHE_NAME = 'midnight-racing-v35-pwa-tournament-quests';
+const CACHE_NAME = 'midnight-racing-v36-audio-hud-trackcheck';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
-  './favicon.ico', './favicon-32.png', './favicon-48.png',
-  './icon-192.png', './icon-512.png', './apple-touch-icon.png',
-  './audio/midnight-racing-loop.mp3'
+  './favicon-v36.ico', './favicon.ico', './favicon-32-v36.png', './favicon-48-v36.png',
+  './icon-192-v36.png', './icon-512-v36.png', './apple-touch-icon-v36.png',
+  './audio/midnight-racing-loop.mp3', './audio/car-engine-loop.mp3'
 ];
 
 self.addEventListener('install', event => {

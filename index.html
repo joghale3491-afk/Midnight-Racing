@@ -5,25 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <meta name="description" content="Midnight Racing is an original 3D street-racing game. Build your garage, race the night, compete online, and climb the tournament series." />
 <meta name="theme-color" content="#060b16" />
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
-<link rel="icon" type="image/png" sizes="48x48" href="./favicon-48.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
-<link rel="icon" type="image/x-icon" href="./favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32-v36.png" />
+<link rel="shortcut icon" href="./favicon-v36.ico" />
+<link rel="icon" type="image/png" sizes="48x48" href="./favicon-48-v36.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192-v36.png" />
+<link rel="icon" type="image/x-icon" href="./favicon-v36.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v36.png" />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="canonical" href="https://joghale3491-afk.github.io/Midnight-Racing/" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="MIDNIGHT RACING" />
 <meta property="og:description" content="Build your garage, race the night, and compete in the online tournament series." />
 <meta property="og:url" content="https://joghale3491-afk.github.io/Midnight-Racing/" />
-<meta property="og:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512.png" />
+<meta property="og:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta property="og:image:width" content="512" />
 <meta property="og:image:height" content="512" />
 <meta property="og:site_name" content="MIDNIGHT RACING" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="MIDNIGHT RACING" />
 <meta name="twitter:description" content="Build your garage, race the night, and compete in online tournaments." />
-<meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512.png" />
+<meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
 <title>MIDNIGHT RACING — 3D Street Racing</title>
@@ -811,6 +812,24 @@ body.local-two-player.race-active #hud .bottom{max-width:43vw}
 .navBtn[data-view="tournamentPanel"].active{border-color:#ffd36a;box-shadow:inset 3px 0 #ffd36a,0 8px 24px #0005}
 @media(max-width:850px){.tournamentLayout{grid-template-columns:1fr}.questCampaignGrid{grid-template-columns:1fr}.tournamentStageGrid{grid-template-columns:1fr 1fr 1fr}#pursuitHud{top:clamp(96px,14vh,128px);width:min(190px,44vw);padding:8px 9px}}
 @media(max-width:520px){.tournamentStatGrid{gap:5px}.tournamentStat{padding:8px}.tournamentStat small{font-size:7px}.tournamentStageGrid{gap:5px}.tournamentStageCard{padding:8px}.tournamentStageCard b{font-size:9px}.tournamentStageCard span{font-size:8px}#pursuitHud{top:100px;width:150px;padding:7px 8px}#pursuitHud .pursuitHudTop b{font-size:7px}#pursuitHud .pursuitHudMeta{font-size:6px}}
+
+/* V36 HUD alignment: keep the race readout mathematically centered. */
+#hud .top{position:absolute;left:0;right:0;width:100%;}
+#hud .raceInfo{position:absolute;left:50vw;top:0;transform:translateX(-50%);margin:0;}
+#hud .brand{position:absolute;left:3vw;top:0;}
+#hud .speedPanel{position:absolute;right:3vw;top:0;}
+body.local-two-player.race-active #hud .top{left:0!important;right:0!important;width:100%!important;}
+body.local-two-player.race-active #hud .raceInfo{left:25vw!important;top:0!important;transform:translateX(-50%)!important;}
+body.local-two-player.race-active #hud .brand{left:1vw!important;}
+body.local-two-player.race-active #hud .speedPanel{right:52vw!important;}
+@media(max-width:850px){
+ #hud .raceInfo{left:50vw;top:0;gap:8px;padding:7px 9px;}
+ #hud .brand{left:10px;top:0;}
+ #hud .speedPanel{right:8px;top:0;min-width:50px;}
+ body.local-two-player.race-active #hud .raceInfo{left:25vw!important;}
+ body.local-two-player.race-active #hud .speedPanel{right:52vw!important;}
+}
+
 </style>
 </head>
 <body>
@@ -1142,7 +1161,7 @@ body.local-two-player.race-active #hud .bottom{max-width:43vw}
           <div class="heroStrip"><div><div class="eyebrow">PERSONALIZE YOUR NIGHT DRIVE</div><h2>GAME <span style="color:var(--pink)">SETTINGS</span></h2></div></div>
           <div class="featureGrid">
             <div class="featureCard"><h3>PROFILE</h3><label class="eyebrow" for="usernameInput">RACER USERNAME</label><input class="mrInput" id="usernameInput" maxlength="18" placeholder="Choose a username"><button class="smallBtn" id="saveUsernameBtn">SAVE USERNAME</button><p id="accountStatus" class="mutedText">Guest profile. Sign in to sync progress across devices.</p></div>
-            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Bundled original electronic race soundtrack</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Enhanced synthesized engine, nitro and race sound effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are available in solo and local 2-player modes. P1 drift: C / Shift. P2 drift: B / Numpad 0.</p></div>
+            <div class="featureCard"><h3>DRIVING & AUDIO</h3><label class="checkLine"><input type="checkbox" id="musicToggle" checked> Bundled original electronic race soundtrack</label><label class="checkLine"><input type="checkbox" id="soundToggle" checked> Engine loop follows speed; original nitro, crash and race effects</label><label class="eyebrow" for="musicVolume">MUSIC VOLUME</label><input type="range" id="musicVolume" min="0" max="100" value="30" style="width:100%;accent-color:#63f3ff"><label class="eyebrow" for="touchStyle">TOUCH CONTROL STYLE</label><select class="mrSelect" id="touchStyle"><option value="hold">Hold to accelerate / steer</option><option value="tap">Tap steering / hold throttle</option></select><p class="mutedText">Keyboard and touch controls are available in solo and local 2-player modes. P1 drift: C / Shift. P2 drift: B / Numpad 0.</p></div>
             <div class="featureCard"><h3>ACCOUNT ACCESS</h3><input class="mrInput" id="accountEmail" type="email" placeholder="Email address"><input class="mrInput" id="accountPassword" type="password" placeholder="Password"><div class="formRow"><button class="smallBtn" id="signInBtn">SIGN IN</button><button class="smallBtn" id="signUpBtn">CREATE ACCOUNT</button></div><button class="smallBtn" id="signOutBtn">SIGN OUT</button><p class="mutedText" id="cloudSaveStatus">Cloud save is available after Supabase is configured.</p></div>
           </div>
         </section>
@@ -1567,54 +1586,81 @@ function formatTime(sec){const m=Math.floor(sec/60),s=sec%60;return `${String(m)
 function makeMat(color,roughness=.65,metalness=0,extra={}){return new THREE.MeshStandardMaterial({color,roughness,metalness,...extra});}
 
 // --- EDM SYNTH ---
+function playNoiseBurst(duration=.18,volume=.08,cutoff=1800){
+ if(!soundEnabled||!audioCtx||audioCtx.state!=='running'||gameState==='paused')return;
+ try{
+  const seconds=clamp(Number(duration)||.18,.035,1.2),level=clamp(Number(volume)||.08,0,.35),now=audioCtx.currentTime;
+  const frames=Math.max(256,Math.floor(audioCtx.sampleRate*seconds));
+  const buffer=audioCtx.createBuffer(1,frames,audioCtx.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<frames;i++)data[i]=(Math.random()*2-1)*(.72+.28*Math.sin(i/frames*Math.PI));
+  const source=audioCtx.createBufferSource(),filter=audioCtx.createBiquadFilter(),gain=audioCtx.createGain();
+  source.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(clamp(Number(cutoff)||1800,250,9000),now);filter.Q.value=.55;
+  gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(level,now+Math.min(.018,seconds*.18));gain.gain.exponentialRampToValueAtTime(.0001,now+seconds);
+  source.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);source.start(now);source.stop(now+seconds+.015);
+ }catch(e){/* Sound effects must never interrupt a race. */}
+}
 function playSfx(frequency=120,duration=.12){
  if(!soundEnabled||!audioCtx)return;
  try{const t=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(frequency,t);o.frequency.exponentialRampToValueAtTime(Math.max(35,frequency*.58),t+duration);f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(.055,t);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(f);f.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration);}catch(e){}
 }
-const engineVoices={};
+const engineAudioVoices={};
 const nitroVoices={};
-function updateEngineSound(speed=0,throttle=false,dt=.016,player=1){
- if(!audioCtx||!soundEnabled)return;
+function getEngineAudioVoice(playerNo=1){
+ const key=playerNo===2?2:1;
+ if(!engineAudioVoices[key]){
+  const audio=new Audio('./audio/car-engine-loop.mp3');
+  audio.loop=true;audio.preload='auto';audio.volume=0;audio.playbackRate=.48;
+  // Allow the motor sample pitch to follow simulated engine RPM.
+  audio.preservesPitch=false;audio.mozPreservesPitch=false;audio.webkitPreservesPitch=false;
+  engineAudioVoices[key]={audio,lastGear:0,lastShift:0,shiftUntil:0,playPending:false,lastAttempt:0};
+ }
+ return engineAudioVoices[key];
+}
+function updateEngineSound(speed=0,throttle=false,dt=.016,playerNo=1){
+ const key=playerNo===2?2:1,v=engineAudioVoices[key];
+ if(!soundEnabled||gameState!=='racing'){
+  if(v){v.audio.volume=0;if(!v.audio.paused)v.audio.pause();}
+  return;
+ }
  try{
-  let v=engineVoices[player],t=audioCtx.currentTime;
-  if(!v){
-   const master=audioCtx.createGain();master.gain.value=0;master.connect(audioCtx.destination);
-   const body=audioCtx.createOscillator(),harm=audioCtx.createOscillator(),sub=audioCtx.createOscillator();
-   const bodyFilter=audioCtx.createBiquadFilter(),harmFilter=audioCtx.createBiquadFilter(),subFilter=audioCtx.createBiquadFilter();
-   const bodyGain=audioCtx.createGain(),harmGain=audioCtx.createGain(),subGain=audioCtx.createGain();
-   body.type='sawtooth';harm.type='triangle';sub.type='sine';
-   bodyFilter.type='lowpass';bodyFilter.frequency.value=820;bodyFilter.Q.value=.9;
-   harmFilter.type='bandpass';harmFilter.frequency.value=1250;harmFilter.Q.value=.72;
-   subFilter.type='lowpass';subFilter.frequency.value=180;subFilter.Q.value=.65;
-   bodyGain.gain.value=.25;harmGain.gain.value=.055;subGain.gain.value=.32;
-   body.connect(bodyFilter);bodyFilter.connect(bodyGain);bodyGain.connect(master);
-   harm.connect(harmFilter);harmFilter.connect(harmGain);harmGain.connect(master);
-   sub.connect(subFilter);subFilter.connect(subGain);subGain.connect(master);
-   body.start();harm.start();sub.start();
-   // Intake/exhaust texture: filtered noise follows throttle load and engine speed.
-   const noiseBuffer=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate),noiseData=noiseBuffer.getChannelData(0);
-   for(let i=0;i<noiseData.length;i++)noiseData[i]=(Math.random()*2-1)*.2;
-   const noise=audioCtx.createBufferSource(),noiseFilter=audioCtx.createBiquadFilter(),noiseGain=audioCtx.createGain();
-   noise.buffer=noiseBuffer;noise.loop=true;noiseFilter.type='bandpass';noiseFilter.frequency.value=1150;noiseFilter.Q.value=.5;
-   noiseGain.gain.value=.012;noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(master);noise.start();
-   const pulse=audioCtx.createOscillator(),pulseGain=audioCtx.createGain();pulse.type='sine';pulse.frequency.value=8;pulseGain.gain.value=.018;pulse.connect(pulseGain);pulseGain.connect(bodyGain.gain);pulse.start();
-   v=engineVoices[player]={master,body,harm,sub,bodyFilter,harmFilter,subFilter,noiseFilter,noiseGain,pulse,pulseGain,lastGear:0,lastShift:0};
+  const voice=getEngineAudioVoice(key),audio=voice.audio;
+  const velocity=clamp(Math.abs(Number(speed)||0)/250,0,1);
+  const rpm=clamp(850+velocity*4550+(throttle?420:0),850,5900);
+  const gear=Math.min(6,Math.floor(velocity*6.15));
+  const now=performance.now();
+  if(gear!==voice.lastGear&&velocity>.12&&now-voice.lastShift>420){voice.lastGear=gear;voice.lastShift=now;voice.shiftUntil=now+135;}
+  let rate=clamp(rpm/2400,.48,2.5);
+  if(now<voice.shiftUntil)rate*=.84;
+  audio.playbackRate=rate;
+  const playerMix=key===2?.68:1;
+  audio.volume=clamp((.13+velocity*.22+(throttle?.12:0))*playerMix,0,.58);
+  if(audio.paused&&!voice.playPending&&now-voice.lastAttempt>1200){
+   voice.lastAttempt=now;voice.playPending=true;
+   const result=audio.play();
+   if(result&&typeof result.then==='function')result.then(()=>{voice.playPending=false;}).catch(()=>{voice.playPending=false;});
+   else voice.playPending=false;
   }
-  const velocity=clamp((Number(speed)||0)/250,0,1),rpm=clamp(820+velocity*4300+(throttle?440:0),760,5850);
-  const firingHz=rpm/30,gear=Math.min(6,Math.floor(velocity*6.2));
-  const shifted=gear!==v.lastGear&&velocity>.1&&t-v.lastShift>.48;
-  if(shifted){v.lastGear=gear;v.lastShift=t;v.master.gain.cancelScheduledValues(t);v.master.gain.setTargetAtTime(.022,t,.018);v.body.frequency.setTargetAtTime(firingHz*.78,t,.025);v.master.gain.setTargetAtTime(throttle?.17:(speed>4?.105:.06),t+.1,.1);}
-  v.body.frequency.setTargetAtTime(firingHz*(throttle?1.015:.985),t,.045);
-  v.harm.frequency.setTargetAtTime(firingHz*2.02,t,.05);
-  v.sub.frequency.setTargetAtTime(Math.max(24,firingHz*.48),t,.07);
-  v.pulse.frequency.setTargetAtTime(Math.max(5,firingHz*.22),t,.09);
-  v.bodyFilter.frequency.setTargetAtTime(430+velocity*1420+(throttle?680:0),t,.075);
-  v.harmFilter.frequency.setTargetAtTime(850+velocity*2100+(throttle?900:0),t,.09);
-  v.noiseFilter.frequency.setTargetAtTime(720+velocity*1650+(throttle?850:0),t,.1);
-  v.noiseGain.gain.setTargetAtTime(throttle?.025:.009,t,.11);
-  const target=speed>2?(throttle?.19:.105):(throttle?.135:.055);
-  if(!shifted)v.master.gain.setTargetAtTime(target,t,.12);
- }catch(e){}
+ }catch(e){/* Audio is optional; never halt the simulation. */}
+}
+function stopEngineSounds(){
+ Object.values(engineAudioVoices).forEach(v=>{try{v.audio.volume=0;v.audio.pause();v.playPending=false;}catch(e){}});
+}
+function primeEngineAudio(){
+ if(!soundEnabled)return;
+ [1,2].forEach(key=>{
+  try{
+   const voice=getEngineAudioVoice(key);
+   if(voice.audio.paused&&!voice.playPending){
+    voice.audio.volume=0;voice.playPending=true;voice.lastAttempt=performance.now();
+    const result=voice.audio.play();
+    if(result&&typeof result.then==='function')result.then(()=>{voice.playPending=false;}).catch(()=>{voice.playPending=false;});
+    else voice.playPending=false;
+   }
+  }catch(e){}
+ });
+}
+function resumeEngineSounds(){
+ // updateEngineSound restarts each player loop on the next running simulation frame.
 }
 function playNitroIgnition(player=1){
  if(!audioCtx||!soundEnabled)return;
@@ -1659,6 +1705,7 @@ function initAudio() {
     const AudioContextClass=window.AudioContext||window.webkitAudioContext;
     if(!audioCtx&&AudioContextClass){try{audioCtx=new AudioContextClass();}catch(e){console.warn('Audio unavailable:',e.message);}}
     if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume?.().catch(()=>{});
+    primeEngineAudio();
     if(!musicAudio){
       musicAudio=new Audio('./audio/midnight-racing-loop.mp3');
       musicAudio.loop=true;musicAudio.preload='auto';musicAudio.volume=musicVolume;
@@ -1840,9 +1887,37 @@ function makeSkyTexture(hex){
   for(let i=0;i<100;i++){x.fillStyle=`rgba(235,248,255,${Math.random()*.5})`;x.fillRect(Math.random()*512,Math.random()*180,1,1);}
   const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return tex;
 }
+function trackDefinitionIsUsable(cfg){
+ if(!cfg||!Array.isArray(cfg.points)||cfg.points.length<8)return false;
+ const pts=cfg.points;
+ if(!pts.every(p=>Array.isArray(p)&&p.length>=2&&Number.isFinite(Number(p[0]))&&Number.isFinite(Number(p[1]))&&Math.abs(Number(p[0]))<=600&&Math.abs(Number(p[1]))<=600))return false;
+ const n=pts.length;
+ for(let i=0;i<n;i++){
+  const a=pts[i],b=pts[(i+1)%n],dx=b[0]-a[0],dz=b[1]-a[1];
+  if(Math.hypot(dx,dz)<12||Math.hypot(dx,dz)>650)return false;
+ }
+ // Reject self-crossing route polygons; adjacent edges and the closing edge are allowed to meet.
+ const orient=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const intersects=(a,b,c,d)=>orient(a,b,c)*orient(a,b,d)<-1e-6&&orient(c,d,a)*orient(c,d,b)<-1e-6;
+ for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+  if(j===i||j===(i+1)%n||i===(j+1)%n)continue;
+  if(intersects(pts[i],pts[(i+1)%n],pts[j],pts[(j+1)%n]))return false;
+ }
+ let area=0,length=0;
+ for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];area+=a[0]*b[1]-b[0]*a[1];length+=Math.hypot(b[0]-a[0],b[1]-a[1]);}
+ return Math.abs(area)>2500&&length>250&&length<12000;
+}
+function validateTrackCatalog(){
+ const report={valid:[],invalid:[]};
+ Object.entries(TRACKS).forEach(([id,cfg])=>(trackDefinitionIsUsable(cfg)?report.valid:report.invalid).push(id));
+ if(report.invalid.length)console.warn('Track catalog contains invalid routes; fallback will be used:',report.invalid);
+ return report;
+}
+const trackCatalogValidation=validateTrackCatalog();
 function buildWorld(id,startRace=true){
+  let cfg=TRACKS[id]||TRACKS.neon;
+  if(!trackDefinitionIsUsable(cfg)){console.warn(`Invalid track '${id}', loading NEON DISTRICT fallback.`);cfg=TRACKS.neon;id='neon';}
   currentTrack=id;
-  const cfg=TRACKS[id]||TRACKS.neon;
   if(world){scene.remove(world);world.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>{if(m.map)m.map.dispose();m.dispose();});else{if(o.material.map)o.material.map.dispose();o.material.dispose();}}});}
   if(scene.background?.isTexture)scene.background.dispose();
   trafficCars=[];powerupPickups=[];
@@ -1852,12 +1927,14 @@ function buildWorld(id,startRace=true){
   scene.fog=new THREE.Fog(currentWeather==='FOG'?0xb7c4c8:currentWeather==='STORM'?0x465765:currentWeather==='SNOW'?0xaabac7:cfg.fog,currentWeather==='FOG'?48:currentWeather==='STORM'?72:currentWeather==='SNOW'?95:125,currentWeather==='FOG'?245:currentWeather==='STORM'?345:currentWeather==='SNOW'?430:510);
   const basePts=cfg.points.map(([x,z])=>new THREE.Vector3(x,0,z));
   const baseCurve=new THREE.CatmullRomCurve3(basePts,true,'centripetal');
-  const turnCenters=[.17,.50,.82];
+  const turnList=Array.isArray(cfg.turns)?cfg.turns:[];
+  const defaultTurnCenters=[.17,.50,.82];
+  const turnCenters=turnList.map((_,j)=>defaultTurnCenters[j]??((j+1)/(turnList.length+1)));
   const trackSampleCount=216;
   const pts=Array.from({length:trackSampleCount},(_,i)=>{
     const t=i/trackSampleCount,p=baseCurve.getPointAt(t),tan=baseCurve.getTangentAt(t).normalize();
     const side=new THREE.Vector3(-tan.z,0,tan.x).normalize();let lateral=0,height=0;
-    (cfg.turns||[]).forEach((turn,j)=>{
+    turnList.forEach((turn,j)=>{
       const q=(t-turnCenters[j])/.105,envelope=Math.exp(-q*q*1.25);
       if(turn==='HAIRPIN')lateral+=5.6*Math.sin(Math.PI*q)*envelope;
       else if(turn==='CHICANE')lateral+=4.2*Math.sin(2*Math.PI*q)*envelope;
@@ -1878,7 +1955,13 @@ function buildWorld(id,startRace=true){
   // A light circular smoothing pass takes the edge off abrupt procedural turn transitions.
   const smoothPts=pts.map((p,i)=>{const prev=pts[(i+pts.length-1)%pts.length],next=pts[(i+1)%pts.length];return new THREE.Vector3(p.x*.82+(prev.x+next.x)*.09,p.y*.82+(prev.y+next.y)*.09,p.z*.82+(prev.z+next.z)*.09);});
   trackCurve=new THREE.CatmullRomCurve3(smoothPts,true,'centripetal');trackCurve.arcLengthDivisions=7200;trackCurve.updateArcLengths();trackLength=trackCurve.getLength();
-  if(!Number.isFinite(trackLength)||trackLength<100)throw new Error('Track curve length is invalid.');
+  if(!Number.isFinite(trackLength)||trackLength<250||trackLength>12000)throw new Error('Track curve length is invalid.');
+  for(let sample=0;sample<288;sample++){
+    const p=trackCurve.getPointAt(sample/288);
+    if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||!Number.isFinite(p.z))throw new Error('Track generation produced invalid spline coordinates.');
+    const next=trackCurve.getPointAt((sample+1)/288);
+    if(p.distanceTo(next)<.08)throw new Error('Track generation produced a collapsed road segment.');
+  }
   const terrainTexture=makeTerrainTexture(cfg.theme);
   const terrainMat=new THREE.MeshStandardMaterial({color:0xffffff,map:terrainTexture,bumpMap:terrainTexture,bumpScale:.022,roughness:.96,metalness:.015});
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(1800,1800),terrainMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.9;ground.receiveShadow=true;world.add(ground);
@@ -2818,7 +2901,7 @@ function loop(){
   const dt=Math.min(clock.getDelta(),.05);
   if(gameState==='racing'||gameState==='countdown'){
     try{update(dt);if(gameState==='racing'||gameState==='countdown')updateWeatherEffects(dt);}
-    catch(error){console.error('Race update halted safely:',error);gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
+    catch(error){console.error('Race update halted safely:',error);gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
   }
   if(world)world.visible=gameState!=='menu';
   try{
@@ -2835,7 +2918,7 @@ function loop(){
         camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.render(scene,camera);
       }
     }
-  }catch(error){renderer.setScissorTest(false);renderer.autoClear=true;graphicsInitError=error;console.error('WebGL render failed:',error);if(gameState==='racing'||gameState==='countdown'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT ERROR · RACE PAUSED');}}
+  }catch(error){renderer.setScissorTest(false);renderer.autoClear=true;graphicsInitError=error;stopEngineSounds();console.error('WebGL render failed:',error);if(gameState==='racing'||gameState==='countdown'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT ERROR · RACE PAUSED');}}
 }
 
 // --- UI & MENU LOGIC ---
@@ -3680,7 +3763,7 @@ Enable hardware acceleration/WebGL or try another browser, then refresh.`);
 
 function finishRace(){
   if(raceAwarded)return;
-  setPoliceSiren(false);$('pursuitHud')?.classList.remove('visible');$('modeTimerHud')?.classList.remove('visible');$('driftControlBtn')?.classList.remove('visible');
+  setPoliceSiren(false);stopEngineSounds();updateNitroSound(false,0,1);updateNitroSound(false,0,2);$('pursuitHud')?.classList.remove('visible');$('modeTimerHud')?.classList.remove('visible');$('driftControlBtn')?.classList.remove('visible');
   raceAwarded=true;gameState='finished';document.body.classList.remove('race-active');$('pauseGraphic').classList.remove('visible');
   const eventTier=getEventTierIndex(),isSpecialEvent=document.body.dataset.specialEvent==='1',isTournament=document.body.dataset.tournament==='1',wasOnlineRace=!!(lobbyChannel&&onlineRaceStarted);
   const eventRewardScale=1+eventTier*.12;
@@ -3804,8 +3887,13 @@ function finishRace(){
   $('againBtn').classList.toggle('hidden',!!lobbyChannel);$('menuBtn').innerText=lobbyChannel?'LEAVE MULTIPLAYER':'MENU';document.body.dataset.specialEvent='0';
   $('finishMenu').classList.remove('hidden');if(lobbyChannel&&onlineRaceStarted)updateOnlineFinishSummary();saveProfile();updateUI();refreshQuests();renderStory();renderLocalLeaderboard();
 }
-function pauseRace(){if(gameState!=='racing')return;gameState='paused';setPoliceSiren(false);if(musicAudio)musicAudio.pause();document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
-function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(musicEnabled)initAudio();setPoliceSiren(isPoliceMode);document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
+function pauseRaceAudio(){
+ stopEngineSounds();
+ if(musicAudio)musicAudio.pause();
+ if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{});
+}
+function pauseRace(){if(gameState!=='racing')return;gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu').classList.remove('hidden');$('pauseGraphic').classList.remove('visible');}
+function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});if(musicEnabled)initAudio();setPoliceSiren(isPoliceMode);document.body.classList.add('race-active');$('pauseMenu').classList.add('hidden');$('pauseGraphic').classList.add('visible');clock.getDelta();}
 async function submitServerResult(time,place,reward){if(!supabaseReady||!authUser)return;const resultMode=lobbyChannel&&onlineRoomMode==='ranked'?'ranked':lobbyChannel&&onlineRoomMode==='tournament'?'tournament':gameMode;const {error}=await supabase.from('race_leaderboard').insert({user_id:authUser.id,username:getDisplayUsername(),track:currentTrack,mode:resultMode,race_time:time,placement:place,credits_earned:reward});if(error)throw error;}
 async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';
   const ranked=$('rankedLeaderboard');if(ranked){ranked.innerHTML='<div class="mutedText">Loading Ranked standings…</div>';const {data:rankedData,error:rankedError}=await supabase.from('race_leaderboard').select('username,track,race_time,placement').eq('mode','ranked').order('race_time',{ascending:true}).limit(20);if(rankedError){ranked.innerHTML=`<div class="mutedText">Ranked standings unavailable: ${escapeHtml(rankedError.message)}</div>`;}else{ranked.innerHTML='';(rankedData||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)} · ${escapeHtml(r.track||'')}</span>`;ranked.appendChild(el);});if(!rankedData?.length)ranked.innerHTML='<div class="mutedText">No Ranked results yet. Complete an online Ranked race while signed in.</div>';}}
@@ -4131,7 +4219,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('refreshLeaderboard').addEventListener('click',loadServerLeaderboard);
   $('tutorialBtn').addEventListener('click',()=>{tutorialStep=0;showTutorial();});$('tutorialNext').addEventListener('click',()=>{if(tutorialStep<TUTORIAL_STEPS.length-1){tutorialStep++;showTutorial();}else{$('tutorialModal').classList.add('hidden');}});$('tutorialBack').addEventListener('click',()=>{tutorialStep=Math.max(0,tutorialStep-1);showTutorial();});$('tutorialClose').addEventListener('click',()=>$('tutorialModal').classList.add('hidden'));
   $('musicVolume').addEventListener('input',e=>{musicVolume=Number(e.target.value)/100;if(musicAudio)musicAudio.volume=musicVolume;});
-  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}else if(musicAudio)musicAudio.pause();});$('soundToggle').addEventListener('change',e=>{soundEnabled=e.target.checked;if(!soundEnabled)setPoliceSiren(false);else if(gameState==='racing'&&isPoliceMode){initAudio();setPoliceSiren(true);}});
+  $('musicToggle').addEventListener('change',e=>{musicEnabled=e.target.checked;if(musicEnabled){try{initAudio();audioCtx?.resume?.();}catch(err){console.warn(err);}}else if(musicAudio)musicAudio.pause();});$('soundToggle').addEventListener('change',e=>{soundEnabled=e.target.checked;if(!soundEnabled){setPoliceSiren(false);stopEngineSounds();updateNitroSound(false,0,1);updateNitroSound(false,0,2);}else{initAudio();if(gameState==='racing'&&isPoliceMode)setPoliceSiren(true);}});
   $('touchStyle').addEventListener('change',e=>document.body.dataset.touchStyle=e.target.value);
   window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
   window.addEventListener('keyup',e=>keys[e.code]=false);
