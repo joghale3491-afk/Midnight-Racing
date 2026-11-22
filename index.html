@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
-<title>MIDNIGHT RACING v38 — 3D Street Racing</title>
+<title>MIDNIGHT RACING v39.1 — Mobile HUD & Ranked Matchmaking</title>
 <script type="importmap">
 {
   "imports": {
@@ -926,6 +926,177 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+
+
+/* V39.1 · HUD hierarchy, mode timer clarity, touch targets and mobile landscape layout */
+:root{--ui-panel:rgba(5,15,27,.9);--ui-border:rgba(110,225,255,.34);--ui-shadow:0 10px 28px rgba(0,0,0,.42)}
+button,select,input{font:inherit}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:focus-visible,.navBtn:focus-visible,.modeCard:focus-visible,.trackCard:focus-visible{outline:2px solid #88f4ff;outline-offset:3px}
+.primaryBtn,.secondaryBtn,.goldBtn,.smallBtn,.navBtn,.modeCard,.trackCard{min-height:44px}
+.featureCard,.mpCard,.tournamentFeature,.questCampaignCard,.tournamentStageCard{min-width:0;overflow-wrap:anywhere}
+.modeGrid{gap:10px}
+.modeCard{min-height:92px;padding:14px;border-radius:13px;background:linear-gradient(145deg,#142b40,#091726);border-color:#8cecff36}
+.modeCard strong{font-size:clamp(10px,1vw,12px);line-height:1.35}
+.modeCard small{font-size:10px;line-height:1.45}
+.modeCard.active{box-shadow:inset 0 0 0 1px #6df0ff,0 9px 25px #00d9ff20}
+.trackCard{min-height:138px;border-radius:13px}
+.featureCard,.mpCard,.tournamentFeature,.questCampaignCard{border-radius:15px}
+.dataRow,.lobbyDriver{gap:10px;min-width:0}
+.dataRow span,.driverStatus{overflow-wrap:anywhere;text-align:right}
+.mpStatus,.tournamentQueueStatus{line-height:1.55;overflow-wrap:anywhere}
+.mrInput,.mrSelect,input,select{min-height:42px}
+.mmRoster{border:1px solid #72e9ff42;background:rgba(3,12,22,.78);padding:12px}
+.mmPlayersList{display:grid;gap:7px}
+.lobbyDriver{border:1px solid #7bdff22d;background:linear-gradient(105deg,#0e2030,#08131f);min-height:48px}
+.lobbyDriver.isYou{border-color:#70edff88;background:linear-gradient(105deg,#12354a,#0a1a29)}
+.lobbyDriver .driverName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lobbyDriver .driverStatus{font-size:9px;letter-spacing:.06em;color:#9ed5e5}
+#hud .raceInfo{gap:clamp(8px,1.6vw,20px)}
+#hud .raceInfo .info{min-width:58px}
+#hud .raceInfo #timer{font-size:clamp(18px,2.3vw,29px);letter-spacing:.035em;font-variant-numeric:tabular-nums;text-shadow:0 0 14px #68dcff30}
+#hud .raceInfo .info small{font-size:8px;letter-spacing:.14em}
+#modeTimerHud{width:min(270px,calc(100vw - 28px));padding:10px 15px 9px;border:1px solid #75eaff85;border-radius:14px;background:linear-gradient(145deg,rgba(3,14,26,.96),rgba(10,35,54,.9));box-shadow:var(--ui-shadow),0 0 22px #31ddff20;clip-path:none}
+#modeTimerHud strong{font-size:clamp(27px,3.5vw,39px);font-variant-numeric:tabular-nums;letter-spacing:.04em;line-height:1.05}
+#modeTimerHud.warning{border-color:#ff6b83;background:linear-gradient(145deg,#210d1aee,#35121dee);box-shadow:0 0 24px #ff426a48}
+.modeTimerTrack{height:5px;margin:8px 0 5px;border-radius:99px;overflow:hidden;background:#233647;border:1px solid #a6dcf51f}
+.modeTimerTrack i{display:block;width:100%;height:100%;border-radius:99px;background:linear-gradient(90deg,#2de0fa,#b9fbff);box-shadow:0 0 12px #3de9ff99;transition:width .12s linear}
+#modeTimerHud.warning .modeTimerTrack i{background:linear-gradient(90deg,#ffb35c,#ff526e);box-shadow:0 0 12px #ff526e88}
+.modeTimerHint{display:block;font-size:7px;font-weight:900;letter-spacing:.2em;color:#8fb4c9}
+#hud .bottom>div{min-width:0}
+#hud .nitroPanel,#hud .vehicleStatus,#hud .racePowerupPanel{box-shadow:var(--ui-shadow);backdrop-filter:blur(12px)}
+#touchControls .touchCluster button{min-width:42px;min-height:42px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#touchControls .touchCluster button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#driftControlBtn{min-height:46px;padding:11px 18px}
+#mobileControlsHint{max-width:92vw;white-space:normal;text-align:center;line-height:1.4}
+@media(max-width:850px){
+  .modeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #trackGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .heroStrip{padding:16px;min-height:0}
+  .heroStrip p{font-size:11px}
+  .featureGrid{grid-template-columns:minmax(0,1fr)}
+  .tournamentLayout{grid-template-columns:minmax(0,1fr)}
+  .mmRoster{padding:9px}
+  #hud .raceInfo .info{min-width:42px}
+  #hud .raceInfo #timer{font-size:clamp(16px,3.4vw,22px)}
+  #hud .bottom{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #hud .racePowerupPanel{grid-column:1/-1}
+}
+@media(max-width:520px) and (orientation:portrait){
+  .modeGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .modeCard{min-height:78px;padding:10px}
+  .modeCard strong{font-size:9px}
+  .modeCard small{font-size:8px}
+  #trackGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  #hud .raceInfo{gap:4px}
+  #hud .raceInfo .info{min-width:34px}
+  #hud .raceInfo .info small{font-size:6px}
+  #hud .raceInfo #timer{font-size:14px}
+  #modeTimerHud{width:154px;padding:6px 9px}
+  #modeTimerHud strong{font-size:23px}
+  .modeTimerHint{font-size:6px}
+}
+
+/* Mobile landscape: reserve the lower corners for steering and keep the race readouts in the clear centre lane. */
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  html,body{height:100%;height:100dvh;overscroll-behavior:none}
+  .overlay{padding:5px max(7px,env(safe-area-inset-left)) max(5px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-right));align-items:center}
+  .menuWrap{width:min(100%,1180px);max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8px);padding:10px 12px;border-radius:13px}
+  #menu .menuWrap{max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8px)}
+  #menu .hubTop{padding:2px 2px 8px;margin-bottom:8px;gap:8px}
+  .hubLogo{font-size:clamp(22px,4.8vh,31px)}
+  .hubTag{font-size:7px;margin-top:3px}
+  .creditsPill{padding:6px 10px;font-size:8px}
+  #menu .hubGrid{display:grid!important;grid-template-columns:minmax(118px,20%) minmax(0,1fr)!important;gap:9px!important;overflow:hidden!important}
+  #menu .sideNav{display:flex!important;flex-direction:column!important;max-height:none!important;height:100%!important;overflow-y:auto!important;gap:4px!important;padding-right:4px!important}
+  #menu .sideNav .navBtn{min-height:34px!important;padding:6px 8px!important;font-size:8px!important;line-height:1.25}
+  #menu .hubMain{min-height:0!important;max-height:none!important;overflow-y:auto!important;padding-right:3px}
+  .heroStrip{min-height:0;padding:12px;margin-bottom:9px;border-radius:11px}
+  .heroStrip h2{font-size:clamp(21px,4.6vh,30px);margin:5px 0}
+  .heroStrip p{font-size:9px;line-height:1.35}
+  .panelTitle{margin:9px 0 6px;font-size:8px}
+  .modeGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .modeCard{min-height:63px;padding:7px;border-radius:9px}
+  .modeCard strong{font-size:8px}
+  .modeCard small{font-size:7px;line-height:1.25;margin-top:3px}
+  #trackGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .trackCard{min-height:76px;border-radius:9px}
+  .trackArt{min-height:50px}
+  .trackCard strong,.trackCard small{font-size:7px}
+  .featureCard,.mpCard,.tournamentFeature,.questCampaignCard,.tournamentStageCard{padding:9px;border-radius:10px}
+  .featureGrid,.tournamentLayout{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .dataRow{padding:6px 0;font-size:9px}
+  .primaryBtn,.secondaryBtn,.goldBtn,.smallBtn{min-height:36px;padding:7px 10px;font-size:9px}
+  #hud .top{top:max(4px,env(safe-area-inset-top));left:max(5px,env(safe-area-inset-left));right:max(5px,env(safe-area-inset-right))}
+  #hud .raceInfo{left:50%!important;top:0!important;transform:translateX(-50%)!important;gap:clamp(6px,1.5vw,13px);padding:5px 9px;border-radius:9px}
+  #hud .raceInfo .info{min-width:39px}
+  #hud .raceInfo .info small{font-size:6px}
+  #hud .raceInfo .info b,#hud .raceInfo #timer{font-size:clamp(14px,3.1vh,19px)}
+  #hud .brand{display:none}
+  #hud .speedPanel{top:4px;right:5px;min-width:64px;padding:4px 6px;border-radius:8px}
+  #hud #speed{font-size:clamp(24px,6.2vh,37px)}
+  #hud .speedUnit{font-size:6px;margin-top:2px}
+  #hud .bottom{left:22%;right:22%;bottom:calc(76px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;align-items:stretch}
+  #hud .nitroPanel,#hud .vehicleStatus,#hud .racePowerupPanel{padding:5px 6px;border-radius:8px;min-width:0}
+  #hud .rowLabel{font-size:6px;letter-spacing:.04em;margin-bottom:3px}
+  #hud .energyStatus,#hud .powerStatus{font-size:6px;min-height:9px;margin-top:3px}
+  #hud .bar{height:5px;margin-bottom:4px!important}
+  #hud .racePowerupHead b,#hud .racePowerupHead small{font-size:6px}
+  #hud .racePowerupSlots{gap:3px}
+  #hud .racePowerupSlots>*{min-width:0;padding:3px;font-size:6px}
+  #hud .damagePips{gap:3px;margin-top:4px}
+  #hud .damagePips i{width:10px;height:4px}
+  #modeTimerHud{top:clamp(54px,12vh,66px)!important;width:clamp(132px,25vw,190px)!important;padding:5px 8px!important;border-radius:9px!important}
+  #modeTimerHud strong{font-size:clamp(20px,4.2vh,27px)!important}
+  #modeTimerHud small{font-size:6px!important}
+  .modeTimerTrack{height:4px;margin:5px 0 3px}
+  .modeTimerHint{font-size:5px}
+  #pursuitHud{top:clamp(53px,12vh,68px)!important;left:8px!important;right:auto!important;width:clamp(112px,20vw,160px)!important;padding:5px 7px!important;border-radius:8px}
+  #pursuitHud .pursuitHudTop b,#pursuitHud .pursuitHudTop span{font-size:6px}
+  #pursuitHud .pursuitHeatTrack{height:4px;margin:5px 0}
+  #pursuitHud .pursuitHudMeta{font-size:5px}
+  #touchControls{bottom:max(4px,env(safe-area-inset-bottom));left:max(5px,env(safe-area-inset-left));right:max(5px,env(safe-area-inset-right));padding:0!important;gap:5px;align-items:flex-end;justify-content:space-between}
+  #touchControls .touchCluster{padding:4px!important;gap:3px!important;border-radius:10px!important;grid-template-columns:repeat(3,clamp(34px,7.8vh,42px))!important;grid-template-rows:14px repeat(2,clamp(34px,7.8vh,42px))!important}
+  #touchControls .touchCluster button{min-width:34px;min-height:34px;border-radius:8px!important;font-size:10px!important;padding:2px}
+  #touchControls .touchLabel{font-size:5px;letter-spacing:.08em}
+  #touchControls .touchRight{grid-template-columns:repeat(2,clamp(34px,7.4vh,40px))!important;grid-template-rows:14px repeat(3,clamp(32px,7.1vh,38px))!important}
+  #touchControls .touchRight button{min-height:32px}
+  #driftControlBtn{bottom:calc(78px + env(safe-area-inset-bottom));padding:7px 11px;min-height:34px;font-size:8px}
+  #mobileControlsHint{display:none}
+  #p2RaceHud{top:45px!important;right:5px!important;width:21vw!important;max-width:21vw!important;max-height:35vh!important;padding:5px 7px!important}
+  #p2RaceHud .p2HudReadout span{font-size:clamp(17px,3vh,24px)!important}
+  #p2RaceHud .p2HudControls{font-size:5px!important}
+  body.local-two-player.race-active #hud .top{left:1%!important;right:auto!important;width:47%!important}
+  body.local-two-player.race-active #hud .raceInfo{left:50%!important}
+  body.local-two-player.race-active #hud .speedPanel{right:2%!important}
+  body.local-two-player.race-active #hud .bottom{left:21%!important;right:1%!important;bottom:calc(74px + env(safe-area-inset-bottom))!important;max-width:28vw!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  body.local-two-player.race-active #hud .racePowerupPanel{display:none}
+  body.local-two-player.race-active #p2RaceHud{top:4px!important;right:1%!important;width:26vw!important;max-width:26vw!important}
+  body.local-two-player.race-active #touchControls{justify-content:space-between!important}
+  body.local-two-player.race-active #p1Touch .touchCluster,body.local-two-player.race-active #p2Touch .touchCluster{grid-template-columns:repeat(3,clamp(30px,6.5vh,36px))!important;grid-template-rows:14px repeat(2,clamp(30px,6.5vh,36px))!important}
+  body.local-two-player.race-active #touchControls .touchRight{display:none!important}
+  body.local-two-player.race-active #p1Touch,body.local-two-player.race-active #p2Touch{display:block!important}
+  .overlayCard,.briefingCard{max-height:calc(100dvh - 10px);overflow-y:auto;padding:12px;border-radius:12px}
+  .overlayCard h2,.briefingCard h2{font-size:clamp(17px,4vh,23px);margin:5px 0}
+  .overlayCard p,.briefingStory{font-size:9px;line-height:1.4}
+  .briefingMeta{gap:5px}
+  .briefingMeta>div{padding:6px}
+  .briefingMeta small{font-size:6px}
+  .briefingMeta b{font-size:8px}
+}
+@media (orientation:landscape) and (max-height:560px) and (pointer:coarse) and (max-width:700px){
+  #menu .hubGrid{grid-template-columns:minmax(104px,23%) minmax(0,1fr)!important;gap:6px!important}
+  #menu .sideNav .navBtn{font-size:7px!important;padding:5px 6px!important}
+  .modeGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #trackGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .modeCard{min-height:54px}
+  .trackCard{min-height:66px}
+  #hud .bottom{left:27%;right:27%;bottom:calc(72px + env(safe-area-inset-bottom))}
+  #hud .racePowerupPanel{display:none}
+  #hud .bottom{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #hud .touchCluster{gap:2px!important}
+}
+
 </style>
 </head>
 <body>
@@ -964,7 +1135,7 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
   </div>
   <div class="controlsHint">P1 LEFT VIEW · WASD / ARROWS · SPACE NITRO · C / SHIFT DRIFT · Q POWERUP · E SWITCH · P2 RIGHT VIEW · IJKL · U NITRO · B DRIFT · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
 </div>
-<div id="modeTimerHud" class="modeTimerHud" aria-live="polite"><small id="modeTimerLabel">ROUND TIMER</small><strong id="modeTimerValue">00:30</strong></div>
+<div id="modeTimerHud" class="modeTimerHud" aria-live="polite"><small id="modeTimerLabel">ROUND TIMER</small><strong id="modeTimerValue">00:30</strong><div class="modeTimerTrack" aria-hidden="true"><i id="modeTimerProgress"></i></div><span id="modeTimerHint" class="modeTimerHint">TIME REMAINING</span></div>
 <div id="pursuitHud" aria-live="polite"><div class="pursuitHudTop"><b>ACTIVE PURSUIT</b><span id="pursuitHeatLevel">HEAT 1</span></div><div class="pursuitHeatTrack"><i id="pursuitHeatFill"></i></div><div class="pursuitHudMeta"><span id="pursuitUnits">3 PATROL UNITS</span><span id="pursuitPhase">PHASE 1 / 3</span></div></div>
 <button id="driftControlBtn" type="button" data-control="drift">HOLD TO DRIFT · C / SHIFT</button>
 
@@ -1382,8 +1553,8 @@ import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP (CHANGE THESE TWO LINES) ---
-const SUPABASE_URL = 'https://mrmassbqjcfdsnnfknww.supabase.co'; // Add your project URL
-const SUPABASE_ANON_KEY = 'sb_publishable_t0OojBZSDsFKsJK0kn9I-g_njpzJJnn'; // Use the public anon/publishable key only
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // Add your project URL
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Use the public anon/publishable key only
 const supabaseReady = /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && SUPABASE_ANON_KEY.length > 20 && !SUPABASE_ANON_KEY.includes('YOUR_');
 const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -2981,13 +3152,13 @@ function update(dt){
 
   if(ghostCar&&ghostTargetTime>0){const ghostProgress=clamp(raceTime/ghostTargetTime,0,1);const gf=frameAt(ghostProgress*trackLength);ghostCar.position.copy(gf.p).addScaledVector(gf.side,0);ghostCar.position.y=.2;ghostCar.lookAt(frameAt(ghostProgress*trackLength+5).p);}
   const tierChallengeBoost=(document.body.dataset.specialEvent==='1'||document.body.dataset.tournament==='1')?getEventTierIndex():0;const driftTarget=3000+tierChallengeBoost*650;trafficDamageLimit=Math.max(20,40-tierChallengeBoost*3);
-  const timerHud=$('modeTimerHud'),timerLabel=$('modeTimerLabel'),timerValue=$('modeTimerValue');let modeClock=null,modeClockTitle='';
-  if(gameMode==='time'){modeClock=eliminationCountdown;modeClockTitle=`TIME UNTIL ELIMINATION · ROUND ${eliminationRound+1}`;}
-  else if(isPoliceMode){modeClock=Math.max(0,policeTargetTime-raceTime);modeClockTitle=`POLICE PURSUIT · ${Math.ceil(policeTargetTime)}s TARGET`;}
-  else if(gameMode==='checkpoint'){modeClock=Math.max(0,checkpointDeadline-raceTime);modeClockTitle='CHECKPOINT RUN · TIME REMAINING';}
-  else if(gameMode==='drift'){modeClock=Math.max(0,90-raceTime);modeClockTitle='DRIFT TRIAL · TIME REMAINING';}
-  else if(gameMode==='infected'){modeClock=infectedCountdown;modeClockTitle=`INFECTED · ROUND ${infectedRound}`;}
-  if(timerHud){timerHud.classList.toggle('visible',modeClock!==null);timerHud.classList.toggle('warning',modeClock!==null&&modeClock<=10);if(modeClock!==null){timerLabel.innerText=modeClockTitle;timerValue.innerText=`${Math.ceil(modeClock)}s`;}}
+  const timerHud=$('modeTimerHud'),timerLabel=$('modeTimerLabel'),timerValue=$('modeTimerValue'),timerProgress=$('modeTimerProgress'),timerHint=$('modeTimerHint');let modeClock=null,modeClockTitle='',modeClockMax=30;
+  if(gameMode==='time'){modeClock=eliminationCountdown;modeClockMax=TIME_ATTACK_ROUND_SECONDS;modeClockTitle=`TIME ATTACK · ROUND ${eliminationRound+1}`;}
+  else if(isPoliceMode){modeClock=Math.max(0,policeTargetTime-raceTime);modeClockMax=Math.max(1,policeTargetTime);modeClockTitle='POLICE PURSUIT';}
+  else if(gameMode==='checkpoint'){modeClock=Math.max(0,checkpointDeadline-raceTime);modeClockMax=Math.max(20,checkpointDeadline);modeClockTitle='CHECKPOINT RUN';}
+  else if(gameMode==='drift'){modeClock=Math.max(0,90-raceTime);modeClockMax=90;modeClockTitle='DRIFT TRIAL';}
+  else if(gameMode==='infected'){modeClock=infectedCountdown;modeClockMax=30;modeClockTitle=`INFECTED · ROUND ${infectedRound}`;}
+  if(timerHud){timerHud.classList.toggle('visible',modeClock!==null);timerHud.classList.toggle('warning',modeClock!==null&&modeClock<=10);if(modeClock!==null){const remaining=Math.max(0,Math.ceil(modeClock)),minutes=Math.floor(remaining/60),seconds=remaining%60,ratio=clamp(remaining/Math.max(1,modeClockMax),0,1);timerLabel.innerText=modeClockTitle;timerValue.innerText=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;if(timerProgress)timerProgress.style.width=`${ratio*100}%`;if(timerHint)timerHint.innerText=remaining<=10?'FINAL SECONDS':'TIME REMAINING';}}
   if(gameMode==='infected')$('powerStatus').innerText=`INFECTED ROUND ${infectedRound} · TAGGED DRIVER ELIMINATED IN ${Math.ceil(infectedCountdown)}s`;
   else if(gameMode==='drift')$('powerStatus').innerText=`DRIFT SCORE · ${Math.floor(driftScore).toLocaleString()} / ${driftTarget.toLocaleString()} · COMBO x${(1+Math.min(.8,driftComboTime*.18)).toFixed(1)}`;
   else if(gameMode==='checkpoint')$('powerStatus').innerText=`CHECKPOINTS · ${checkpointProgress}/4 · ${Math.max(0,Math.ceil(checkpointDeadline-raceTime))}s LEFT${localPlayer2?` · P2 ${p2CheckpointProgress}/4`:''}`;
@@ -4116,7 +4287,7 @@ function renderDriverRoster(targetId,members,kind='lobby'){
     const name=document.createElement('b');name.className='driverName';
     name.textContent=String(member.username||'RACER').trim().slice(0,18)||'RACER';
     const status=document.createElement('small');status.className='driverStatus';
-    if(kind==='queue')status.textContent=self?'YOU · SEARCHING':'SEARCHING';
+    if(kind==='queue'){const rankLabel=member.mode==='ranked'&&member.carRank?` · ${String(member.carRank).toUpperCase()} CLASS`:'';status.textContent=(self?'YOU · SEARCHING':'SEARCHING')+rankLabel;}
     else status.textContent=[member.isHost?'HOST':null,member.ready?'READY':'WAITING',self?'YOU':null].filter(Boolean).join(' · ');
     row.append(name,status);host.appendChild(row);
   });
@@ -4229,7 +4400,21 @@ function buildAdaptiveAiRoster(count,seed,humanProfiles=[],tierIndex=getEventTie
   });
 }
 function buildRankedBotRoster(count,seed,humanProfiles=[]){
-  return buildAdaptiveAiRoster(count,seed,humanProfiles,getEventTierIndex(),true);
+  const roster=buildAdaptiveAiRoster(count,seed,humanProfiles,getEventTierIndex(),true);
+  const first=humanProfiles.find(Boolean)||currentDriverMatchProfile();
+  const targetIndex=clamp(Number.isFinite(Number(first.rankIndex))?Math.round(Number(first.rankIndex)):Math.max(0,CAR_RANKS.findIndex(r=>r.name===first.carRank)),0,CAR_RANKS.length-1);
+  const targetRank=CAR_RANKS[targetIndex]||CAR_RANKS[0];
+  const models=CAR_CATALOG.filter(c=>c.rank===targetRank.name);
+  return roster.map((bot,i)=>{
+    const model=models[(Math.abs(Math.floor(Number(seed)||1))+i*7)%Math.max(1,models.length)]||CAR_CATALOG[0];
+    const stats={
+      speed:Math.round(clamp(Number(bot.stats?.speed)||model.speed,targetRank.speedMin,targetRank.speedMax)),
+      acceleration:Math.round(clamp(Number(bot.stats?.acceleration)||model.acceleration,targetRank.accelMin,targetRank.accelMax)),
+      handling:Math.round(clamp(Number(bot.stats?.handling)||model.handling,targetRank.handlingMin,targetRank.handlingMax)),
+      durability:Math.round(clamp(Number(bot.stats?.durability)||model.durability,targetRank.durabilityMin,targetRank.durabilityMax))
+    };
+    return {...bot,carId:model.id,carName:model.name,rank:targetRank.name,rankIndex:targetIndex,price:model.price,carLevel:Math.max(1,Math.min(Number(bot.driverLevel)||1,Number(model.level)||1)),stats};
+  });
 }
 async function sendOnlineRaceStart(mode,hostRecord){
   if(!lobbyChannel||!authUser)return;
@@ -4424,6 +4609,13 @@ async function connectPublicLobby(){
   $('matchmakingModal').classList.remove('hidden');
   await startRaceRoom('PUBLIC','casual',false,true,true);
 }
+function normalizeMatchCarRank(carRank,rankIndex){
+  const raw=String(carRank||'').trim().toLowerCase();
+  const found=CAR_RANKS.find(r=>String(r.name).toLowerCase()===raw);
+  if(found)return found.name;
+  const idx=Number(rankIndex);
+  return Number.isFinite(idx)?(CAR_RANKS[clamp(Math.round(idx),0,CAR_RANKS.length-1)]||CAR_RANKS[0]).name:CAR_RANKS[0].name;
+}
 async function findOnlineMatch(mode,eventMeta={}){
   const status=mode==='ranked'?'rankedQueueStatus':mode==='tournament'?'tournamentQueueStatus':'casualQueueStatus';
   if(!supabaseReady||!authUser){$(status).innerText='Sign in and configure Supabase Realtime to search for online players.';return;}
@@ -4431,25 +4623,27 @@ async function findOnlineMatch(mode,eventMeta={}){
   if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$(status).innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
   if(mode==='tournament'&&(!eventMeta.event_key||!eventMeta.event_stage)){$(status).innerText='The tournament round could not be loaded. Refresh the Tournament tab.';return;}
   await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';
-  $('matchmakingModal').classList.remove('hidden');$('mmLobbyActions').classList.add('hidden');$('mmInviteBar').classList.add('hidden');$('mmCancelBtn').innerText='CANCEL SEARCH';$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':mode==='tournament'?'SEARCHING FOR TOURNAMENT DRIVERS':'SEARCHING FOR CASUAL PLAYERS';
-  $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN QUEUE':mode==='tournament'?'PLAYERS IN TOURNAMENT QUEUE':'PLAYERS IN CASUAL QUEUE';
+  const myQueueProfile=currentDriverMatchProfile();
+  const rankedCarClass=mode==='ranked'?normalizeMatchCarRank(myQueueProfile.carRank,myQueueProfile.rankIndex):'';
+  $('matchmakingModal').classList.remove('hidden');$('mmLobbyActions').classList.add('hidden');$('mmInviteBar').classList.add('hidden');$('mmCancelBtn').innerText='CANCEL SEARCH';$('mmTitle').innerText=mode==='ranked'?`SEARCHING · ${rankedCarClass.toUpperCase()} CLASS`:mode==='tournament'?'SEARCHING FOR TOURNAMENT DRIVERS':'SEARCHING FOR CASUAL PLAYERS';
+  $('mmPlayersTitle').innerText=mode==='ranked'?`${rankedCarClass.toUpperCase()} CLASS · RANKED PLAYERS`:mode==='tournament'?'PLAYERS IN TOURNAMENT QUEUE':'PLAYERS IN CASUAL QUEUE';
   renderMatchmakingPlayers([]);
-  $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?'Searching for humans first. AI grid fillers activate after 18 seconds.':mode==='tournament'?`Finding human racers for ${eventMeta.tournament_stage_name||'this round'}…`:'Searching for up to six online racers…';
+  $('mmStatus').innerText='Joining the online queue…';$(status).innerText=mode==='ranked'?`Only ${rankedCarClass} class drivers will appear in your Ranked queue. Searching for matching players; AI fills open slots after 18 seconds.`:mode==='tournament'?`Finding human racers for ${eventMeta.tournament_stage_name||'this round'}…`:'Searching for up to six online racers…';
   try{
     matchmakingChannel=supabase.channel(`matchmaking:${mode}`,{config:{presence:{key:authUser.id}}});
     const tryPair=async(forceBots=false)=>{
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
-      const presenceRows=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m?.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
+      const presenceRows=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m?.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0&&normalizeMatchCarRank(m.carRank,m.rankIndex)===rankedCarClass))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
       const uniqueMembers=new Map();
       presenceRows.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
       for(const member of presenceRows)if(!uniqueMembers.has(String(member.user_id)))uniqueMembers.set(String(member.user_id),member);
       const members=Array.from(uniqueMembers.values());
       const myIndex=members.findIndex(m=>String(m.user_id)===String(authUser.id));if(myIndex<0){renderMatchmakingPlayers([]);$(status).innerText='Waiting to enter the queue…';return;}
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
-      $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN YOUR MATCH':mode==='tournament'?'PLAYERS IN YOUR TOURNAMENT ROUND':'PLAYERS IN YOUR CASUAL MATCH';
+      $('mmPlayersTitle').innerText=mode==='ranked'?`${rankedCarClass.toUpperCase()} CLASS · RANKED PLAYERS IN YOUR MATCH`:mode==='tournament'?'PLAYERS IN YOUR TOURNAMENT ROUND':'PLAYERS IN YOUR CASUAL MATCH';
       renderMatchmakingPlayers(group);
-      if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`Searching for humans · ${group.length}/6 found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
-      if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':mode==='tournament'?'Waiting for another human driver in the same tournament round…':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
+      if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`${rankedCarClass} class · ${group.length}/6 matching human drivers found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
+      if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?`No other ${rankedCarClass} class driver is available yet. AI fillers will complete your grid after the search window.`:mode==='tournament'?'Waiting for another human driver in the same tournament round…':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
       queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
       $(status).innerText=mode==='tournament'?`${group.length} tournament drivers found. Preparing the shared ${eventMeta.tournament_stage_name||'round'}…`:`${group.length} human player${group.length===1?'':'s'} found. Filling to six with AI where needed…`;$('mmStatus').innerText=$(status).innerText;
       try{await startRaceRoom(code,mode,authUser.id===hostId,false,false,eventMeta);if(rankedFallbackTimer){clearTimeout(rankedFallbackTimer);rankedFallbackTimer=null;}setTimeout(()=>{if(matchmakingChannel)leaveQueue();},18000);}catch(e){queuePairing=false;throw e;}

@@ -1,47 +1,34 @@
-MIDNIGHT RACING v39 — EASIER LOBBIES & READY CHECK
-=================================================
+MIDNIGHT RACING v39.1 — MOBILE HUD, LANDSCAPE UI & RANKED CLASS MATCHMAKING
+============================================================================
+
+WHAT CHANGED
+- Reworked the race HUD spacing and readability, including the standard race timer, lap/position and speed readouts.
+- Added a contextual mode-timer progress rail and a consistent MM:SS display for Time Attack, Police, Checkpoint, Drift and Infected modes.
+- Added dedicated mobile-landscape layouts for the menu, mode/track cards, pre-race dialogs, HUD and touch controls. The game does not force screen rotation; portrait remains supported.
+- Improved touch target sizes, focus visibility, queue roster spacing and menu card consistency.
+- Ranked matchmaking now groups human players by the selected car class (D, C, B, A, S, Exotic or Secret). Players only see same-class drivers in their Ranked queue. Ranked AI fillers are also restricted to that class.
+- Casual and Tournament matchmaking rules are unchanged.
+
+IMPORTANT RANKING NOTE
+This v39 codebase contains vehicle-class ranks, not a separate player skill-rating/MMR tier. Therefore, same-rank Ranked matchmaking in this update means same selected CAR CLASS. It does not implement Bronze/Silver/Gold player divisions or an MMR rating.
 
 INSTALL
-1. Extract this ZIP.
-2. Open index.html and put your Supabase Project URL and Publishable key in the existing SUPABASE_URL and SUPABASE_ANON_KEY settings. Do not use a Secret/service_role key.
-3. Upload every file and folder in this ZIP to the root of your existing GitHub Pages repository, replacing the previous version.
-4. Commit to main and refresh with Ctrl+Shift+R. If the older layout is cached, unregister the service worker and clear Cache Storage only (do not clear Local Storage).
+1. Extract the ZIP.
+2. Open index.html and keep/restore your own Supabase Project URL and Publishable/anon key in the two existing constants. Never use a service_role/secret key.
+3. Upload the contents of the Midnight-Racing-v39.1 folder to the root of the GitHub Pages repository, replacing the old files.
+4. Commit to main.
+5. Open the published game and refresh. If an older UI remains, use Ctrl+Shift+R on PC. On mobile, close the browser tab and reopen the published link.
 
-LOBBY CHANGES
-- Clear Quick Match, Open Public Lobby, Create Private Room, and Join a Friend sections.
-- Press Enter in the invite-code field to join.
-- Private-room hosts can copy an invite link. Opening it pre-fills the room code and opens the Multiplayer tab.
-- Private, public, Casual Quick Match, Ranked, and Tournament lobbies now have a Ready for Race toggle.
-- The host gets a Start Race button only after all connected human players are ready.
-- The matchmaking overlay contains the Ready/Start buttons so controls are usable while the overlay is open.
-- Player names and readiness labels remain visible in the lobby roster.
-- Public Casual is one shared open lobby in this build; private rooms are joined by invite link or code.
+SUPABASE / SQL
+- No new SQL is required for these changes. Ranked class grouping uses Supabase Realtime Presence fields already published by the queue client.
+- Keep your existing v37 private-room migration installed. Do not rerun old SQL scripts.
+- This package is based on the exact v39 ZIP provided in this conversation; it does not include later v40/v41-only files or migrations.
 
-SUPABASE
-- No new SQL is required. Keep the existing v37 private-room SQL functions and security policies installed.
-- Existing Supabase URL/key placeholders remain in the source package by design; insert your project's URL and Publishable key in index.html.
-- Private room creation, join, ready state, start and leave continue to use the v37 SQL RPCs. Public/queue readiness uses Realtime Presence and requires no additional table.
+TEST CHECKLIST
+- Desktop: select Ranked, search with two accounts using the same car class, then repeat with a different class.
+- Mobile portrait: inspect menu, race HUD and touch controls.
+- Mobile landscape: inspect menu navigation, race briefing, timers, steering and powerup controls.
+- Modes with countdowns: Time Attack, Police, Checkpoint, Drift and Infected.
 
-TEST
-1. Open two separate browsers/devices and sign in with two different accounts.
-2. Create a private room on Player 1 and copy the invite link.
-3. Open the link on Player 2, confirm it fills the code, then press JOIN ROOM.
-4. Both players should appear by username. Each presses READY FOR RACE.
-5. The host's START RACE button should enable only when both players are ready.
-6. Repeat using Join Public Lobby or Casual Quick Match.
-
-LIMITATION
-This package can be syntax-checked locally, but live cross-device Realtime behaviour still requires testing against your Supabase project.
-
-
-V39 AUDIO + UI PASS
-- RPM-responsive synthesized engine layer with exhaust/intake texture for Player 1 and Player 2.
-- Layered nitro activation and sustained boost audio, speed-responsive.
-- Soft tap and menu-transition sounds for interactive UI controls; controlled by the existing Sound Effects setting.
-- Updated HUD contrast, card hierarchy, responsive mobile layout, safe-area spacing, and reduced-motion support.
-- No external copyrighted music or samples added. Existing locally bundled original soundtrack remains included.
-- The engine and nitro effects are synthesized with the Web Audio API at runtime.
-
-
-SUPABASE NOTE
-NO ADDITIONAL SUPABASE SQL is required for v39. Keep the v37 private-room SQL and your existing RLS policies. This package leaves SUPABASE_URL and SUPABASE_ANON_KEY as placeholders, so add your own project URL and Publishable key to index.html before uploading. Do not use a secret/service-role key.
+VALIDATION
+JavaScript syntax and key asset/HTML checks should be performed before release. The package has not been live-tested against the user's Supabase project or every mobile browser/device; cross-device Realtime matching and gameplay still require testing.
