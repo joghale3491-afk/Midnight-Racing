@@ -65,3 +65,17 @@ A real browser session against your Supabase project is needed to verify WebGL r
 
 SUPABASE KEYS
 Only the Project URL and public Publishable/anon key belong in index.html. Never expose the database password, service-role key or Supabase Secret key.
+
+
+V41.2 ENTRY-SCREEN REPAIR
+=========================
+- Added a small non-module fallback for ENTER THE NIGHT and CONTINUE AS GUEST.
+- The account screen can now open even if the browser fails to load the external ES modules.
+- If the main module is still unavailable after page load, the screen displays a visible warning.
+- Updated the service-worker cache name so browsers install the new entry-screen repair.
+
+Important: this fallback does not replace Three.js or Supabase. If the external game module is blocked,
+the account/menu transition can be seen but full game features still require the module to load.
+
+For an existing Supabase project, do not rerun old SQL scripts. Do not rerun v41 SQL if it has already
+completed successfully. The SQL scripts are included for reference and fresh installations.

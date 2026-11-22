@@ -1024,6 +1024,7 @@ button:not(:disabled):active { filter:brightness(.94); }
 </div>
 <div class="overlay hidden" id="menu">
   <div class="menuWrap">
+    <div id="moduleLoadNotice" hidden style="margin:10px 0;padding:12px;border:1px solid #ffcc66;border-radius:10px;background:#2a1b08;color:#ffe4a3;font:700 12px/1.5 system-ui;text-align:center">The main game scripts did not load. The menu is shown as a fallback; refresh the page and check whether your network blocks jsDelivr.</div>
     <div class="hubTop">
       <div>
         <div class="hubLogo">MIDNIGHT <span>RACING</span></div>
@@ -1420,9 +1421,46 @@ button:not(:disabled):active { filter:brightness(.94); }
 <div class="overlay hidden" id="pauseMenu"><div class="overlayCard"><h2>PAUSED</h2><button class="primaryBtn" id="resumeBtn">RESUME</button><button class="secondaryBtn" id="quitBtn">QUIT</button></div></div>
 <div class="overlay hidden" id="finishMenu"><div class="overlayCard"><h2 id="finishTitle">FINISH</h2><p id="finishSummary"></p><button class="primaryBtn" id="againBtn">RACE AGAIN</button><button class="secondaryBtn" id="menuBtn">MENU</button></div></div>
 
+<script>
+// Entry-screen fallback: keep the intro/account navigation clickable even if a
+// browser blocks the external ES-module imports. The full game handlers take over
+// as soon as the main module has loaded.
+(function () {
+  const byId = (id) => document.getElementById(id);
+  const enter = byId('enterIntro');
+  const guest = byId('guestPlay');
+  if (enter) enter.addEventListener('click', function () {
+    if (window.__MR_GAME_MODULE_READY__) return;
+    byId('introScreen')?.classList.add('hidden');
+    byId('menu')?.classList.add('hidden');
+    byId('authGate')?.classList.remove('hidden');
+    const status = byId('authStatus');
+    if (status) status.textContent = 'Account screen opened. Loading the game systems…';
+  }, true);
+  if (guest) guest.addEventListener('click', function () {
+    if (window.__MR_GAME_MODULE_READY__) return;
+    byId('introScreen')?.classList.add('hidden');
+    byId('authGate')?.classList.add('hidden');
+    byId('menu')?.classList.remove('hidden');
+    const notice = byId('moduleLoadNotice');
+    if (notice) notice.hidden = false;
+  }, true);
+  window.addEventListener('load', function () {
+    window.setTimeout(function () {
+      if (window.__MR_GAME_MODULE_READY__) return;
+      const status = byId('authStatus');
+      if (status) status.textContent = 'The account screen is available, but the game scripts did not finish loading. Check that your browser/network allows jsDelivr, then refresh.';
+      const notice = byId('moduleLoadNotice');
+      if (notice) notice.hidden = false;
+    }, 3500);
+  });
+})();
+</script>
+
 <script type="module">
 import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
+window.__MR_GAME_MODULE_READY__ = true;
 
 // --- SUPABASE SETUP (CHANGE THESE TWO LINES) ---
 const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // Add your project URL

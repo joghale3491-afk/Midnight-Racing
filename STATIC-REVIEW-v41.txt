@@ -20,3 +20,11 @@ Not verified in a live user browser:
 Anti-cheat boundary:
 - v41 registers authenticated participants on the server, derives ranked opponents from that roster, blocks repeat submissions and duplicate finishing-place claims, and stores tournament results server-side.
 - Race movement, timer, and finishing data are still produced by the browser. This is not full server-authoritative anti-cheat. A trusted game server/Edge Function with validated race telemetry is required for that stronger guarantee.
+
+
+V41.2 FOLLOW-UP CHECK
+---------------------
+- Added capture-phase fallback listeners for ENTER THE NIGHT and CONTINUE AS GUEST, independent of module imports.
+- Added explicit UI notice when the main ES module has not loaded after page load.
+- Updated service-worker cache key to force a fresh app shell.
+- Not live-browser tested; external module/CDN availability and 3D/WebGL runtime still require user-device testing.
