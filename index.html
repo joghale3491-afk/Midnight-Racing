@@ -950,6 +950,11 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
 .achievementGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.achievementCard{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px;border-radius:11px;border:1px solid #74eaff22;background:linear-gradient(145deg,#102438,#081522);min-width:0}.achievementCard.isUnlocked{border-color:#ffd36a66;background:linear-gradient(145deg,#332817,#111c29);box-shadow:inset 0 1px #fff1}.achievementIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:11px;background:#183349;font-size:22px;filter:grayscale(1);opacity:.55}.achievementCard.isUnlocked .achievementIcon{background:#6b501c55;filter:none;opacity:1}.achievementBody{min-width:0}.achievementBody>b{display:block;color:#f0faff;font-size:9px;letter-spacing:.08em}.achievementBody p{font-size:8px;color:#8faabd;line-height:1.4;margin:4px 0 7px}.achievementBody>small{display:block;margin-top:4px;color:#93acbe;font-size:7px;letter-spacing:.1em}.achievementProgress{height:5px;border-radius:99px;background:#1b3446;overflow:hidden}.achievementProgress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#36bdd8,#73efff)}.achievementCard.isUnlocked .achievementProgress i{background:linear-gradient(90deg,#d19b37,#ffe09a)}.achievementSeal{font-size:7px;font-weight:1000;letter-spacing:.08em;color:#7891a4;white-space:nowrap}.achievementCard.isUnlocked .achievementSeal{color:#ffe19a}
 @media(max-width:700px){.achievementGrid{grid-template-columns:1fr}.profileStatGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.profileHeroCard{padding:14px}.achievementCard{grid-template-columns:38px minmax(0,1fr) auto;padding:10px}.achievementIcon{width:36px;height:36px;font-size:19px}}
 
+
+/* v41 interaction polish: visible keyboard focus and easier touch targets. */
+button:focus-visible, [role="button"]:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid #62f3ff; outline-offset:3px; }
+button:not(:disabled):active { filter:brightness(.94); }
+@media (max-width:760px) { .navBtn { min-height:44px; } button { touch-action:manipulation; } .menuFooter { flex-wrap:wrap; } .menuFooter .primaryBtn { width:100%; } }
 </style>
 </head>
 <body>
@@ -1005,7 +1010,7 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
     <div class="introFoot">HEADLIGHTS ON · ENGINE READY</div>
   </div>
 </div>
-<div class="overlay" id="authGate">
+<div class="overlay hidden" id="authGate">
   <div class="authCard">
     <div class="eyebrow">WELCOME TO THE AFTER HOURS</div><h1>MIDNIGHT <span>RACING</span></h1>
     <p>Sign in to sync your profile and race history, or continue as a guest. Online features become available when the Supabase project is configured.</p>
@@ -1017,7 +1022,7 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
     <div id="authStatus">You can link an account later in Settings.</div>
   </div>
 </div>
-<div class="overlay" id="menu">
+<div class="overlay hidden" id="menu">
   <div class="menuWrap">
     <div class="hubTop">
       <div>
@@ -1253,6 +1258,7 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
             </div>
           </div>
           <div class="featureCard" style="margin-top:12px"><div class="panelTitle">YOUR TOURNAMENT RECORD</div><div id="tournamentHistory" class="dataList"><div class="mutedText">Finish tournament rounds to build your series record.</div></div></div>
+          <div class="featureCard" style="margin-top:12px"><div class="panelTitle">GLOBAL TOURNAMENT STANDINGS</div><div id="tournamentGlobalStandings" class="dataList"><div class="mutedText">Sign in to load this week’s tournament standings.</div></div></div>
         </section>
 
         <section id="questsPanel" class="viewPanel hidden">
@@ -1444,6 +1450,7 @@ let queueStartTimer = null, lobbyStartTimer = null, onlineStartTimer = null, onl
 let notificationAutoCloseTimer=null, toastCloseTimer=null;
 let privateLobby = false, publicLobby = false, privateLobbyReady = false, isRoomHost = false, roomMetadata = null, onlineParticipants = [];
 let privateRoomRegistered = false, privateRoomJoinCheckTimer = null, lobbyReadyEnabled = false;
+let competitiveMatchJoinPromise = Promise.resolve(true);
 let policeFailed = false, p2PoliceFailed = false, specialEventMode = 'infected', queuePairing = false;
 let activeTournamentStage=1, activeTournamentEventKey='', policeBackupWave1=false, policeBackupWave2=false;
 let policeSirenNodes=null;
@@ -3239,7 +3246,7 @@ function achievementProgress(def){const value=Math.max(0,Number(def.progress())|
 function renderAchievements(){const grid=$('achievementGrid');if(!grid)return;const unlocked=(profile.achievements||[]);const done=ACHIEVEMENT_DEFS.filter(d=>achievementProgress(d).unlocked).length;const pct=Math.round(done/ACHIEVEMENT_DEFS.length*100);$('achievementUnlockedCount').textContent=`${done} / ${ACHIEVEMENT_DEFS.length} ACHIEVEMENTS UNLOCKED`;$('achievementProgressText').textContent=`${pct}% COMPLETE`;$('achievementProgressFill').style.width=`${pct}%`;grid.replaceChildren();ACHIEVEMENT_DEFS.forEach(def=>{const pr=achievementProgress(def),card=document.createElement('article');card.className=`achievementCard ${pr.unlocked?'isUnlocked':'isLocked'}`;card.innerHTML=`<div class="achievementIcon">${def.icon}</div><div class="achievementBody"><b>${escapeHtml(def.name)}</b><p>${escapeHtml(def.desc)}</p><div class="achievementProgress"><i style="width:${pr.pct}%"></i></div><small>${pr.unlocked?'UNLOCKED':`${Math.min(pr.value,pr.target).toLocaleString()} / ${pr.target.toLocaleString()}`}</small></div><span class="achievementSeal">${pr.unlocked?'✓':'LOCKED'}</span>`;grid.appendChild(card);});}
 function renderPlayerProfile(){const rating=Number(profile.rankedRating)||1000,races=Number(profile.totalRaces)||0,wins=Number(profile.wins)||0,podiums=Number(profile.totalPodiums)||0,winRate=races?Math.round(wins/races*100):0,unlocked=ACHIEVEMENT_DEFS.filter(d=>achievementProgress(d).unlocked).length;const set=(id,value)=>{const el=$(id);if(el)el.textContent=value;};set('profileDisplayName',getDisplayUsername());set('profileRankTier',Number(profile.rankedMatches)>0?`${getRankTier(rating)} · ${rating<1200?'ROOKIE':rating<1600?'CONTENDER':rating<2000?'ELITE':'LEGEND'}`:'UNRANKED · PROVISIONAL');set('profileRating',String(rating));set('profileRatingChange',Number(profile.rankedMatches)>0?`${profile.rankedMatches} RANKED MATCHES`:'PROVISIONAL RATING · PLAY RANKED');set('profileLevel',`LVL ${profile.level}`);set('profileRaces',races.toLocaleString());set('profileWins',wins.toLocaleString());set('profilePodiums',podiums.toLocaleString());set('profileRankedRecord',`${Number(profile.rankedWins)||0}W – ${Number(profile.rankedLosses)||0}L`);set('profileAchievementCount',`${unlocked} / ${ACHIEVEMENT_DEFS.length}`);set('profileWinRate',`${winRate}%`);set('profileOnlineRaces',String(Number(profile.onlineRaces)||0));set('profileBestDrift',(Number(profile.bestDriftScore)||0).toLocaleString());set('profileGarageCount',`${(profile.ownedCars||[]).length} CARS`);const fill=$('profileWinRateFill');if(fill)fill.style.width=`${winRate}%`;}
 function unlockEligibleAchievements(silent=false){profile.achievements=Array.isArray(profile.achievements)?profile.achievements:[];const newly=[];for(const def of ACHIEVEMENT_DEFS){const pr=achievementProgress(def);if(pr.value>=pr.target&&!profile.achievements.includes(def.id)){profile.achievements.push(def.id);newly.push(def);}}if(newly.length){newly.forEach((d,i)=>{pushNotification('ACHIEVEMENT UNLOCKED',`${d.name} · ${d.desc}`,'achievement');if(!silent&&i===0)showToast(`ACHIEVEMENT UNLOCKED · ${d.name}`,'success');});saveProfile();}renderAchievements();renderPlayerProfile();return newly.map(d=>d.id);}
-async function loadPlayerStats(){if(!supabaseReady||!authUser)return;try{await supabase.rpc('mr_ensure_player_stats');const {data,error}=await supabase.from('mr_player_stats').select('username,rating,ranked_matches,ranked_wins,ranked_losses,total_races,wins,podiums,online_races').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data){profile.rankedRating=Number(data.rating)||1000;profile.rankedMatches=Number(data.ranked_matches)||0;profile.rankedWins=Number(data.ranked_wins)||0;profile.rankedLosses=Number(data.ranked_losses)||0;profile.totalRaces=Math.max(Number(profile.totalRaces)||0,Number(data.total_races)||0);profile.wins=Math.max(Number(profile.wins)||0,Number(data.wins)||0);profile.totalPodiums=Math.max(Number(profile.totalPodiums)||0,Number(data.podiums)||0);profile.onlineRaces=Math.max(Number(profile.onlineRaces)||0,Number(data.online_races)||0);}const {data:ach,error:achError}=await supabase.from('mr_user_achievements').select('achievement_id').eq('user_id',authUser.id);if(!achError&&Array.isArray(ach)){const ids=ach.map(x=>x.achievement_id);profile.achievements=[...new Set([...(profile.achievements||[]),...ids])];}unlockEligibleAchievements(true);saveProfile();updateUI();}catch(e){console.warn('Ranked stats could not be loaded:',e.message);}}
+async function loadPlayerStats(){if(!supabaseReady||!authUser)return;try{await supabase.rpc('mr_ensure_player_stats');const {data,error}=await supabase.from('mr_player_stats').select('username,rating,ranked_matches,ranked_wins,ranked_losses,total_races,wins,podiums,online_races').eq('user_id',authUser.id).maybeSingle();if(error)throw error;if(data){profile.rankedRating=Number(data.rating)||1000;profile.rankedMatches=Number(data.ranked_matches)||0;profile.rankedWins=Number(data.ranked_wins)||0;profile.rankedLosses=Number(data.ranked_losses)||0;profile.totalRaces=Math.max(Number(profile.totalRaces)||0,Number(data.total_races)||0);profile.wins=Math.max(Number(profile.wins)||0,Number(data.wins)||0);profile.totalPodiums=Math.max(Number(profile.totalPodiums)||0,Number(data.podiums)||0);profile.onlineRaces=Math.max(Number(profile.onlineRaces)||0,Number(data.online_races)||0);}const {data:ach,error:achError}=await supabase.from('mr_user_achievements').select('achievement_id').eq('user_id',authUser.id);if(!achError&&Array.isArray(ach)){const ids=ach.map(x=>x.achievement_id);profile.achievements=[...new Set([...(profile.achievements||[]),...ids])];}unlockEligibleAchievements(true);saveProfile();updateUI();await loadTournamentProgressFromServer();}catch(e){console.warn('Ranked stats could not be loaded:',e.message);}}
 function saveProfile(){
   try{localStorage.setItem('midnight_racing_profile',JSON.stringify(profile));}catch(e){console.warn('Save failed',e);}
   if(profileSaveTimer)clearTimeout(profileSaveTimer);
@@ -3648,11 +3655,42 @@ function renderTournamentPanel(){
  host.innerHTML='';TOURNAMENT_STAGE_DEFS.forEach((d,i)=>{const card=document.createElement('div');card.className='tournamentStageCard'+(i<series.round-1||series.completed?' complete':i===series.round-1&&!series.completed?' active':'');const status=i<series.round-1||series.completed?'COMPLETED':i===series.round-1?'CURRENT ROUND':'LOCKED';const place=series.placements[i];card.innerHTML=`<small>ROUND ${i+1} · ${status}</small><b>${d.name}</b><span>${d.detail}${place?` · FINISH #${place}`:''}</span>`;host.appendChild(card);});
  const history=$('tournamentHistory');if(history){history.innerHTML='';if(!series.placements.length)history.innerHTML='<div class="mutedText">Your tournament finishes will appear here after each round.</div>';else series.placements.forEach((place,i)=>{const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<b>ROUND ${i+1} · ${TOURNAMENT_STAGE_DEFS[i].name}</b><span>#${place} · +${[10,7,5,3,2,1][Math.max(0,Math.min(5,place-1))]} PTS</span>`;history.appendChild(row);});if(series.completed){const row=document.createElement('div');row.className='dataRow';row.innerHTML=`<b>WEEKLY SERIES SCORE</b><span>${series.points} POINTS · COMPLETED</span>`;history.appendChild(row);}}
 }
-function joinTournamentQueue(){
- const series=getTournamentSeries();if(series.completed){$('tournamentQueueStatus').textContent='This week’s three rounds are complete. Your progress is saved.';return;}
- const days=new Date().getDay();if(![0,5,6].includes(days)){ $('tournamentQueueStatus').textContent='Tournament queue opens Friday, Saturday and Sunday. Your round is saved until then.';return;}
- const meta=getTournamentStageMeta();$('tournamentQueueStatus').textContent=`Searching for online tournament drivers · ${meta.tournament_stage_name} · ${meta.laps} laps.`;
- findOnlineMatch('tournament',meta);
+
+function applyTournamentServerState(data){
+  if(!data)return;
+  const entry=data.entry||data;
+  if(!entry||!entry.current_round)return;
+  const season=String(entry.season_key||getTournamentSeries().season).slice(0,10);
+  const results=Array.isArray(data.results)?data.results:[];
+  const placements=results.slice().sort((a,b)=>Number(a.round_no)-Number(b.round_no)).map(r=>Number(r.placement)||0).filter(Boolean);
+  profile.tournamentSeries={season,round:Math.max(1,Math.min(3,Number(entry.current_round)||1)),points:Math.max(0,Number(entry.total_points)||0),placements,completed:!!entry.completed};
+  saveProfile();renderTournamentPanel();
+}
+async function loadTournamentProgressFromServer(){
+  if(!supabaseReady||!authUser)return;
+  try{const season=getTournamentSeries().season;const {data,error}=await supabase.rpc('mr_get_tournament_status_v41',{p_season_key:season});if(error)throw error;if(data?.entry)applyTournamentServerState(data);}
+  catch(e){console.warn('Tournament progress could not be loaded:',e.message);}
+}
+async function loadTournamentStandings(){
+  const host=$('tournamentGlobalStandings');if(!host)return;
+  if(!supabaseReady||!authUser){host.innerHTML='<div class="mutedText">Sign in and configure Supabase to view global tournament standings.</div>';return;}
+  host.innerHTML='<div class="mutedText">Loading tournament standings…</div>';
+  try{const {data,error}=await supabase.rpc('mr_tournament_standings_v41',{p_season_key:getTournamentSeries().season});if(error)throw error;host.replaceChildren();(data||[]).forEach(row=>{const el=document.createElement('div');el.className='dataRow';const label=document.createElement('b');label.textContent=`#${Number(row.position)||0} ${String(row.username||'RACER').slice(0,18)}`;const value=document.createElement('span');value.textContent=`${Number(row.total_points)||0} PTS · ROUND ${Math.min(3,Number(row.current_round)||1)}${row.completed?' · COMPLETE':''}`;el.append(label,value);host.appendChild(el);});if(!(data||[]).length)host.innerHTML='<div class="mutedText">No tournament entries this week yet.</div>';}
+  catch(e){host.innerHTML=`<div class="mutedText">Tournament standings unavailable: ${escapeHtml(e.message)} · Apply the v41 SQL migration.</div>`;}
+}
+
+async function joinTournamentQueue(){
+  if(!supabaseReady||!authUser){$('tournamentQueueStatus').textContent='Sign in to enter a server-saved tournament.';return;}
+  const days=new Date().getDay();if(![0,5,6].includes(days)){$('tournamentQueueStatus').textContent='Tournament queue opens Friday, Saturday and Sunday. Your server progress stays saved.';return;}
+  try{
+    const season=getTournamentSeries().season;
+    const {data,error}=await supabase.rpc('mr_join_tournament_v41',{p_season_key:season,p_username:getDisplayUsername()});
+    if(error)throw error;
+    applyTournamentServerState(data);
+    const series=getTournamentSeries();if(series.completed){$('tournamentQueueStatus').textContent='This week’s three rounds are complete. Your result is saved on the server.';return;}
+    const meta=getTournamentStageMeta();$('tournamentQueueStatus').textContent=`Searching for online tournament drivers · ${meta.tournament_stage_name} · ${meta.laps} laps.`;
+    await findOnlineMatch('tournament',meta);
+  }catch(e){$('tournamentQueueStatus').textContent=`Tournament entry failed: ${e.message}`;}
 }
 
 function refreshQuests(){
@@ -4127,8 +4165,22 @@ function resumeRace(){if(gameState!=='paused')return;gameState='racing';if(audio
 async function submitServerResult(time,place,reward){
  if(!supabaseReady||!authUser)return;
  const isOnline=!!(lobbyChannel&&onlineRaceStarted),resultMode=isOnline&&onlineRoomMode==='ranked'?'ranked':isOnline&&onlineRoomMode==='tournament'?'tournament':gameMode;
- const opponentIds=isOnline&&resultMode==='ranked'?(onlineParticipants||[]).map(p=>p.user_id).filter(id=>id&&id!==authUser.id):[];
- const {data,error}=await supabase.rpc('mr_submit_race_result',{p_track:currentTrack,p_mode:resultMode,p_race_time:Number(time),p_placement:Math.max(1,Math.min(6,Number(place)||6)),p_credits_earned:Math.max(0,Math.min(5000,Number(reward)||0)),p_online:isOnline,p_match_id:isOnline?String(onlineRaceId||''):null,p_opponent_ids:opponentIds});
+ if((resultMode==='ranked'||resultMode==='tournament')&&isOnline){
+   const registered=await competitiveMatchJoinPromise;
+   if(!registered)throw new Error('The server could not confirm your competitive match registration.');
+ }
+ const params={
+   p_track:currentTrack,
+   p_mode:resultMode,
+   p_race_time:Number(time),
+   p_placement:Math.max(1,Math.min(6,Number(place)||6)),
+   p_credits_earned:Math.max(0,Math.min(5000,Number(reward)||0)),
+   p_online:isOnline,
+   p_match_id:isOnline?String(onlineRaceId||''):null,
+   p_season_key:resultMode==='tournament'?String(activeTournamentEventKey||'').split('-ROUND-')[0]:null,
+   p_round:resultMode==='tournament'?Number(activeTournamentStage)||1:null
+ };
+ const {data,error}=await supabase.rpc('mr_submit_game_result_v41',params);
  if(error)throw error;
  if(data&&typeof data==='object'){
    if(Number.isFinite(Number(data.rating)))profile.rankedRating=Number(data.rating);
@@ -4141,9 +4193,10 @@ async function submitServerResult(time,place,reward){
    if(Number.isFinite(Number(data.online_races)))profile.onlineRaces=Math.max(Number(profile.onlineRaces)||0,Number(data.online_races));
    if(Array.isArray(data.new_achievements))profile.achievements=[...new Set([...(profile.achievements||[]),...data.new_achievements])];
    if(resultMode==='ranked'&&Number(data.rating_change)!==0)showToast(`RANKED RATING ${Number(data.rating_change)>0?'+':''}${Number(data.rating_change)}`,'success');
+   if(resultMode==='tournament'&&data.tournament){applyTournamentServerState(data.tournament);$('tournamentQueueStatus').textContent='Round result saved to your online tournament record.';loadTournamentStandings();}
    unlockEligibleAchievements(true);saveProfile();updateUI();
  }
-} 
+}
 async function loadServerLeaderboard(){const host=$('globalLeaderboard');host.innerHTML='<div class="mutedText">Loading server rankings…</div>';if(!supabaseReady){host.innerHTML='<div class="mutedText">Supabase is not configured. Add your project URL and public anon key, then apply supabase_setup.sql.</div>';return;}const {data,error}=await supabase.from('race_leaderboard').select('username,track,mode,race_time,placement').order('race_time',{ascending:true}).limit(20);if(error){host.innerHTML=`<div class="mutedText">Server leaderboard unavailable: ${error.message}</div>`;return;}host.innerHTML='';(data||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${formatTime(Number(r.race_time)||0)}</span>`;host.appendChild(el);});if(!data?.length)host.innerHTML='<div class="mutedText">No server records yet. Complete a race while signed in.</div>';
   const ranked=$('rankedLeaderboard');if(ranked){ranked.innerHTML='<div class="mutedText">Loading Ranked standings…</div>';const {data:rankedData,error:rankedError}=await supabase.from('mr_player_stats').select('username,rating,ranked_wins,ranked_losses,ranked_matches').gt('ranked_matches',0).order('rating',{ascending:false}).limit(20);if(rankedError){ranked.innerHTML=`<div class="mutedText">Ranked standings unavailable: ${escapeHtml(rankedError.message)} · Run the v40 SQL update.</div>`;}else{ranked.innerHTML='';(rankedData||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')} · ${escapeHtml(getRankTier(r.rating))}</b><span>${Number(r.rating)||1000} RP · ${Number(r.ranked_wins)||0}W/${Number(r.ranked_losses)||0}L</span>`;ranked.appendChild(el);});if(!rankedData?.length)ranked.innerHTML='<div class="mutedText">No ranked drivers yet. Complete a ranked race.</div>';}}
   const playerBoard=$('globalPlayerLeaderboard');if(playerBoard){playerBoard.innerHTML='<div class="mutedText">Loading global driver rankings…</div>';const {data:players,error:playersError}=await supabase.from('mr_player_stats').select('username,rating,ranked_wins,ranked_losses,ranked_matches').gt('ranked_matches',0).order('rating',{ascending:false}).limit(20);if(playersError){playerBoard.innerHTML=`<div class="mutedText">Rankings unavailable: ${escapeHtml(playersError.message)}</div>`;}else{playerBoard.innerHTML='';(players||[]).forEach((r,i)=>{const el=document.createElement('div');el.className='dataRow';el.innerHTML=`<b>#${i+1} ${escapeHtml(r.username||'Racer')}</b><span>${escapeHtml(getRankTier(r.rating))} · ${Number(r.rating)||1000} RP</span>`;playerBoard.appendChild(el);});if(!players?.length)playerBoard.innerHTML='<div class="mutedText">No ranked players yet.</div>';}}
@@ -4263,6 +4316,13 @@ function launchOnlineRace(payload){
   if(payload.mode==='ranked'&&rankedBotRoster.length)pushNotification('RANKED GRID FILLED',`Your Ranked race has ${rankedBotRoster.length} AI opponent${rankedBotRoster.length===1?'':'s'} filling the open grid slots.`,'ranked');
   onlineRaceStarted=true;onlineRaceId=String(payload.race_id||`${Date.now()}-${Math.random().toString(36).slice(2,8)}`);onlineLocalFinishSent=false;onlineFinishers.clear();onlineCollisionCooldown=0;
   onlineRoomMode=payload.mode||onlineRoomMode;
+  competitiveMatchJoinPromise=Promise.resolve(true);
+  if(supabaseReady&&authUser&&['ranked','tournament'].includes(onlineRoomMode)){
+    const tournamentSeason=onlineRoomMode==='tournament'?String(activeTournamentEventKey||'').split('-ROUND-')[0]:null;
+    competitiveMatchJoinPromise=supabase.rpc('mr_join_competitive_match_v41',{p_match_id:onlineRaceId,p_mode:onlineRoomMode,p_season_key:tournamentSeason,p_round:onlineRoomMode==='tournament'?activeTournamentStage:null})
+      .then(({error})=>{if(error)throw error;return true;})
+      .catch(error=>{console.warn('Competitive match registration failed:',error.message);showToast(`MATCH REGISTRATION FAILED · ${error.message}`,'danger');return false;});
+  }
   // Ranked Ticket is charged with race energy only after the local countdown reaches GO.
   currentTrack=TRACKS[payload.track]?payload.track:currentTrack;gameMode='street';playerMode='solo';isPoliceMode=false;activeTournamentStage=Math.max(1,Math.min(3,Number(payload.event_stage)||1));activeTournamentEventKey=String(payload.event_key||'');
   forcedRaceLaps=clamp(Math.floor(Number(payload.laps)||3),2,6);forcedRaceWeather=payload.weather||'CLEAR';forcedRaceSeed=Number(payload.seed)||null;
@@ -4518,7 +4578,7 @@ async function findOnlineMatch(mode,eventMeta={}){
   if(profile.energy<RACE_ENTRY_ENERGY){$(status).innerText=`Not enough energy. You need ${RACE_ENTRY_ENERGY} energy to race.`;return;}
   if(mode==='ranked'&&(profile.level<10||(profile.rankedTickets||0)<1)){$(status).innerText='Ranked requires Street Rep level 10 and one Ranked Ticket.';return;}
   if(mode==='tournament'&&(!eventMeta.event_key||!eventMeta.event_stage)){$(status).innerText='The tournament round could not be loaded. Refresh the Tournament tab.';return;}
-  await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';
+  await leaveOnlineRoom();queueMode=mode;queuePairing=false;let rankedQueueReady=mode!=='ranked';const rankedSearchStarted=Date.now();
   $('matchmakingModal').classList.remove('hidden');$('mmLobbyActions').classList.add('hidden');$('mmInviteBar').classList.add('hidden');$('mmCancelBtn').innerText='CANCEL SEARCH';$('mmTitle').innerText=mode==='ranked'?'SEARCHING FOR RANKED PLAYERS':mode==='tournament'?'SEARCHING FOR TOURNAMENT DRIVERS':'SEARCHING FOR CASUAL PLAYERS';
   $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN QUEUE':mode==='tournament'?'PLAYERS IN TOURNAMENT QUEUE':'PLAYERS IN CASUAL QUEUE';
   renderMatchmakingPlayers([]);
@@ -4528,7 +4588,7 @@ async function findOnlineMatch(mode,eventMeta={}){
     const tryPair=async(forceBots=false)=>{
       if(!matchmakingChannel||queueMode!==mode||queuePairing)return;
       const myRatingBand=Math.floor((Number(profile.rankedRating)||1000)/250);
-      const presenceRows=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m?.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0&&Number(m.rating_band)===myRatingBand))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
+      const presenceRows=Object.values(matchmakingChannel.presenceState()).flat().filter(m=>m?.user_id&&m.mode===mode&&Number(m.energy)>=RACE_ENTRY_ENERGY&&(mode!=='ranked'||(Number(m.level)>=10&&Number(m.tickets)>0&&Math.abs((Number(m.rating)||1000)-(Number(profile.rankedRating)||1000))<=(Date.now()-rankedSearchStarted<9000?250:Date.now()-rankedSearchStarted<18000?500:900)))&&(mode!=='tournament'||String(m.event_key||'')===String(eventMeta.event_key||'')));
       const uniqueMembers=new Map();
       presenceRows.sort((a,b)=>String(a.joined_at).localeCompare(String(b.joined_at))||String(a.user_id).localeCompare(String(b.user_id)));
       for(const member of presenceRows)if(!uniqueMembers.has(String(member.user_id)))uniqueMembers.set(String(member.user_id),member);
@@ -4537,7 +4597,7 @@ async function findOnlineMatch(mode,eventMeta={}){
       const groupStart=Math.floor(myIndex/6)*6,group=members.slice(groupStart,groupStart+6);
       $('mmPlayersTitle').innerText=mode==='ranked'?'RANKED PLAYERS IN YOUR MATCH':mode==='tournament'?'PLAYERS IN YOUR TOURNAMENT ROUND':'PLAYERS IN YOUR CASUAL MATCH';
       renderMatchmakingPlayers(group);
-      if(mode==='ranked'&&!rankedQueueReady&&group.length<6){$(status).innerText=`Searching for humans · ${group.length}/6 found. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
+      if(mode==='ranked'&&!rankedQueueReady&&group.length<6){const tolerance=Date.now()-rankedSearchStarted<9000?250:Date.now()-rankedSearchStarted<18000?500:900;$(status).innerText=`Searching for humans · ${group.length}/6 found · rating range ±${tolerance}. AI fillers in 18 seconds…`;$('mmStatus').innerText=$(status).innerText;return;}
       if(group.length<(mode==='ranked'&&forceBots?1:2)){$(status).innerText=mode==='ranked'?'No eligible Ranked players found yet. AI fillers will complete the grid shortly.':mode==='tournament'?'Waiting for another human driver in the same tournament round…':'Searching for another Casual racer…';$('mmStatus').innerText=$(status).innerText;return;}
       queuePairing=true;const ids=group.map(m=>m.user_id).sort();const hostId=group[0].user_id;const code=stableRoomCode(ids);
       $(status).innerText=mode==='tournament'?`${group.length} tournament drivers found. Preparing the shared ${eventMeta.tournament_stage_name||'round'}…`:`${group.length} human player${group.length===1?'':'s'} found. Filling to six with AI where needed…`;$('mmStatus').innerText=$(status).innerText;
@@ -4560,14 +4620,18 @@ async function findOnlineMatch(mode,eventMeta={}){
 document.addEventListener('DOMContentLoaded',async()=>{
   try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Check that WebGL 2 is enabled and browser hardware acceleration is on, then reload.`;}
   try{if(renderer)initGarage();}catch(e){console.warn('Garage preview renderer unavailable; race renderer remains available:',e);if($('garagePreviewStatus'))$('garagePreviewStatus').innerText='Garage preview unavailable in this browser.';}
-  $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
+  $('enterIntro').addEventListener('click',()=>{
+    $('introScreen').classList.add('hidden');
+    if(authUser){$('authGate').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();}
+    else{$('menu').classList.add('hidden');$('authGate').classList.remove('hidden');$('gateUsername').focus({preventScroll:true});}
+  });
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
-  if(supabaseReady){await refreshAuth();if(authUser){$('authGate').classList.add('hidden');await loadPlayerStats();}}unlockEligibleAchievements(true);renderPlayerProfile();renderAchievements();
+  if(supabaseReady){await refreshAuth();if(authUser){$('authGate').classList.add('hidden');if($('introScreen').classList.contains('hidden'))$('menu').classList.remove('hidden');await loadPlayerStats();}}unlockEligibleAchievements(true);renderPlayerProfile();renderAchievements();
   if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);
   // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
   applyEnergyRegen();updateUI();
-  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(['eventsPanel','tournamentPanel','questsPanel'].includes(btn.dataset.view))refreshQuests();if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
+  document.querySelectorAll('.navBtn').forEach(btn=>btn.addEventListener('click',()=>{setView(btn.dataset.view);if(btn.dataset.view==='leaderboardPanel')loadServerLeaderboard();if(btn.dataset.view==='rankedPanel')loadServerLeaderboard();if(['eventsPanel','tournamentPanel','questsPanel'].includes(btn.dataset.view))refreshQuests();if(btn.dataset.view==='tournamentPanel'){loadTournamentProgressFromServer();loadTournamentStandings();}if(btn.dataset.view==='storyPanel')renderStory();if(btn.dataset.view==='storePanel')renderStore();}));
   $('gameDialogCancel').addEventListener('click',()=>closeGameDialog(false));$('gameDialogConfirm').addEventListener('click',()=>closeGameDialog(true));$('gameDialog').addEventListener('click',e=>{if(e.target===$('gameDialog'))closeGameDialog(false);});
   const unlockGameAudio=()=>{try{initAudio();if(audioCtx?.state==='suspended')audioCtx.resume?.().catch(()=>{});if(musicEnabled&&musicAudio&&gameState!=='paused')musicAudio.play().catch(()=>{});}catch(e){console.warn('Audio start deferred until next interaction',e);}};
   document.addEventListener('pointerdown',unlockGameAudio,{passive:true});document.addEventListener('keydown',unlockGameAudio);
@@ -4581,10 +4645,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
   },{passive:true});
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
-  $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){gameAlert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
-  $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
-  $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
-  $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
+  $('startBtn').addEventListener('click',()=>{try{if(!isRaceRendererReady()){gameAlert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();}catch(error){console.error('PLAY RACE failed:',error);gameAlert(`The race briefing could not open.\n\n${error?.message||error}`);}});
+  $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');$('introScreen').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();saveProfile();});
+  $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');$('introScreen').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();}});
+  $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');$('introScreen').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();}});
   $('signInBtn').addEventListener('click',async()=>{if(await handleAuth(false,$('accountEmail').value,$('accountPassword').value,profile.username)){$('cloudSaveStatus').innerText='Signed in. Cloud save is active.';}});
   $('signUpBtn').addEventListener('click',async()=>{if(await handleAuth(true,$('accountEmail').value,$('accountPassword').value,profile.username))$('cloudSaveStatus').innerText='Account created. Check your email if verification is required.';});
   $('signOutBtn').addEventListener('click',async()=>{if(supabaseReady)await supabase.auth.signOut();authUser=null;$('accountStatus').innerText='Signed out. Guest progress remains on this device.';});

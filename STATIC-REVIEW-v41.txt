@@ -1,0 +1,22 @@
+MIDNIGHT RACING v41 — STATIC REVIEW NOTES
+========================================
+
+Checked in the packaged files:
+- The main HTML file and bundled audio assets are present.
+- JavaScript module parses successfully with Node.js.
+- No duplicate HTML IDs were found.
+- All 67 direct ID-based addEventListener targets exist in the HTML.
+- Navigation, race-mode, track-card, and dynamic menu actions also use delegated or render-time handlers.
+- The two literal DOM references without matching HTML IDs (garagePreviewStatus and questBoard) are protected by null checks.
+- The service worker references both bundled MP3 files that are present.
+- Four SQL scripts are included: base setup, v37 private rooms, v40 progression, and v41 integrity/tournaments.
+
+Not verified in a live user browser:
+- Actual rendering and button interaction on Windows/mobile.
+- WebGL 2 race initialization, race countdown, and 3D track loading.
+- Sign-in, guest flow, Realtime matchmaking, two-device tournament round sync.
+- Applying SQL to the user's Supabase project.
+
+Anti-cheat boundary:
+- v41 registers authenticated participants on the server, derives ranked opponents from that roster, blocks repeat submissions and duplicate finishing-place claims, and stores tournament results server-side.
+- Race movement, timer, and finishing data are still produced by the browser. This is not full server-authoritative anti-cheat. A trusted game server/Edge Function with validated race telemetry is required for that stronger guarantee.

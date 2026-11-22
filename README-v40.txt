@@ -1,3 +1,10 @@
+MIDNIGHT RACING v40.3 STARTUP FLOW FIX
+
+This complete package includes the v40 game and a startup-flow correction: the intro screen now explicitly opens the account gate; continuing as a guest or signing in explicitly opens the main menu. The service-worker cache name is updated so browsers fetch the corrected files.
+
+Keep your existing Supabase project and database. No SQL migration is required for this startup fix.
+
+--- PREVIOUS v40 NOTES ---
 MIDNIGHT RACING v40 — COMPETITIVE PROGRESSION UPDATE
 
 WHAT'S NEW

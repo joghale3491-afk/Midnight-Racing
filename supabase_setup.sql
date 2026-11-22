@@ -7,7 +7,6 @@ create table if not exists public.player_saves (
   save_data jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
-
 alter table public.player_saves enable row level security;
 drop policy if exists "Players read own save" on public.player_saves;
 drop policy if exists "Players insert own save" on public.player_saves;
@@ -15,7 +14,6 @@ drop policy if exists "Players update own save" on public.player_saves;
 create policy "Players read own save" on public.player_saves for select to authenticated using (auth.uid() = user_id);
 create policy "Players insert own save" on public.player_saves for insert to authenticated with check (auth.uid() = user_id);
 create policy "Players update own save" on public.player_saves for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
 -- Public racer names are separated from private save data.
 create table if not exists public.player_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -31,7 +29,6 @@ drop policy if exists "Players update own profile" on public.player_profiles;
 create policy "Profiles are publicly readable" on public.player_profiles for select to anon, authenticated using (true);
 create policy "Players insert own profile" on public.player_profiles for insert to authenticated with check (auth.uid() = user_id);
 create policy "Players update own profile" on public.player_profiles for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
 -- Keep the account's chosen username in player_profiles after sign-up.
 create or replace function public.handle_new_midnight_racer()
 returns trigger
@@ -53,7 +50,6 @@ drop trigger if exists on_auth_user_created_midnight on auth.users;
 create trigger on_auth_user_created_midnight
 after insert on auth.users
 for each row execute procedure public.handle_new_midnight_racer();
-
 -- Public server leaderboard. Scores are submitted by signed-in game clients.
 -- For a competitive production release, move result validation into a trusted Edge Function.
 create table if not exists public.race_leaderboard (
@@ -74,7 +70,6 @@ drop policy if exists "Leaderboard is public" on public.race_leaderboard;
 drop policy if exists "Signed-in racers submit own results" on public.race_leaderboard;
 create policy "Leaderboard is public" on public.race_leaderboard for select to anon, authenticated using (true);
 create policy "Signed-in racers submit own results" on public.race_leaderboard for insert to authenticated with check (auth.uid() = user_id);
-
 -- Realtime private-room codes use Supabase Realtime broadcast/presence channels
 -- (race:ABC123). They do not require a database table. For production, switch to
 -- private channels and add Realtime authorization policies before public release.
