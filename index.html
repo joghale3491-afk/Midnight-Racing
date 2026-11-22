@@ -1017,7 +1017,7 @@ button:disabled{filter:saturate(.45);cursor:not-allowed}
     <div id="authStatus">You can link an account later in Settings.</div>
   </div>
 </div>
-<div class="overlay hidden" id="menu">
+<div class="overlay" id="menu">
   <div class="menuWrap">
     <div class="hubTop">
       <div>
@@ -4560,10 +4560,10 @@ async function findOnlineMatch(mode,eventMeta={}){
 document.addEventListener('DOMContentLoaded',async()=>{
   try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Check that WebGL 2 is enabled and browser hardware acceleration is on, then reload.`;}
   try{if(renderer)initGarage();}catch(e){console.warn('Garage preview renderer unavailable; race renderer remains available:',e);if($('garagePreviewStatus'))$('garagePreviewStatus').innerText='Garage preview unavailable in this browser.';}
-  $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');$('authGate').classList.remove('hidden');$('menu').classList.add('hidden');});
+  $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
-  if(supabaseReady){await refreshAuth();if(authUser){$('authGate').classList.add('hidden');$('menu').classList.remove('hidden');await loadPlayerStats();}}unlockEligibleAchievements(true);renderPlayerProfile();renderAchievements();
+  if(supabaseReady){await refreshAuth();if(authUser){$('authGate').classList.add('hidden');await loadPlayerStats();}}unlockEligibleAchievements(true);renderPlayerProfile();renderAchievements();
   if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);
   // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
   applyEnergyRegen();updateUI();
@@ -4582,9 +4582,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
   $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){gameAlert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
-  $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();saveProfile();});
-  $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();}});
-  $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');$('menu').classList.remove('hidden');updateUI();}});
+  $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
+  $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
+  $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
   $('signInBtn').addEventListener('click',async()=>{if(await handleAuth(false,$('accountEmail').value,$('accountPassword').value,profile.username)){$('cloudSaveStatus').innerText='Signed in. Cloud save is active.';}});
   $('signUpBtn').addEventListener('click',async()=>{if(await handleAuth(true,$('accountEmail').value,$('accountPassword').value,profile.username))$('cloudSaveStatus').innerText='Account created. Check your email if verification is required.';});
   $('signOutBtn').addEventListener('click',async()=>{if(supabaseReady)await supabase.auth.signOut();authUser=null;$('accountStatus').innerText='Signed out. Guest progress remains on this device.';});
@@ -4644,25 +4644,6 @@ canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();graphi
 canvas.addEventListener('webglcontextrestored',()=>{graphicsInitError=null;showToast('GRAPHICS CONTEXT RESTORED · RELOAD BEFORE THE NEXT RACE');});
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('Service worker:',e.message)));}
 
-</script>
-<script>
-(function(){
-  function bindIntroFallback(){
-    var enter=document.getElementById('enterIntro');
-    if(!enter || enter.dataset.fallbackBound==='1') return;
-    enter.dataset.fallbackBound='1';
-    enter.addEventListener('click',function(){
-      var intro=document.getElementById('introScreen');
-      var gate=document.getElementById('authGate');
-      var menu=document.getElementById('menu');
-      if(intro) intro.classList.add('hidden');
-      if(gate) gate.classList.remove('hidden');
-      if(menu) menu.classList.add('hidden');
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bindIntroFallback,{once:true});
-  else bindIntroFallback();
-})();
 </script>
 </body>
 </html>
