@@ -1,4 +1,4 @@
-const CACHE_NAME = 'midnight-racing-v41-2-entry-fallback';
+const CACHE_NAME = 'midnight-racing-v39-lobbies-audio-ui';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
   './favicon-v36.ico', './favicon.ico', './favicon-32-v36.png', './favicon-48-v36.png',
