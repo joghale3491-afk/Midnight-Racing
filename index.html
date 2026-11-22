@@ -1553,8 +1553,8 @@ import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP (CHANGE THESE TWO LINES) ---
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // Add your project URL
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Use the public anon/publishable key only
+const SUPABASE_URL = 'https://mrmassbqjcfdsnnfknww.supabase.co'; // Add your project URL
+const SUPABASE_ANON_KEY = 'sb_publishable_t0OojBZSDsFKsJK0kn9I-g_njpzJJnn'; // Use the public anon/publishable key only
 const supabaseReady = /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && SUPABASE_ANON_KEY.length > 20 && !SUPABASE_ANON_KEY.includes('YOUR_');
 const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
