@@ -1553,8 +1553,8 @@ import * as THREE from 'three';
 import { createClient } from '@supabase/supabase-js';
 
 // --- SUPABASE SETUP (CHANGE THESE TWO LINES) ---
-const SUPABASE_URL = 'https://mrmassbqjcfdsnnfknww.supabase.co'; // Add your project URL
-const SUPABASE_ANON_KEY = 'sb_publishable_t0OojBZSDsFKsJK0kn9I-g_njpzJJnn'; // Use the public anon/publishable key only
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // Add your project URL
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Use the public anon/publishable key only
 const supabaseReady = /^https:\/\//.test(SUPABASE_URL) && !SUPABASE_URL.includes('YOUR_') && SUPABASE_ANON_KEY.length > 20 && !SUPABASE_ANON_KEY.includes('YOUR_');
 const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -3139,7 +3139,13 @@ function update(dt){
       if(active.length===1){eliminationChampion=active[0].id;finishRace();return;}
       if(active.length>1){
         const out=active[0];eliminationOrder.push(out.id);eliminationRound++;
-        if(out.id==='player'){playerEliminated=true;playerSpeed=0;if(player)player.visible=false;$('powerStatus').innerText='ELIMINATED · WATCH THE FINAL RUN';}
+        if(out.id==='player'){
+          playerEliminated=true;playerSpeed=0;if(player)player.visible=false;
+          $('powerStatus').innerText='ELIMINATED';
+          // In a solo Time Attack run, show the player's result immediately.
+          // Do not leave the player spectating AI racers after their elimination.
+          if(!lobbyChannel&&!localPlayer2){finishRace();return;}
+        }
         else if(out.id==='player2'){p2Eliminated=true;p2State.speed=0;if(localPlayer2)localPlayer2.visible=false;}
         else if(out.id.startsWith('rival:')){const r=rivals[Number(out.id.split(':')[1])];if(r){r.active=false;scene.remove(r.mesh);}}
         else if(out.id.startsWith('online:')){const uid=out.id.slice(7),state=remotePlayers.get(uid);if(state)state.eliminated=true;const mesh=remotePlayerMeshes.get(uid);if(mesh)mesh.visible=false;}
@@ -4115,10 +4121,20 @@ function finishRace(){
   const p1RankIndex=sorted.findIndex(x=>x.id==='player'),p2RankIndex=localPlayer2?sorted.findIndex(x=>x.id==='player2'):-1;let place=p1RankIndex>=0?p1RankIndex+1:sorted.length+1,p2Place=localPlayer2?(p2RankIndex>=0?p2RankIndex+1:sorted.length+1):0;
   let won=false,p2Won=false;
   if(gameMode==='time'){
-    const finalOrder=[eliminationChampion,...eliminationOrder.slice().reverse()].filter(Boolean);
-    place=finalOrder.indexOf('player')>=0?finalOrder.indexOf('player')+1:finalOrder.length+1;
-    p2Place=localPlayer2?(finalOrder.indexOf('player2')>=0?finalOrder.indexOf('player2')+1:finalOrder.length+1):0;
-    won=eliminationChampion==='player';p2Won=eliminationChampion==='player2';
+    if(playerEliminated&&!eliminationChampion){
+      // The player chose to leave the race at their elimination, before the AI final.
+      // Their position is the order in which they were eliminated.
+      const playerOutIndex=eliminationOrder.indexOf('player');
+      place=playerOutIndex>=0?playerOutIndex+1:Math.max(1,eliminationOrder.length+1);
+      const p2OutIndex=eliminationOrder.indexOf('player2');
+      p2Place=localPlayer2?(p2OutIndex>=0?p2OutIndex+1:place):0;
+      won=false;p2Won=false;
+    }else{
+      const finalOrder=[eliminationChampion,...eliminationOrder.slice().reverse()].filter(Boolean);
+      place=finalOrder.indexOf('player')>=0?finalOrder.indexOf('player')+1:finalOrder.length+1;
+      p2Place=localPlayer2?(finalOrder.indexOf('player2')>=0?finalOrder.indexOf('player2')+1:finalOrder.length+1):0;
+      won=eliminationChampion==='player';p2Won=eliminationChampion==='player2';
+    }
   }else if(gameMode==='infected'){
     const finalOrder=[infectedChampion,...infectedEliminationOrder.slice().reverse()].filter(Boolean);
     if(finalOrder.length){place=finalOrder.indexOf('player')>=0?finalOrder.indexOf('player')+1:finalOrder.length+1;p2Place=localPlayer2?(finalOrder.indexOf('player2')>=0?finalOrder.indexOf('player2')+1:finalOrder.length+1):0;}
