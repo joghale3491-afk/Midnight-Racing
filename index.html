@@ -1098,6 +1098,7 @@ button:focus-visible,.navBtn:focus-visible,.modeCard:focus-visible,.trackCard:fo
 }
 
 </style>
+  <script src="https://cdn.y8.com/minimal-sdk/2-0/y8.min.js" async></script>
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -1160,6 +1161,8 @@ button:focus-visible,.navBtn:focus-visible,.modeCard:focus-visible,.trackCard:fo
     <input class="mrInput" id="gateEmail" type="email" placeholder="Email address (optional)">
     <input class="mrInput" id="gatePassword" type="password" placeholder="Password (optional)">
     <div class="formRow"><button class="primaryBtn" id="gateSignIn">SIGN IN</button><button class="secondaryBtn" id="gateSignUp">CREATE ACCOUNT</button></div>
+    <button class="secondaryBtn" id="y8LoginBtn" type="button" style="width:100%;margin-top:8px">SIGN IN WITH Y8</button>
+    <div class="mutedText" style="text-align:center;margin:6px 0 2px">Y8 sign-in is separate from Supabase. Existing multiplayer accounts remain unchanged.</div>
     <button class="goldBtn" id="guestPlay" style="width:100%;margin-top:8px">CONTINUE AS GUEST · PLAY</button>
     <div id="authStatus">You can link an account later in Settings.</div>
   </div>
@@ -1582,6 +1585,7 @@ let policeFailed = false, p2PoliceFailed = false, specialEventMode = 'infected',
 let activeTournamentStage=1, activeTournamentEventKey='', policeBackupWave1=false, policeBackupWave2=false;
 let policeSirenNodes=null;
 let authUser = null;
+let y8Sdk = null, y8User = null, y8SdkInitialized = false;
 let localPlayer2 = null;
 let p2State = {dist:0,offset:3,speed:0,nitro:100,damage:0};
 let p2ActivePowerupSlot=0,p2PowerupCooldown=false,p2ActiveEffects={},p2PowerupInputWasDown=false,p2SwapInputWasDown=false;
@@ -4677,6 +4681,52 @@ async function findOnlineMatch(mode,eventMeta={}){
     });
   }catch(e){$(status).innerText=`Could not join queue: ${e.message}`;$('mmStatus').innerText=$(status).innerText;}
 }
+// --- Y8 PLATFORM SDK ---
+// Y8 login is an optional platform identity. Supabase remains the game's backend
+// for existing accounts, cloud profile storage, matchmaking and multiplayer.
+function initializeY8SDK(){
+  const onY8Ready=()=>{
+    if(y8SdkInitialized)return;
+    try{
+      if(!window.y8||typeof window.y8.sdk!=='function')throw new Error('Y8 SDK did not expose its JavaScript API.');
+      y8Sdk=window.y8.sdk();
+      y8Sdk.init({appId:'6b03b37dded6de961769b1d1',autoLogin:true});
+      y8SdkInitialized=true;
+      y8Sdk.onAuth((user,error)=>{
+        const status=$('authStatus');
+        const button=$('y8LoginBtn');
+        if(error){
+          console.warn('Y8 authentication:',error);
+          if(status)status.innerText='Y8 sign-in could not be completed. You can still use Supabase or continue as a guest.';
+          if(button){button.disabled=false;button.innerText='SIGN IN WITH Y8';}
+          return;
+        }
+        y8User=user||null;
+        if(y8User){
+          const nickname=String(y8User.nickname||'Y8 RACER').trim().slice(0,18)||'Y8 RACER';
+          // Use the Y8 nickname only as a display name; never treat the browser profile as backend identity.
+          profile.username=nickname;
+          if(button){button.disabled=true;button.innerText='Y8 CONNECTED · '+nickname;}
+          if(status)status.innerText='Signed in with Y8. Supabase sign-in remains separate for existing multiplayer accounts.';
+          if($('authGate'))$('authGate').classList.add('hidden');
+          updateUI();
+          saveProfile();
+        }else if(button){
+          button.disabled=false;
+          button.innerText='SIGN IN WITH Y8';
+        }
+      });
+    }catch(error){
+      console.warn('Y8 SDK initialization:',error);
+      const status=$('authStatus');
+      if(status)status.innerText='Y8 sign-in is unavailable on this page right now. You can still use Supabase or continue as a guest.';
+    }
+  };
+  window.addEventListener('y8sdk.ready',onY8Ready,{once:true});
+  // The async SDK may have loaded before this listener was attached.
+  if(window.y8&&typeof window.y8.emitReadyEvent==='function')window.y8.emitReadyEvent();
+}
+
 // --- EVENT LISTENERS ---
 document.addEventListener('DOMContentLoaded',async()=>{
   try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Check that WebGL 2 is enabled and browser hardware acceleration is on, then reload.`;}
@@ -4685,6 +4735,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
   if(supabaseReady){await refreshAuth();if(authUser)$('authGate').classList.add('hidden');}
+  initializeY8SDK();
   if((profile.notifications||[]).some(n=>!n.read))toggleNotificationMenu(true);
   // Energy recovery includes offline time and keeps the partial timer when a race consumes energy.
   applyEnergyRegen();updateUI();
@@ -4703,6 +4754,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   document.querySelectorAll('.modeCard[data-mode]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.modeCard[data-mode]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');gameMode=btn.dataset.mode;}));
   $('trackGrid').addEventListener('click',e=>{const btn=e.target.closest('.trackCard');if(!btn||btn.disabled||!isTrackUnlocked(btn.dataset.track))return;currentTrack=btn.dataset.track;renderTrackGrid();});
   $('startBtn').addEventListener('click',()=>{if(!isRaceRendererReady()){gameAlert(`The 3D race engine is unavailable, so the race cannot start. No energy will be charged.\n\n${graphicsInitError?.message||'WebGL context is unavailable.'}\n\nEnable WebGL/hardware acceleration and refresh the page.`);return;}document.body.dataset.returnView='homePanel';gameMode=document.querySelector('.modeCard.active')?.dataset.mode||'street';playerMode=$('playerModeSelect').value;$('p2Touch').style.display=playerMode==='local2'?'block':'none';raceLaps=Number($('lapSelect').value)||3;profile.selectedPowerup=$('powerupSelect').value;storySideIndex=-1;document.body.dataset.storyRace='0';document.body.dataset.tournament='0';document.body.dataset.specialEvent='0';openRaceBriefing();});
+  $('y8LoginBtn').addEventListener('click',()=>{if(!y8Sdk){$('authStatus').innerText='Y8 is still loading. Try again in a moment.';return;}try{y8Sdk.login();}catch(error){console.warn('Y8 login:',error);$('authStatus').innerText='Y8 sign-in could not open. Check popup permissions and try again.';}});
   $('guestPlay').addEventListener('click',()=>{profile.username=($('gateUsername').value||profile.username).trim().slice(0,18)||'RACER';$('authGate').classList.add('hidden');updateUI();saveProfile();});
   $('gateSignIn').addEventListener('click',async()=>{if(await handleAuth(false)){$('authGate').classList.add('hidden');updateUI();}});
   $('gateSignUp').addEventListener('click',async()=>{if(await handleAuth(true)){$('authGate').classList.add('hidden');updateUI();}});
