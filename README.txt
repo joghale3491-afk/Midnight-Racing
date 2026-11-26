@@ -1,3 +1,6 @@
+MIDNIGHT RACING v40.4
+Performance, scenery and UX update. See README-v40.4-performance-world-ux.txt for details.
+
 MIDNIGHT RACING v40.1
 Track boundaries, smoother steering, street scenery, notifications and car design update
 
