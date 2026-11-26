@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
-<title>MIDNIGHT RACING v39.9 — Realistic Vehicle Models & Race Start Fix</title>
+<title>MIDNIGHT RACING v40.0 — Frame-Safe Countdown & Original Vehicle Design Overhaul</title>
 <script type="importmap">
 {
   "imports": {
@@ -1840,7 +1840,7 @@ let playerImpactNextAt={p1:0,p2:0};
 function canApplyPlayerImpact(target,cooldown=.9){const next=playerImpactNextAt[target]||0;if(raceTime<next)return false;playerImpactNextAt[target]=raceTime+cooldown;return true;}
 let playerMode = 'solo', selectedStoryPath = 'crew', selectedChapter = 0, storySideIndex = -1;
 let raceBriefingConfirmed=false, raceLapsPrepared=false, activePowerupSlot=0, briefingSlotActive=0, driftScore=0, p2DriftScore=0, checkpointProgress=0, p2CheckpointProgress=0, selectedStoryChoice='crew';
-let raceLaunchPending=false, raceCountdownTimer=null, raceLaunchWatchdog=null, raceLaunchStage='idle', pendingRankedTicket=false, graphicsInitError=null;
+let raceLaunchPending=false, raceCountdownTimer=null, raceCountdownRemainingMs=4000, raceCountdownPaused=false, raceCountdownLastLabel=null, raceLaunchWatchdog=null, raceLaunchStage='idle', pendingRankedTicket=false, graphicsInitError=null, lastGameFrameAt=0;
 let raceLapsCompleted = 0, raceAwarded = false, powerupCooldown = false, powerupPickups = [], activeEffects = {}, policeHeat = 0;
 const CHECKPOINT_COUNT=4, CHECKPOINT_START_SECONDS=10, CHECKPOINT_BONUS_SECONDS=5;
 function checkpointDistanceAt(index){return trackLength*(index+1)/(CHECKPOINT_COUNT+1);}
@@ -1880,7 +1880,7 @@ const CAR_CATALOG = CAR_RANKS.flatMap((rank,ri)=>Array.from({length:20},(_,i)=>{
  return {
   id:`${rank.name}-${String(i+1).padStart(2,'0')}`,
   name:`${CAR_NAMES[(i+ri*3)%CAR_NAMES.length]} ${String(i+1).padStart(2,'0')}`,
-  rank:rank.name,level:rank.level,visualId:ri*20+i,variantIndex:i,
+  rank:rank.name,level:rank.level,visualId:ri*20+i,variantIndex:(i+ri*3)%20,
   price:Math.round(rank.price+i*Math.max(40,rank.price*.025)),
   // More expensive models within a rank have consistently better baseline performance.
   speed:Math.round(rank.speedMin+(rank.speedMax-rank.speedMin)*progress),
@@ -3062,29 +3062,32 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
 
   // Keep road-car proportions within realistic bounds; small ID-based changes make each
   // vehicle's wheelbase, cabin placement, width and overhang combination unique.
-  const widthScale=clamp(archetypes.w*(.99+noise(7,17)*.055),.91,1.13);
-  const lengthScale=clamp(archetypes.l*(.99+noise(11,19)*.055),.91,1.13);
-  const bodyHalfWidth=.96*widthScale;
-  const frontExtent=2.15*lengthScale*(1+noise(13,17)*.035);
-  const rearExtent=2.16*lengthScale*(1+noise(17,19)*.035);
-  const wheelBase=archetypes.wb+noise(23,17)*.12;
+  const classTier=Math.floor(visualId/20);
+  // Each of the 140 catalogue IDs receives its own repeatable chassis measurements.
+  // The variation stays within plausible road-car ranges instead of stretching the body wildly.
+  const widthScale=clamp(archetypes.w*(.96+((visualId*17)%17)*.005),.90,1.10);
+  const lengthScale=clamp(archetypes.l*(.95+((visualId*13+7)%21)*.005),.90,1.10);
+  const bodyHalfWidth=.955*widthScale;
+  const frontExtent=2.13*lengthScale*(.975+((visualId*11)%11)*.005);
+  const rearExtent=2.17*lengthScale*(.975+((visualId*7+3)%11)*.005);
+  const wheelBase=archetypes.wb+(((visualId*19)%17)-8)*.012+(classTier-3)*.012;
   const wheelFront=wheelBase*.5*lengthScale,wheelRear=-wheelBase*.5*lengthScale;
   const wheelX=archetypes.track*.5*widthScale;
-  const wheelRadius=clamp(archetypes.wr+noise(29,13)*.025,.365,.465);
-  const wheelWidth=clamp(archetypes.ww+noise(31,13)*.024,.245,.365);
+  const wheelRadius=clamp(archetypes.wr+(((visualId*23)%9)-4)*.006,.35,.46);
+  const wheelWidth=clamp(archetypes.ww+(((visualId*31)%9)-4)*.006,.24,.36);
   const wheelY=wheelRadius+.045;
-  const cabinHalfLength=clamp(archetypes.cl*.5+noise(19,17)*.055,.68,1.12)*lengthScale;
-  const cabinCenterZ=archetypes.cz+noise(5,17)*.11;
+  const cabinHalfLength=clamp(archetypes.cl*.5+(((visualId*11)%11)-5)*.016,.64,1.18)*lengthScale;
+  const cabinCenterZ=archetypes.cz+(((visualId*29)%17)-8)*.022;
   const cabinFront=cabinHalfLength,cabinRear=-cabinHalfLength;
-  const cabinHalfWidth=.66*widthScale*archetypes.cw;
-  const cabinY=archetypes.cy+noise(37,13)*.045;
+  const cabinHalfWidth=.65*widthScale*archetypes.cw*(.94+((visualId*7)%9)*.015);
+  const cabinY=archetypes.cy+(((visualId*11+5)%9)-4)*.015;
 
   const bodyMat=new THREE.MeshPhysicalMaterial({color,roughness:.27,metalness:.56,clearcoat:.82,clearcoatRoughness:.16,envMapIntensity:1.0});
   const darkMat=makeMat(0x111820,.42,.52);
   const glassMat=new THREE.MeshPhysicalMaterial({color:0x102535,roughness:.16,metalness:.22,transparent:true,opacity:.91,clearcoat:.8,clearcoatRoughness:.12,side:THREE.DoubleSide});
   const trimMat=makeMat(0x1a232c,.36,.72);
   const tireMat=makeMat(0x090c10,.94,.015);
-  const brakeRotorMat=makeMat(0x68727a,.48,.78);
+  const brakeRotorMat=makeMat(0x343d45,.68,.38);
   const rimPalette=[0xc1cbd2,0x778995,0xb17d52,0x8f9daa,0xd6d9dc,0x34424e];
   const rimMat=makeMat(rimPalette[(visualId*3+variantIndex)%rimPalette.length],.24,.92);
   const caliperMat=makeMat([0xb53e45,0xc58a35,0x497a9b,0x6e5b9c][visualId%4],.34,.58);
@@ -3101,10 +3104,10 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
       [.08,.89,.89,.38],[.17,.98,1.03,.52],[.25,1.11,1.09,.76],[.09,.91,.94,.40]
     ][variantIndex];
     let [nose,frontShoulder,rearShoulder,tail]=profileTable;
-    nose=clamp(nose+noise(41,19)*.065,.025,.43);
-    frontShoulder=clamp(frontShoulder+noise(43,17)*.055,.82,1.13);
-    rearShoulder=clamp(rearShoulder+noise(47,19)*.055,.82,1.13);
-    tail=clamp(tail+noise(53,17)*.07,.32,.88);
+    nose=clamp(nose+noise(41,19)*.105,.025,.43);
+    frontShoulder=clamp(frontShoulder+noise(43,17)*.115,.80,1.15);
+    rearShoulder=clamp(rearShoulder+noise(47,19)*.115,.80,1.15);
+    tail=clamp(tail+noise(53,17)*.105,.30,.90);
     if(section==='cabin'){nose=clamp(nose+.10,.08,.48);frontShoulder*=.73;rearShoulder*=.73;tail*=.82;}
     if(section==='roof'){nose=clamp(nose+.13,.10,.5);frontShoulder*=.60;rearShoulder*=.61;tail*=.72;}
     const fw=halfWidth*frontShoulder,rw=halfWidth*rearShoulder;
@@ -3132,19 +3135,28 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
     const hc=wheelRadius*.145,center=[0,0],h1=[hc*Math.cos(a),hc*Math.sin(a)],h2=[hc*Math.cos(b),hc*Math.sin(b)];
     addWheelFaceTri(center,h1,h2);
   }
-  for(let i=0;i<5;i++){
-    const a=i*Math.PI*2/5,ca=Math.cos(a),sa=Math.sin(a),px=-sa,pz=ca;
+  const spokeCount=5+(visualId%4);
+  for(let i=0;i<spokeCount;i++){
+    const a=i*Math.PI*2/spokeCount,ca=Math.cos(a),sa=Math.sin(a),px=-sa,pz=ca;
     const inner=wheelRadius*.12,outer=wheelRadius*.65,half=wheelRadius*.075;
     const p1=[inner*ca+half*px,inner*sa+half*pz],p2=[outer*ca+half*.42*px,outer*sa+half*.42*pz];
     const p3=[outer*ca-half*.42*px,outer*sa-half*.42*pz],p4=[inner*ca-half*px,inner*sa-half*pz];
     addWheelFaceTri(p1,p2,p3);addWheelFaceTri(p1,p3,p4);
   }
   const spokeGeometry=new THREE.BufferGeometry();spokeGeometry.setAttribute('position',new THREE.Float32BufferAttribute(spokePositions,3));spokeGeometry.computeVertexNormals();
-  const tireGeometry=new THREE.CylinderGeometry(wheelRadius,wheelRadius,wheelWidth,28,1,false);
-  const sidewallGeometry=new THREE.TorusGeometry(wheelRadius*.82,wheelRadius*.105,7,28);
-  const rimLipGeometry=new THREE.TorusGeometry(wheelRadius*.67,wheelRadius*.035,7,28);
-  const rotorGeometry=new THREE.CylinderGeometry(wheelRadius*.54,wheelRadius*.54,.026,22,1,false);
-  const hubGeometry=new THREE.CylinderGeometry(wheelRadius*.13,wheelRadius*.13,.065,16,1,false);
+  const tyreProfile=[
+    new THREE.Vector2(wheelRadius*.61,-wheelWidth*.50),new THREE.Vector2(wheelRadius*.83,-wheelWidth*.48),
+    new THREE.Vector2(wheelRadius*.96,-wheelWidth*.38),new THREE.Vector2(wheelRadius,wheelWidth*.30),
+    new THREE.Vector2(wheelRadius*.96,wheelWidth*.40),new THREE.Vector2(wheelRadius*.83,wheelWidth*.49),
+    new THREE.Vector2(wheelRadius*.61,wheelWidth*.50)
+  ];
+  const tireGeometry=new THREE.LatheGeometry(tyreProfile,36);
+  const sidewallGeometry=new THREE.TorusGeometry(wheelRadius*.79,wheelRadius*.055,8,32);
+  const rimLipGeometry=new THREE.TorusGeometry(wheelRadius*.66,wheelRadius*.028,7,32);
+  const rotorGeometry=new THREE.CylinderGeometry(wheelRadius*.47,wheelRadius*.47,.022,32,1,false);
+  const hubGeometry=new THREE.CylinderGeometry(wheelRadius*.13,wheelRadius*.13,.065,18,1,false);
+  const rimFaceGeometry=new THREE.CylinderGeometry(wheelRadius*.435,wheelRadius*.435,.014,32,1,false);
+  const treadMat=new THREE.MeshStandardMaterial({color:0x151a1e,roughness:1,metalness:0});
   const spokeFaceMat=new THREE.MeshStandardMaterial({color:rimPalette[(visualId*3+variantIndex)%rimPalette.length],metalness:.9,roughness:.24,side:THREE.DoubleSide});
   root.userData.rimMaterials.push(rimMat,spokeFaceMat);
   const sidewallMat=new THREE.MeshStandardMaterial({color:0x11151a,roughness:.94,metalness:0.0,side:THREE.DoubleSide});
@@ -3154,7 +3166,8 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
     const tyre=new THREE.Mesh(tireGeometry,tireMat);tyre.rotation.z=Math.PI/2;tyre.castShadow=true;wheelGroup.add(tyre);
     for(const side of [-1,1]){
       const faceX=side*(wheelWidth*.5+.009);
-      // Even distant traffic gets a rubber tyre and a visible five-spoke wheel face.
+      // A dark alloy barrel sits under the spokes, preventing the wheel from reading as a bare metal disc.
+      const wheelFace=new THREE.Mesh(rimFaceGeometry,darkMat);wheelFace.rotation.z=Math.PI/2;wheelFace.position.x=side*(wheelWidth*.5-.015);wheelGroup.add(wheelFace);
       const spokes=new THREE.Mesh(spokeGeometry,spokeFaceMat);spokes.position.x=faceX;wheelGroup.add(spokes);
       if(detailLevel!=='traffic'){
         const sidewall=new THREE.Mesh(sidewallGeometry,sidewallMat);sidewall.rotation.y=Math.PI/2;sidewall.position.x=side*(wheelWidth*.5+.004);wheelGroup.add(sidewall);
@@ -3162,7 +3175,21 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
         const lip=new THREE.Mesh(rimLipGeometry,rimMat);lip.rotation.y=Math.PI/2;lip.position.x=side*(wheelWidth*.5+.015);wheelGroup.add(lip);root.userData.rimMaterials.push(lip.material);
         const hub=new THREE.Mesh(hubGeometry,rimMat);hub.rotation.z=Math.PI/2;hub.position.x=side*(wheelWidth*.5+.026);wheelGroup.add(hub);
         const caliper=new THREE.Mesh(wheelCaliperGeo,caliperMat);caliper.position.set(side*(wheelWidth*.5+.025),wheelRadius*.18,wheelRadius*.42);wheelGroup.add(caliper);
+        if(side===1&&(detailLevel==='showroom'||isPlayer)){
+          const holeGeo=new THREE.SphereGeometry(.018,6,5),holeMat=makeMat(0x141a20,.74,.25);
+          for(let h=0;h<8;h++){const a=h*Math.PI/4;const hole=new THREE.Mesh(holeGeo,holeMat);hole.position.set(side*(wheelWidth*.5+.018),Math.sin(a)*wheelRadius*.36,Math.cos(a)*wheelRadius*.36);wheelGroup.add(hole);}
+          const lugGeo=new THREE.SphereGeometry(.022,7,6),lugMat=makeMat(0xd5dde2,.25,.9);
+          for(let lug=0;lug<5;lug++){const a=lug*Math.PI*2/5;const nut=new THREE.Mesh(lugGeo,lugMat);nut.position.set(side*(wheelWidth*.5+.029),Math.sin(a)*wheelRadius*.19,Math.cos(a)*wheelRadius*.19);wheelGroup.add(nut);}
+        }
       }
+    }
+    // Directional tread ribs sit on the rubber crown and rotate with the wheel assembly.
+    const treadCount=isPlayer||detailLevel==='showroom'?22:(detailLevel==='traffic'?0:12);
+    for(let treadIndex=0;treadIndex<treadCount;treadIndex++){
+      const angle=treadIndex*Math.PI*2/treadCount;
+      const rib=new THREE.Mesh(new THREE.BoxGeometry(wheelWidth*.68,.010,.034),treadMat);
+      rib.position.set(0,Math.sin(angle)*wheelRadius*.985,Math.cos(angle)*wheelRadius*.985);
+      rib.rotation.x=angle;wheelGroup.add(rib);
     }
     root.userData.wheels.push(wheelGroup);if(isFront)root.userData.frontWheels.push(wheelGroup);
     return wheelGroup;
@@ -3204,24 +3231,73 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
   // Four independent wheel assemblies with black rubber tyres and visible multi-spoke rims.
   addWheel(-wheelX,wheelFront,true);addWheel(wheelX,wheelFront,true);addWheel(-wheelX,wheelRear,false);addWheel(wheelX,wheelRear,false);
 
+  // Fine panel lines, door cuts, sculpted shoulders and compact mirrors make the body read as a road car.
+  if(detailLevel!=='traffic')for(const side of [-1,1]){
+    const sx=side*bodyHalfWidth*.975;
+    const shoulderCurve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(sx*.88,.96,frontExtent*.48),new THREE.Vector3(sx,.88,.78),
+      new THREE.Vector3(sx*1.01,.84,-.36),new THREE.Vector3(sx*.89,.93,-rearExtent*.62)
+    ]);
+    add(new THREE.TubeGeometry(shoulderCurve,18,.022,6,false),accentMat,[0,0,0]);
+    // Sculpted lower sill and a fine door seam give each side a real panel break.
+    add(new THREE.BoxGeometry(.075,.085,1.22*lengthScale),darkMat,[side*bodyHalfWidth*.97,.53,0]);
+    const doorCurve=new THREE.CatmullRomCurve3([
+      new THREE.Vector3(side*bodyHalfWidth*.99,.90,cabinCenterZ+cabinHalfLength*.45),
+      new THREE.Vector3(side*bodyHalfWidth*1.005,.73,cabinCenterZ+cabinHalfLength*.28),
+      new THREE.Vector3(side*bodyHalfWidth*1.005,.70,cabinCenterZ-cabinHalfLength*.52),
+      new THREE.Vector3(side*bodyHalfWidth*.99,.88,cabinCenterZ-cabinHalfLength*.67)
+    ]);
+    add(new THREE.TubeGeometry(doorCurve,18,.009,5,false),darkMat,[0,0,0]);
+    add(new THREE.BoxGeometry(.035,.05,.11),darkMat,[side*bodyHalfWidth*.96,1.25,cabinCenterZ+cabinHalfLength*.30]);
+    add(new THREE.BoxGeometry(.105,.035,.075),bodyMat,[side*bodyHalfWidth*1.015,1.27,cabinCenterZ+cabinHalfLength*.30]);
+    add(new THREE.BoxGeometry(.05,.025,.11),rimMat,[side*bodyHalfWidth*.93,.84,-.03]);
+    // Small flush door handle and rear-quarter cooling vent.
+    add(new THREE.BoxGeometry(.10,.022,.035),rimMat,[side*bodyHalfWidth*.99,.91,cabinCenterZ-cabinHalfLength*.16]);
+    add(new THREE.BoxGeometry(.035,.10,.24),darkMat,[side*bodyHalfWidth*.985,.74,-rearExtent*.60]);
+  }
+  if(detailLevel!=='traffic'){
+    // Paired bonnet creases and a centre hood inset distinguish the upper body without oversized add-ons.
+    for(const side of [-1,1]){
+      const hoodLine=new THREE.CatmullRomCurve3([
+        new THREE.Vector3(side*bodyHalfWidth*.22,1.105,frontExtent*.90),
+        new THREE.Vector3(side*bodyHalfWidth*.34,1.115,frontExtent*.58),
+        new THREE.Vector3(side*bodyHalfWidth*.39,1.115,frontExtent*.18)
+      ]);
+      add(new THREE.TubeGeometry(hoodLine,10,.012,5,false),accentMat,[0,0,0]);
+    }
+  }
   // Wheel-arch lips, bumpers, grille, headlights and rear lamps complete the road-car body.
   const archMat=makeMat(new THREE.Color(color).offsetHSL(.01,-.02,-.04).getHex(),.34,.58);
   if(detailLevel!=='traffic')for(const side of [-1,1])for(const axleZ of [wheelFront,wheelRear]){
-    const arch=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius+.035,.038,6,22,Math.PI),archMat);
+    const arch=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius+.045,.052,7,28,Math.PI),archMat);
     arch.rotation.y=Math.PI/2;arch.position.set(side*wheelX,wheelY,axleZ);visualRig.add(arch);
   }
   const frontZ=frontExtent*.985,rearZ=-rearExtent*.98;
   add(new THREE.BoxGeometry(bodyHalfWidth*1.72,.13,.18),trimMat,[0,.62,frontZ]);
   add(new THREE.BoxGeometry(bodyHalfWidth*1.70,.12,.19),trimMat,[0,.62,rearZ]);
   if(detailLevel!=='traffic'){
-    add(new THREE.BoxGeometry(.64,.15,.055),darkMat,[0,.70,frontZ+.045]);
-    for(let rib=-2;rib<=2;rib++)add(new THREE.BoxGeometry(.045,.085,.035),makeMat(0x667984,.42,.7),[rib*.105,.70,frontZ+.08]);
+    add(new THREE.BoxGeometry(.72,.16,.065),darkMat,[0,.70,frontZ+.045]);
+    for(let rib=-3;rib<=3;rib++)add(new THREE.BoxGeometry(.018,.092,.025),makeMat(0x85949d,.42,.72),[rib*.092,.70,frontZ+.083]);
+    add(new THREE.BoxGeometry(bodyHalfWidth*1.72,.105,.20),darkMat,[0,.51,rearZ-.035]);
+    for(let fin=-2;fin<=2;fin++)add(new THREE.BoxGeometry(.045,.11,.18),trimMat,[fin*.26,.51,rearZ-.07]);
   }
   const headMat=new THREE.MeshStandardMaterial({color:0xeafaff,emissive:0xc5f1ff,emissiveIntensity:2.5,roughness:.22});
   const tailMat=new THREE.MeshStandardMaterial({color:0xff294f,emissive:0xf31643,emissiveIntensity:2.2,roughness:.25});
   for(const x of [-bodyHalfWidth*.67,bodyHalfWidth*.67]){
-    add(new THREE.BoxGeometry(.33,.105,.075),headMat,[x,.88,frontZ+.02]);
-    const tail=add(new THREE.BoxGeometry(.38,.105,.07),tailMat,[x,.86,rearZ-.02]);root.userData.brakeLights.push(tail);
+    const lampWidth=.25+((visualId*3)%5)*.018;
+    add(new THREE.BoxGeometry(lampWidth,.065,.07),headMat,[x,.89,frontZ+.025]);
+    const tail=add(new THREE.BoxGeometry(.30+((visualId*5)%4)*.02,.075,.065),tailMat,[x,.86,rearZ-.025]);root.userData.brakeLights.push(tail);
+    if(detailLevel!=='traffic'){
+      const exhaust=add(new THREE.CylinderGeometry(.055,.065,.14,12),makeMat(0x9ba8b0,.30,.9),[x*.66,.50,rearZ-.13],[Math.PI/2,0,0]);
+      exhaust.scale.set(.9,.9,1);
+    }
+  }
+
+  if(detailLevel!=='traffic'){
+    const rearLight=new THREE.Mesh(new THREE.BoxGeometry(bodyHalfWidth*1.10,.035,.028),tailMat);
+    rearLight.position.set(0,.875,rearZ-.028);visualRig.add(rearLight);root.userData.brakeLights.push(rearLight);
+    // A compact undertray and central diffuser finish the rear without a bulky block bumper.
+    add(new THREE.BoxGeometry(bodyHalfWidth*1.48,.07,.22),darkMat,[0,.48,rearZ-.015]);
   }
 
   // Twenty restrained body treatments provide recognisable car classes without oversized,
@@ -3282,12 +3358,14 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
   }
 
   // A subtle per-model trim pattern prevents same-family vehicles from looking like palette swaps.
-  const trimPattern=visualId%5;
+  const trimPattern=(visualId*3+Math.floor(visualId/7))%7;
   if(detailLevel!=='traffic'&&trimPattern===0){for(const sx of [-1,1])add(new THREE.BoxGeometry(.035,.025,1.65*lengthScale),accentMat,[sx*.42*widthScale,1.145,.15]);}
   else if(detailLevel!=='traffic'&&trimPattern===1){add(new THREE.BoxGeometry(.07,.025,1.10*lengthScale),accentMat,[0,1.145,frontExtent*.42]);}
   else if(detailLevel!=='traffic'&&trimPattern===2){for(const sx of [-1,1])add(new THREE.BoxGeometry(.045,.035,1.0*lengthScale),accentMat,[sx*bodyHalfWidth*.92,.72,-.12]);}
   else if(detailLevel!=='traffic'&&trimPattern===3){add(new THREE.BoxGeometry(bodyHalfWidth*1.25,.045,.08),accentMat,[0,1.17,rearZ+.15]);}
-  else if(detailLevel!=='traffic'){for(const sx of [-1,1])add(new THREE.BoxGeometry(.04,.04,cabinHalfLength*1.35),accentMat,[sx*cabinHalfWidth*.78,cabinY+.07,cabinCenterZ]);}
+  else if(detailLevel!=='traffic'&&trimPattern===4){for(const sx of [-1,1])add(new THREE.BoxGeometry(.04,.04,cabinHalfLength*1.35),accentMat,[sx*cabinHalfWidth*.78,cabinY+.07,cabinCenterZ]);}
+  else if(detailLevel!=='traffic'&&trimPattern===5){for(const sx of [-1,1])add(new THREE.BoxGeometry(.045,.025,.64*lengthScale),accentMat,[sx*bodyHalfWidth*.88,1.105,frontExtent*.50]);}
+  else if(detailLevel!=='traffic'){add(new THREE.BoxGeometry(bodyHalfWidth*1.38,.028,.045),accentMat,[0,1.10,-rearExtent*.64]);}
 
   // Player garage attachments are mirrored on the actual in-race model.
   if(isPlayer&&detailLevel!=='p2'&&carAttachments.spoiler)addWing(bodyHalfWidth*1.95,1.48,-rearExtent*.82);
@@ -3590,20 +3668,8 @@ function createRacers(){
   const cameraBack=gridForward.clone().multiplyScalar(-17);camera.position.copy(cameraFocus).add(new THREE.Vector3(0,8,0)).add(cameraBack);camera.lookAt(cameraFocus.clone().addScaledVector(gridForward,5).add(new THREE.Vector3(0,1.2,0)));
   if(localPlayer2&&camera2){const p2Forward=new THREE.Vector3(Math.sin(p2DriveState.heading),0,Math.cos(p2DriveState.heading));camera2.position.copy(localPlayer2.position).add(new THREE.Vector3(0,8,0)).addScaledVector(p2Forward,-17);camera2.lookAt(localPlayer2.position.clone().addScaledVector(p2Forward,5).add(new THREE.Vector3(0,1.2,0)));}
   $('lap').innerText=eliminationActive?'ELIM. 1':`1/${raceLaps}`;$('position').innerText=`${Math.min(6,rivals.length+1+(localPlayer2?1:0)+Math.max(remotePlayers.size||0,onlineParticipants.length?onlineParticipants.length-1:0))}/6`;
-  gameState='countdown';renderRacePowerupHud();renderP2RacePowerupHud();$('countdown').classList.add('show');let cd=3;$('countdown').innerText=cd;
-  if(raceCountdownTimer)clearInterval(raceCountdownTimer);
-  raceCountdownTimer=setInterval(()=>{
-    try{
-      if(gameState!=='countdown'||!raceLaunchPending){clearInterval(raceCountdownTimer);raceCountdownTimer=null;return;}
-      cd--;
-      if(cd>0){$('countdown').innerText=cd;return;}
-      if(cd===0){$('countdown').innerText='GO!';return;}
-      clearInterval(raceCountdownTimer);raceCountdownTimer=null;$('countdown').classList.remove('show');
-      raceLaunchStage='entering race';gameState='racing';document.body.classList.add('race-active');$('pauseGraphic').classList.add('visible');
-      if(!commitRaceEntryAtGo())return;setPoliceSiren(isPoliceMode);
-      if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
-    }catch(error){abortRaceLaunch(error);}
-  },1000);
+  gameState='countdown';renderRacePowerupHud();renderP2RacePowerupHud();$('countdown').classList.add('show');
+  startRaceCountdown();
 }
 function update(dt){
   if(gameState!=='racing')return;
@@ -4033,10 +4099,12 @@ function update(dt){
 function loop(){
   requestAnimationFrame(loop);
   if(!renderer||!scene||!camera)return;
+  lastGameFrameAt=performance.now();
   const dt=Math.min(clock.getDelta(),.05);
+  if(gameState==='countdown'&&raceCountdownTimer)tickRaceCountdownFrame(dt);
   if(gameState==='racing'||gameState==='countdown'){
     try{update(dt);if(gameState==='racing'||gameState==='countdown')updateWeatherEffects(dt);}
-    catch(error){console.error('Race update halted safely:',error);gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
+    catch(error){console.error('Race update halted safely:',error);if(gameState==='countdown'&&raceLaunchPending){abortRaceLaunch(error);return;}gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
   }
   if(world)world.visible=gameState!=='menu';
   try{
@@ -4053,7 +4121,7 @@ function loop(){
         camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.render(scene,camera);
       }
     }
-  }catch(error){renderer.setScissorTest(false);renderer.autoClear=true;graphicsInitError=error;stopEngineSounds();console.error('WebGL render failed:',error);if(gameState==='racing'||gameState==='countdown'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT ERROR · RACE PAUSED');}}
+  }catch(error){renderer.setScissorTest(false);renderer.autoClear=true;graphicsInitError=error;stopEngineSounds();console.error('WebGL render failed:',error);if(gameState==='countdown'&&raceLaunchPending){abortRaceLaunch(error);return;}if(gameState==='racing'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT ERROR · RACE PAUSED');}}
 }
 
 // --- UI & MENU LOGIC ---
@@ -4128,7 +4196,7 @@ function initGarage(){
   // This is the only auxiliary WebGL renderer; Garage and Store move the same canvas
   // between panels instead of opening another GPU context for dealership thumbnails.
   garageRenderer=new THREE.WebGLRenderer({canvas:gCanvas,antialias:false,alpha:true,powerPreference:'low-power',preserveDrawingBuffer:false,depth:true,stencil:false});garageRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,.9));garageRenderer.outputColorSpace=THREE.SRGBColorSpace;garageRenderer.toneMapping=THREE.ACESFilmicToneMapping;garageRenderer.toneMappingExposure=1.2;garageRenderer.setSize(container.clientWidth||340,container.clientHeight||250,false);
-  garageScene=new THREE.Scene();garageCamera=new THREE.PerspectiveCamera(39,(container.clientWidth||340)/(container.clientHeight||250),.1,100);garageCamera.position.set(5.2,3.0,7.7);garageCamera.lookAt(0,.83,0);
+  garageScene=new THREE.Scene();garageCamera=new THREE.PerspectiveCamera(36,(container.clientWidth||340)/(container.clientHeight||250),.1,100);garageCamera.position.set(5.8,3.25,8.3);garageCamera.lookAt(0,.82,0);
   garageScene.add(new THREE.HemisphereLight(0xe4f7ff,0x172737,1.85));const spot=new THREE.SpotLight(0x83f3ff,9);spot.position.set(5,10,5);spot.angle=.72;spot.penumbra=.65;spot.decay=1.4;spot.distance=35;spot.castShadow=false;garageScene.add(spot);const warmFill=new THREE.DirectionalLight(0xffd9b0,2.4);warmFill.position.set(-6,4,-4);garageScene.add(warmFill);const rimLight=new THREE.DirectionalLight(0x569fff,1.8);rimLight.position.set(2,3,-7);garageScene.add(rimLight);
   const floor=new THREE.Mesh(new THREE.CircleGeometry(7,64),new THREE.MeshStandardMaterial({color:0x0a1a29,metalness:.48,roughness:.3,transparent:true,opacity:.94}));floor.rotation.x=-Math.PI/2;floor.position.y=-.14;garageScene.add(floor);const grid=new THREE.GridHelper(24,24,0x63f3ff,0x173044);grid.position.y=-.12;garageScene.add(grid);
   refreshGarageCar();refreshStoreCarPreview(storePreviewCarId);
@@ -4861,6 +4929,65 @@ function updateAiPowerupEffects(r,dt,rivalMaxSpeed,gapToPlayer,bend){
   if(r.fxRing){r.fxRing.visible=Object.values(r.aiEffects).some(v=>v>0);r.fxRing.material.color.setHex(choice==='shield'?0x9d79ff:choice==='overdrive'?0xffcf55:choice==='grip'||choice==='repair'?0x55ef9c:choice==='pulse'||choice==='jammer'?0xff5caa:0x4eeaff);}
 }
 
+// Countdown is advanced by the main animation loop, not by browser timers.
+// A hidden tab pauses it; returning to the game starts a fresh, visible countdown.
+function clearRaceCountdown(){
+  raceCountdownTimer=null;
+  raceCountdownRemainingMs=4000;
+  raceCountdownPaused=false;
+  raceCountdownLastLabel=null;
+}
+function armRaceLaunchWatchdog(){
+  if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+  if(!raceLaunchPending||gameState!=='countdown'||document.hidden)return;
+  raceLaunchWatchdog=setTimeout(()=>{
+    if(!raceLaunchPending||gameState!=='countdown'||document.hidden)return;
+    const frameAge=lastGameFrameAt?performance.now()-lastGameFrameAt:Infinity;
+    if(frameAge<1800){armRaceLaunchWatchdog();return;}
+    abortRaceLaunch(new Error('The 3D animation loop stopped responding while the game tab was visible. No entry energy was charged.'));
+  },15000);
+}
+function finishRaceCountdown(){
+  if(gameState!=='countdown'||!raceLaunchPending)return;
+  clearRaceCountdown();
+  if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+  if(!isRaceRendererReady()){abortRaceLaunch(new Error(graphicsInitError?.message||'The WebGL renderer became unavailable during the countdown.'));return;}
+  if(!lastGameFrameAt||performance.now()-lastGameFrameAt>1800){abortRaceLaunch(new Error('The 3D render loop stopped responding before the start. Check browser graphics support and hardware acceleration.'));return;}
+  $('countdown')?.classList.remove('show');
+  raceLaunchStage='entering race';gameState='racing';document.body.classList.add('race-active');$('pauseGraphic')?.classList.add('visible');
+  if(!commitRaceEntryAtGo())return;
+  setPoliceSiren(isPoliceMode);
+}
+function tickRaceCountdownFrame(frameDelta){
+  if(!raceCountdownTimer||gameState!=='countdown'||!raceLaunchPending)return;
+  if(document.hidden){raceCountdownPaused=true;return;}
+  if(raceCountdownPaused){raceCountdownPaused=false;raceCountdownRemainingMs=4000;raceCountdownLastLabel='3';}
+  // Clock only advances while the visible game is actually rendering. Clamp long frame gaps.
+  raceCountdownRemainingMs-=Math.max(0,Math.min(Number(frameDelta)||0,.05))*1000;
+  const remaining=Math.max(0,raceCountdownRemainingMs);
+  const label=remaining>3000?'3':remaining>2000?'2':remaining>1000?'1':remaining>0?'GO!':null;
+  if(label&&label!==raceCountdownLastLabel){const node=$('countdown');if(node)node.textContent=label;raceCountdownLastLabel=label;}
+  if(remaining<=0){finishRaceCountdown();return;}
+}
+function startRaceCountdown(){
+  clearRaceCountdown();
+  raceCountdownTimer=true;raceCountdownRemainingMs=4000;raceCountdownPaused=!!document.hidden;raceCountdownLastLabel='3';
+  const node=$('countdown');if(node){node.textContent='3';node.classList.add('show');}
+  if(!document.hidden)armRaceLaunchWatchdog();
+}
+function handleRaceCountdownVisibility(){
+  if(!raceLaunchPending||gameState!=='countdown'||!raceCountdownTimer)return;
+  if(document.hidden){
+    raceCountdownPaused=true;
+    if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
+    return;
+  }
+  // Restart from three when the player returns so a throttled background tab cannot skip GO.
+  raceCountdownRemainingMs=4000;raceCountdownPaused=false;raceCountdownLastLabel='3';
+  const node=$('countdown');if(node){node.textContent='3';node.classList.add('show');}
+  armRaceLaunchWatchdog();
+}
+
 function isRaceRendererReady(){
   try{
     const gl=renderer?.getContext?.();
@@ -4882,7 +5009,7 @@ function isRaceRendererReady(){
   }catch(error){graphicsInitError=error;return false;}
 }
 function clearPartialRaceScene(){
-  if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+  clearRaceCountdown();
   try{if(player)dispose3DObject(player);if(localPlayer2)dispose3DObject(localPlayer2);if(ghostCar)dispose3DObject(ghostCar);rivals.forEach(r=>dispose3DObject(r.mesh));if(world)dispose3DObject(world);}
   catch(error){console.warn('Partial race cleanup:',error);}
   player=null;localPlayer2=null;ghostCar=null;rivals=[];trafficCars=[];powerupPickups=[];world=null;
@@ -4890,7 +5017,7 @@ function clearPartialRaceScene(){
 }
 function abortRaceLaunch(error){
   const detail=error instanceof Error?error.message:String(error||'Unknown initialization error');
-  if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+  clearRaceCountdown();
   if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
   const failedStage=raceLaunchStage||'setup';
   clearPartialRaceScene();raceLaunchPending=false;pendingRankedTicket=false;raceBriefingConfirmed=false;raceLaunchStage='idle';
@@ -4901,10 +5028,10 @@ function abortRaceLaunch(error){
   const message=`Race could not start during ${failedStage}: ${detail}. No Energy or Ranked Ticket was charged.`;
   if($('lobbyStatus'))$('lobbyStatus').innerText=message;
   if($('mmStatus')&&lobbyChannel)$('mmStatus').innerText=message;
-  updateUI();console.error('Race launch aborted:',{stage:raceLaunchStage,error});
+  updateUI();console.error('Race launch aborted:',{stage:failedStage,error});
   gameAlert(`Race could not start. No energy was charged.
 
-Stage: ${raceLaunchStage||'setup'}
+Stage: ${failedStage}
 ${detail}
 
 Please check WebGL / browser compatibility, then try again.`);
@@ -4928,7 +5055,7 @@ function beginRace(skipBriefing=false){
   if(gameState==='countdown'){
     if(player&&raceCountdownTimer)return;
     console.warn('Recovering stale countdown state before a new launch.');
-    if(raceCountdownTimer){clearInterval(raceCountdownTimer);raceCountdownTimer=null;}
+    clearRaceCountdown();
     if(raceLaunchWatchdog){clearTimeout(raceLaunchWatchdog);raceLaunchWatchdog=null;}
     clearPartialRaceScene();gameState='menu';document.body.classList.remove('race-active');
     $('countdown')?.classList.remove('show');$('pauseGraphic')?.classList.remove('visible');
@@ -4968,9 +5095,7 @@ Enable hardware acceleration/WebGL or try another browser, then refresh.`);
     $('menu').classList.add('hidden');$('hud').classList.add('live');
     raceLaunchStage='countdown';
     // If a background tab or browser timer stalls, recover to the menu without charging entry energy.
-    raceLaunchWatchdog=setTimeout(()=>{
-      if(raceLaunchPending&&gameState==='countdown')abortRaceLaunch(new Error('The countdown did not reach GO. The browser may have paused the game timer.'));
-    },12000);
+    armRaceLaunchWatchdog();
   }catch(error){abortRaceLaunch(error);}
 }
 
@@ -5683,7 +5808,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
 
 // Keep HUD state coherent if the tab loses focus or is resized.
 window.addEventListener('blur',()=>{for(const k of Object.keys(keys))keys[k]=false;mobilePressed.clear();if(gameState==='racing')pauseRace();});
-canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();graphicsInitError=new Error('WebGL context was lost. Close other GPU-heavy tabs, enable hardware acceleration and reload.');if(gameState==='racing'||gameState==='countdown'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT LOST · RACE PAUSED');}});
+document.addEventListener('visibilitychange',handleRaceCountdownVisibility);
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();graphicsInitError=new Error('WebGL context was lost. Close other GPU-heavy tabs, enable hardware acceleration and reload.');if(gameState==='countdown'&&raceLaunchPending){abortRaceLaunch(graphicsInitError);}else if(gameState==='racing'){gameState='paused';document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast('GRAPHICS CONTEXT LOST · RACE PAUSED');}});
 canvas.addEventListener('webglcontextrestored',()=>{graphicsInitError=null;showToast('GRAPHICS CONTEXT RESTORED · RELOAD BEFORE THE NEXT RACE');});
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('Service worker:',e.message)));}
 

@@ -1,41 +1,27 @@
-MIDNIGHT RACING v39.4 — AI PACE, RACE POWERUP LOG & HARDER QUESTS
+MIDNIGHT RACING v40.0 — FRAME-SAFE COUNTDOWN & ORIGINAL VEHICLE DESIGN OVERHAUL
 
-BASE
-- Built directly on v39.3 Individual Car Shop Designs.
-- Keeps Y8 SDK App ID/login integration and Supabase configuration.
-- Keeps guest mode, existing Supabase accounts, existing multiplayer setup, prior Time Attack fix, shop vehicle visual designs, track visual changes, and mobile HUD.
-- No Supabase table changes or SQL migration are required.
+Based on the supplied v39.9 full game package.
 
-WHAT CHANGED
-AI PACE
-- Each AI racer samples the live speed of the nearest active human driver (Player 1 or local Player 2).
-- AI pace targets follow the player's speed with smoothing to avoid sudden rubber-band acceleration or braking.
-- Vehicle top-speed limits and small per-rival skill differences remain in place.
-- AI retains its last observed player pace after all human drivers are eliminated or finish, so remaining race logic does not suddenly slow down.
+RACE START / COUNTDOWN
+- Replaced the one-second setInterval countdown and 12-second timeout watchdog with a frame-driven countdown tied to the visible main render loop.
+- Countdown advances only while the game is actively drawing frames. When the browser tab is hidden, it pauses; when the player returns, it restarts from 3 so background throttling cannot skip GO.
+- A watchdog now checks whether the actual 3D render loop is alive and reports the real failing stage. Race energy and ranked tickets are committed only after GO.
+- The previously reported placeOnGrid helper is present in the build.
 
-RACE POWERUP LOG
-- Added a compact in-race activity panel that records the latest four Player 1 / Player 2 power-up events.
-- Power-up pickups are marked ACQUIRED; activations are marked USED.
-- The panel resets at the beginning of each race and uses text-only DOM updates for safe display.
+ORIGINAL CAR MODEL IMPROVEMENTS
+- Updated all 140 catalogue entries with class-shifted body archetypes and bounded unique chassis, wheelbase, cabin, overhang and width variations.
+- Improved tyre and rim read: rubber remains the outer surface; the brake disc is smaller and darker behind open multi-spoke alloy geometry; detailed models add rotor marks and lug nuts.
+- Added clearer fender lips, door seams, side handles, bonnet creases, rear LED bridge and undertray details.
+- These models are procedural original Three.js geometry rather than third-party copyrighted vehicle meshes or brand replicas.
+- Player, AI, traffic, Garage and Store continue to use the same catalogue model identifiers.
 
-QUEST DIFFICULTY
-- Raised the requirements and rewards for the three Quest Board challenges.
-- Increased multi-stage Street Credentials, Online Rival and Pursuit Specialist goals.
-- Increased daily and weekly contract targets while preserving Street Rep rank scaling and corresponding reward scaling.
-- Existing quest progress is retained; no player profile wipe is performed.
+PRESERVED
+- Y8 SDK integration and existing App ID configuration.
+- Supabase URL and public client key configuration.
+- Existing multiplayer, player profiles, saved progression, car catalogue, power-ups, quests, tracks, and audio assets.
+- No Supabase SQL changes or migrations are required.
 
-CACHE
-- Service-worker cache version has been updated to make browsers fetch v39.4 files.
-
-VALIDATION
-- Main JavaScript module syntax checked with Node.js.
-- Key AI, feed, quest, Supabase and Y8 configuration blocks inspected.
-- ZIP integrity checked after packaging.
-- No live browser race or Y8 portal test is claimed; test AI speed response, local 2-player feed and quest progress after upload.
-
-INSTALL
-1. Extract the ZIP.
-2. Upload all files and folders inside the extracted folder to the root of the Midnight-Racing GitHub repository, replacing the old files.
-3. Commit the changes to main.
-4. Open the game and hard-refresh using Ctrl+Shift+R.
-5. Test a race by changing speed repeatedly; AI pacing should follow smoothly. Collect and activate powerups; check the Race Powerup Log. Review the Quest Board, Daily Contracts and Weekly Challenges.
+STATIC VALIDATION
+- Run JavaScript module syntax checks.
+- Verify HTML parsing, local asset references, service-worker cache version and ZIP integrity.
+- Live browser/WebGL gameplay cannot be guaranteed by static checks; test one solo race, one local two-player race, Garage and Store after upload.
