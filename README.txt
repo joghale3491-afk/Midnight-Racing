@@ -1,27 +1,32 @@
-MIDNIGHT RACING v40.0 — FRAME-SAFE COUNTDOWN & ORIGINAL VEHICLE DESIGN OVERHAUL
+MIDNIGHT RACING v40.1
+Track boundaries, smoother steering, street scenery, notifications and car design update
 
-Based on the supplied v39.9 full game package.
+BUILT FROM
+- Midnight Racing v40.0, the working race-start/countdown build.
 
-RACE START / COUNTDOWN
-- Replaced the one-second setInterval countdown and 12-second timeout watchdog with a frame-driven countdown tied to the visible main render loop.
-- Countdown advances only while the game is actively drawing frames. When the browser tab is hidden, it pauses; when the player returns, it restarts from 3 so background throttling cannot skip GO.
-- A watchdog now checks whether the actual 3D render loop is alive and reports the real failing stage. Race energy and ranked tickets are committed only after GO.
-- The previously reported placeOnGrid helper is present in the build.
-
-ORIGINAL CAR MODEL IMPROVEMENTS
-- Updated all 140 catalogue entries with class-shifted body archetypes and bounded unique chassis, wheelbase, cabin, overhang and width variations.
-- Improved tyre and rim read: rubber remains the outer surface; the brake disc is smaller and darker behind open multi-spoke alloy geometry; detailed models add rotor marks and lug nuts.
-- Added clearer fender lips, door seams, side handles, bonnet creases, rear LED bridge and undertray details.
-- These models are procedural original Three.js geometry rather than third-party copyrighted vehicle meshes or brand replicas.
-- Player, AI, traffic, Garage and Store continue to use the same catalogue model identifiers.
+CHANGES
+- Player 1 and local Player 2 are kept inside the road corridor. The road shoulder remains usable, with a firm boundary before the outer scenery.
+- Continuous guardrails and track-edge reflectors are now present on every track theme.
+- Steering input eases into turns and high-speed steering is less abrupt. A / Left Arrow steer left; D / Right Arrow steer right.
+- Urban, industrial, harbour and skyway tracks receive closer street-front buildings, illuminated windows, signs and awnings.
+- Power-up feed entries and active power-up notifications are cleared when a race ends or the player returns to a menu. Power-up events are ignored outside active races.
+- Car body geometry has been refined using original, brand-free vehicle archetypes inspired by real-world categories. Distinct chassis dimensions and more exotic aero details progress with vehicle rarity.
+- Wheel centres were refined so black rubber tyres, alloy spokes and brake hardware read more clearly.
+- Service-worker cache version updated to v40.1.
 
 PRESERVED
-- Y8 SDK integration and existing App ID configuration.
-- Supabase URL and public client key configuration.
-- Existing multiplayer, player profiles, saved progression, car catalogue, power-ups, quests, tracks, and audio assets.
-- No Supabase SQL changes or migrations are required.
+- Y8 SDK integration and App ID.
+- Supabase URL and public client key.
+- Existing accounts, cloud profiles, multiplayer, race modes, tracks, quests, cars, power-ups and the v40.0 countdown repair.
+- No database migrations or table changes are required.
 
-STATIC VALIDATION
-- Run JavaScript module syntax checks.
-- Verify HTML parsing, local asset references, service-worker cache version and ZIP integrity.
-- Live browser/WebGL gameplay cannot be guaranteed by static checks; test one solo race, one local two-player race, Garage and Store after upload.
+STATIC CHECKS
+- JavaScript module syntax check passed.
+- CSS parser reported zero errors.
+- HTML scan found no duplicate IDs.
+- All local src/href references resolve.
+- Y8 and Supabase configuration markers present.
+- ZIP integrity checked after packaging.
+
+IMPORTANT
+These are static package checks. A live browser test is still required to confirm driving behaviour, collision boundaries, track performance and visual appearance on the player's device.
