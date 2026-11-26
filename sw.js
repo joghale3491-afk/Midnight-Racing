@@ -1,4 +1,4 @@
-const CACHE_NAME = 'midnight-racing-v40-4-performance-world-ux';
+const CACHE_NAME = 'midnight-racing-v40-5-adaptive-ai-pace';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
   './favicon-v36.ico', './favicon.ico', './favicon-32-v36.png', './favicon-48-v36.png',

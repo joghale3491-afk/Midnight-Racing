@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
-<title>MIDNIGHT RACING v40.4 — Performance, Living Tracks & UX Overhaul</title>
+<title>MIDNIGHT RACING v40.5 — Adaptive AI Pace</title>
 <script type="importmap">
 {
   "imports": {
@@ -4008,34 +4008,56 @@ function update(dt){
     const rivalMaxSpeed=(Number(r.maxSpeed)||maxSpeed)*weatherGrip;
     const p1Active=!playerEliminated&&!playerFinished,p2Active=!!localPlayer2&&!p2Eliminated&&!p2Finished;
     const p1Gap=p1Active?trackGap(r.dist,playerDistance):Infinity,p2Gap=p2Active?trackGap(r.dist,p2State.dist):Infinity;
-    const paceTargetDriver=p2Gap<p1Gap?p2State:{speed:playerSpeed};
+    // Pace against the closest active human driver. Local split-screen racers therefore
+    // each influence the field according to who an AI is actually racing near.
+    const paceTargetIsP2=p2Gap<p1Gap;
+    const paceTargetDriver=paceTargetIsP2?p2State:{speed:playerSpeed};
     const liveHumanSpeed=Math.max(0,Number(paceTargetDriver.speed)||0);
-    const desiredPaceSample=(p1Active||p2Active)?clamp(Math.max(58,liveHumanSpeed*.96),rivalMaxSpeed*.42,rivalMaxSpeed*1.025):(Number(r.playerPaceSample)||Math.max(rivalMaxSpeed*.52,58));
-    if(!Number.isFinite(r.playerPaceSample)||r.playerPaceSample<=0)r.playerPaceSample=Math.max(rivalMaxSpeed*.52,desiredPaceSample);
-    // Smooth live pace tracking avoids sudden rubber-band surges when the player changes throttle.
-    r.playerPaceSample+=(desiredPaceSample-r.playerPaceSample)*Math.min(1,dt*1.35);
-    const learnedPace=r.playerPaceSample*(r.adapt||1);
+    const paceTargetDistance=paceTargetIsP2?p2State.dist:playerDistance;
+    const paceTargetStart=paceTargetIsP2?p2StartDistance:playerStartDistance;
+    const paceGapToHuman=raceDistanceProgress(paceTargetDistance,paceTargetStart)-raceDistanceProgress(r.dist,r.startDist||0);
+    // Keep the field close to the live player's speed. Rivals just behind receive a
+    // small competitive edge; rivals already ahead stay near the player's pace.
+    // This target is deliberately NOT capped by the AI car's catalogue speed stat.
+    const chaseFactor=clamp(paceGapToHuman/900,-.012,.085);
+    const duelFactor=gameMode==='duel'?.035:.018;
+    const skillFactor=clamp(((Number(r.ability)||1)-1)*.18,-.012,.028);
+    const desiredPaceSample=(p1Active||p2Active)
+      ?Math.max(54,liveHumanSpeed*(1+duelFactor+chaseFactor+skillFactor))
+      :(Number(r.playerPaceSample)||Math.max(rivalMaxSpeed*.52,54));
+    if(!Number.isFinite(r.playerPaceSample)||r.playerPaceSample<=0){
+      r.playerPaceSample=(p1Active||p2Active)?desiredPaceSample:Math.max(rivalMaxSpeed*.52,desiredPaceSample);
+    }
+    // A responsive but smooth spring lets opponents follow acceleration, braking and
+    // nitro without snapping or teleporting to the player's velocity.
+    r.playerPaceSample+=(desiredPaceSample-r.playerPaceSample)*Math.min(1,dt*2.05);
+    const learnedPace=r.playerPaceSample*clamp(Number(r.adapt)||1,.985,1.045);
     const gapToPlayer=raceDistanceProgress(playerDistance,playerStartDistance)-raceDistanceProgress(r.dist,r.startDist||0);
     const powerFrame=frameAt(r.dist),powerLook=frameAt(r.dist+15).tangent;
     const powerBend=Math.abs(powerFrame.tangent.x-powerLook.x)+Math.abs(powerFrame.tangent.z-powerLook.z);
-    updateAiPowerupEffects(r,dt,rivalMaxSpeed,gapToPlayer,powerBend);
-    const catchup=clamp(gapToPlayer*.012,-rivalMaxSpeed*.075,rivalMaxSpeed*.105);
-    const skillBias=clamp(((Number(r.ability)||1)-1)*.34,-.045,.075);
-    const adaptiveBase=learnedPace*(.94+skillBias)+rivalMaxSpeed*.045;
+    const aiPaceReferenceSpeed=Math.max(rivalMaxSpeed,Number(r.playerPaceSample)||0);
+    updateAiPowerupEffects(r,dt,aiPaceReferenceSpeed,gapToPlayer,powerBend);
+    const catchup=clamp(paceGapToHuman*.006,-Math.max(3,r.playerPaceSample*.018),Math.max(4,r.playerPaceSample*.032));
+    const skillBias=clamp(((Number(r.ability)||1)-1)*.18,-.012,.028);
+    const adaptiveBase=learnedPace*(1+skillBias);
     const interference=((activeEffects.pulse>0||p2ActiveEffects.pulse>0)?.72:1)*((activeEffects.jammer>0||p2ActiveEffects.jammer>0)?.86:1);
-    const target=(r.isPolice?clamp(maxSpeed*(.94+policeHeat*.20)+catchup*.25,125,maxSpeed*1.24):clamp(adaptiveBase+catchup+(raceTime>18?Math.sin(raceTime*.11+r.index)*2.2:0),rivalMaxSpeed*.42,rivalMaxSpeed*1.035))*interference;
+    const target=(r.isPolice?clamp(maxSpeed*(.94+policeHeat*.20)+catchup*.25,125,maxSpeed*1.24):clamp(adaptiveBase+catchup+(raceTime>18?Math.sin(raceTime*.11+r.index)*1.15:0),42,Math.max(rivalMaxSpeed*1.05,r.playerPaceSample*1.14)))*interference;
     const response=clamp(.72+(Number(r.acceleration)||effective.acceleration)*.0065,.9,1.45);
     r.aiNitroCooldown=Math.max(0,(r.aiNitroCooldown||0)-dt);
     r.aiNitroActive=Math.max(0,(r.aiNitroActive||0)-dt);
     if(r.aiNitroActive>0)r.aiNitroEnergy=Math.max(0,(r.aiNitroEnergy??100)-34*dt);
     else r.aiNitroEnergy=Math.min(100,(r.aiNitroEnergy??100)+10*dt);
-    if(r.aiNitroActive<=0&&r.aiNitroEnergy>30&&r.aiNitroCooldown<=0&&powerBend<.085&&r.speed>rivalMaxSpeed*.52&&r.speed<rivalMaxSpeed*.91&&(gapToPlayer>10||gapToPlayer< -22)){
+    if(r.aiNitroActive<=0&&r.aiNitroEnergy>30&&r.aiNitroCooldown<=0&&powerBend<.085&&r.speed<Math.max(rivalMaxSpeed*.91,(Number(r.playerPaceSample)||rivalMaxSpeed)*1.035)&&(gapToPlayer>10||gapToPlayer< -22)){
       r.aiNitroActive=1.0+Math.random()*.55;r.aiNitroCooldown=4.2+Math.random()*3.2;
     }
     const aiNitroOn=r.aiNitroActive>0&&r.aiNitroEnergy>0;
     const aiPowerMultiplier=(r.aiEffects?.boost>0?1.11:1)*(r.aiEffects?.overdrive>0?1.12:1)*(aiNitroOn?1.105:1);
     r.speed+=(target*aiPowerMultiplier-r.speed)*Math.min(1,dt*(r.isPolice?1.8:response*(r.aiEffects?.grip>0?1.12:1)));
-    const aiSpeedCeiling=r.isPolice?maxSpeed*1.24:rivalMaxSpeed*(1.04+(r.aiEffects?.boost>0?.08:0)+(r.aiEffects?.overdrive>0?.1:0)+(aiNitroOn?.11:0));
+    // Allow rivals to match a faster human even when their displayed car class has
+    // a lower stock top-speed stat. Power-ups can briefly raise the adaptive ceiling.
+    const classSpeedCeiling=rivalMaxSpeed*(1.06+(r.aiEffects?.boost>0?.08:0)+(r.aiEffects?.overdrive>0?.1:0)+(aiNitroOn?.11:0));
+    const paceSpeedCeiling=Math.max(classSpeedCeiling,r.playerPaceSample*1.18,target*1.12);
+    const aiSpeedCeiling=r.isPolice?maxSpeed*1.24:paceSpeedCeiling;
     r.speed=Math.min(r.speed,aiSpeedCeiling);
     if(!r.isPolice&&raceTime>12){const relative=raceDistanceProgress(playerDistance,playerStartDistance)-raceDistanceProgress(r.dist,r.startDist||0);const desiredAdapt=clamp(1+relative/1800,.91,1.09);r.adapt+=(desiredAdapt-r.adapt)*Math.min(1,dt*.025);r.ability=clamp((r.ability||1)+clamp(relative/1600,-.00035,.00035)*dt,.88,1.18);}
     if(r.isPolice){
