@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://joghale3491-afk.github.io/Midnight-Racing/icon-512-v36.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="Midnight Racing" />
-<title>MIDNIGHT RACING v39.7 — Checkpoint, Mobile Controls & HUD</title>
+<title>MIDNIGHT RACING v39.8 — 3D Vehicle Showroom & WebGL Fix</title>
 <script type="importmap">
 {
   "imports": {
@@ -634,14 +634,32 @@ body.local-two-player.race-active #mobileControlsHint{display:block;bottom:2px;f
 .sellBtn{border-color:#ff91ae88!important;color:#ffc4d5!important;background:#3a1423!important}
 .sellBtn:hover{background:#5a1b32!important}
 .dealershipRow{align-items:center;gap:10px}
-.dealershipPreview{width:128px;height:72px;flex:0 0 128px;overflow:hidden;border-radius:9px;border:1px solid #68dffb33;background:radial-gradient(ellipse at 50% 50%,#17364b,#07111c 72%);box-shadow:inset 0 1px #ffffff12}
-.dealershipPreview svg{display:block;width:100%;height:100%}
+
+.garagePreviewTag{position:absolute;left:10px;bottom:9px;z-index:2;padding:6px 8px;border:1px solid #7aeaff44;border-radius:6px;background:#05101ccc;color:#8ceeff;font-size:7px;font-weight:1000;letter-spacing:.14em;pointer-events:none}
+.storeShowcase{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(180px,.95fr);gap:14px;align-items:stretch;margin:10px 0 13px;padding:12px;border:1px solid #69eaff55;border-radius:13px;background:linear-gradient(145deg,#0b2031,#06101b);box-shadow:inset 0 1px #ffffff12,0 12px 28px #0005}
+.storeShowcaseStage{height:236px;min-height:200px;position:relative;overflow:hidden;border:1px solid #78eaff33;border-radius:10px;background:radial-gradient(ellipse at 50% 78%,#1a5368 0%,#0a2133 45%,#040a12 100%);touch-action:pan-y}
+#storeShowcaseCanvasHost{position:absolute;inset:0;width:100%;height:100%}
+#storeShowcaseCanvasHost canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.storeShowcaseCopy{display:flex;flex-direction:column;justify-content:center;min-width:0;gap:7px}
+.storeShowcaseCopy .eyebrow{margin:0}
+.storeShowcaseCopy h3{font-size:clamp(18px,2.4vw,27px);line-height:1.05;margin:0;color:#effcff}
+.storeShowcaseCopy p{font-size:9px;line-height:1.55;color:#9eb7c8;margin:0}
+.storeShowcaseStats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:2px}
+.storeShowcaseStats span{padding:7px;border:1px solid #6de9ff24;border-radius:7px;background:#061522;color:#95b5c8;font-size:8px}
+.storeShowcaseStats b{display:block;color:#eafaff;font-size:11px;margin-top:3px}
+.storePreviewHint{font-size:8px!important;color:#6fe9ff!important;letter-spacing:.09em;text-transform:uppercase}
+.dealershipPreview{width:128px;height:72px;flex:0 0 128px;display:grid;place-items:center;gap:3px;overflow:hidden;border-radius:9px;border:1px solid #68dffb55;background:radial-gradient(ellipse at 50% 70%,#24546a,#07111c 76%);box-shadow:inset 0 1px #ffffff12;color:#9cefff;text-align:center;cursor:pointer}
+.dealershipPreview .preview3dIcon{font-size:25px;line-height:1;text-shadow:0 0 15px #5cecff99}
+.dealershipPreview .preview3dLabel{font-size:8px;font-weight:1000;letter-spacing:.16em}
+.dealershipRow.previewSelected{border-color:#79ecff99;background:linear-gradient(90deg,#0d2b3c,#071522);box-shadow:inset 3px 0 #63eaff}
+.dealershipRow .dealershipInfo{cursor:pointer}
+@media(max-width:680px){.storeShowcase{grid-template-columns:1fr}.storeShowcaseStage{height:208px}.storeShowcaseCopy{padding:2px 3px}.storeShowcaseStats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
 .dealershipInfo{min-width:0;flex:1}
 .dealershipInfo>b{display:block;font-size:10px;letter-spacing:.035em}
 .dealershipInfo small{display:block;color:#89a4b8;font-size:8px;line-height:1.4;margin-top:3px}
 .dealershipInfo .designLabel{color:#8feaff;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-.carPickPreview{display:block;width:100%;height:58px;margin:0 0 7px;overflow:hidden;border-radius:8px;border:1px solid #66eaff25;background:#071421}
-.carPickPreview svg{display:block;width:100%;height:100%}
+.carPickPreview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;height:58px;margin:0 0 7px;overflow:hidden;border-radius:8px;border:1px solid #66eaff25;background:radial-gradient(ellipse at 50% 70%,#214b61,#071421 76%);color:#8feaff}.carPickPreview .preview3dIcon{font-size:22px;line-height:1;text-shadow:0 0 12px #5cecff99}.carPickPreview .preview3dLabel{font-size:7px;font-weight:1000;letter-spacing:.14em}
 .inventorySellRow{gap:8px}
 .inventorySellRow>span{min-width:0;flex:1}
 @media(max-width:520px){.shopActions{min-width:90px}.shopActions .smallBtn{font-size:7px;padding:6px 5px}.dealershipPreview{width:86px;height:58px;flex-basis:86px}.dealershipRow{gap:6px;padding:7px}.dealershipInfo small{font-size:7px}.carPickPreview{height:48px}}
@@ -1518,6 +1536,7 @@ body:not(.local-two-player) #p2Touch{display:none!important}
             <div>
               <div class="garagePreview" id="garagePreview">
                 <div id="garageCanvasContainer" style="width:100%;height:100%;position:absolute;inset:0;"></div>
+                <div class="garagePreviewTag">LIVE 3D INSPECTION · DRAG TO ROTATE</div>
               </div>
               <div class="panelTitle">SELECTED VEHICLE</div>
               <div id="garageRankChips" class="rankChipRow" aria-label="Filter owned cars by rank"></div><div id="garageSelectionSummary" class="selectionSummary">SELECT A VEHICLE TO VIEW ITS CLASS AND STATS</div><div class="carPickerTools"><select class="mrSelect" id="garageRankFilter"><option value="ALL">ALL OWNED RANKS</option><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><span id="ownedCarCount" class="mutedText">1 owned</span></div>
@@ -1566,7 +1585,7 @@ body:not(.local-two-player) #p2Touch{display:none!important}
           <div class="storeSubgrid">
             <details class="menuGroup" open>
               <summary><span>VEHICLE DEALERSHIP</span><small>browse by rank · buy and equip cars</small></summary>
-              <div class="featureCard"><label class="eyebrow" for="storeRank">CAR RANK</label><div id="storeRankChips" class="rankChipRow" aria-label="Filter cars in store by rank"></div><div id="storeRankSummary" class="selectionSummary">SELECT A RANK TO VIEW AVAILABLE CARS</div><select class="mrSelect" id="storeRank"><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><div id="carStoreList" class="dataList" style="margin-top:10px"></div></div>
+              <div class="featureCard"><label class="eyebrow" for="storeRank">CAR RANK</label><div id="storeRankChips" class="rankChipRow" aria-label="Filter cars in store by rank"></div><div id="storeRankSummary" class="selectionSummary">SELECT A RANK TO VIEW AVAILABLE CARS</div><select class="mrSelect" id="storeRank"><option>D</option><option>C</option><option>B</option><option>A</option><option>S</option><option>Exotic</option><option>Secret</option></select><div class="storeShowcase"><div class="storeShowcaseStage"><div id="storeShowcaseCanvasHost"></div></div><div class="storeShowcaseCopy"><div class="eyebrow">3D VEHICLE INSPECTION</div><h3 id="storeShowcaseName">SELECT A MODEL</h3><p id="storeShowcaseDesign">Choose any car below to inspect its actual 3D body, wheels, aero and lighting. Drag the preview to rotate it.</p><div id="storeShowcaseStats" class="storeShowcaseStats"><span>SPEED<b>—</b></span><span>ACCEL<b>—</b></span><span>HANDLING<b>—</b></span><span>CLASS<b>—</b></span></div><p class="storePreviewHint">LIVE 3D MODEL · DRAG TO ROTATE</p></div></div><div id="carStoreList" class="dataList" style="margin-top:10px"></div></div>
             </details>
             <details class="menuGroup">
               <summary><span>POWERUP SUPPLIES & INVENTORY</span><small>buy supplies · manage race inventory</small></summary>
@@ -1839,7 +1858,7 @@ let bestTimes = readSavedJSON('mr_best_times',{});
 let leaderboardLocal = readSavedJSON('mr_local_leaderboard',[]);
 if(!bestTimes||typeof bestTimes!=='object'||Array.isArray(bestTimes))bestTimes={};
 if(!Array.isArray(leaderboardLocal))leaderboardLocal=[];
-let profileSaveTimer = null, garageRenderer = null, garageScene = null, garageCamera = null, garageCarObject = null;
+let profileSaveTimer = null, garageRenderer = null, garageScene = null, garageCamera = null, garageCarObject = null, storeCarObject = null, previewCanvas = null, storePreviewCarId = "D-01", previewDragState = null;
 let mobilePressed = new Set();
 let tutorialStep=0;
 const TUTORIAL_STEPS=[['STEP 1 · DRIVE','Use W or the Up Arrow to accelerate. A/D or the arrow keys physically steer the car through corners. Mobile players use gas and steering; hold brake while steering to drift.'],['STEP 2 · NITRO','Press Space or the N₂ button to use nitro. Nitro refills slowly while you race, so use it on straights.'],['STEP 3 · POWERUPS','Choose a powerup before the race. Press Q or tap POWER to activate it. Collect glowing supply rings to refill your selected inventory item.'],['STEP 4 · DAMAGE & TRAFFIC','Avoid civilian traffic and the road edges. When your condition reaches zero, your car respawns with full condition. Rivals can take damage too.'],['STEP 5 · PROGRESSION','Finish races to earn Credits and Street Rep. Every five levels gives a milestone reward. Higher car ranks and Ranked access unlock as you level up.'],['STEP 6 · LOCAL TWO-PLAYER','Select Local 2-player before the race. Player 1 uses WASD / arrows. Player 2 uses IJKL and U for nitro, or the second touchscreen control cluster.']];
@@ -1871,10 +1890,10 @@ const CAR_CATALOG = CAR_RANKS.flatMap((rank,ri)=>Array.from({length:20},(_,i)=>{
   body:1+(i%4),design:(i+ri*5)%8,color:parseInt(PAINT_COLORS[(i*3+ri*2)%PAINT_COLORS.length],16)
  };
  }));
-const CAR_BODY_FAMILIES=['Street Coupe','Muscle GT','Aero Hypercar','Rally Hatch','Grand Tourer','Roadster','Touring Racer','Electric Concept'];
+const CAR_BODY_FAMILIES=['Street Coupe','Muscle GT','Aero Hypercar','Rally Hatch','Grand Tourer','Roadster','Touring Racer','Electric Concept','Mid-Engine Supercar','Rally Buggy','Luxury Saloon','Tuner Coupe','Endurance Prototype','Retro Fastback','Sport Wagon','Performance Ute','Track Special','Executive GT','Widebody Racer','Future Concept'];
 const CAR_TRIM_NAMES=['Street Spec','Sport Pack','Track Pack','Club Edition','Aero Edition','Night Edition','Competition Spec'];
 function carVisualId(car){return Math.max(0,Number(car?.visualId)||0);}
-function carDesignLabel(car){const id=carVisualId(car),family=CAR_BODY_FAMILIES[(Number(car?.design)||0)%CAR_BODY_FAMILIES.length],trim=CAR_TRIM_NAMES[(id*3+Math.floor(id/8))%CAR_TRIM_NAMES.length];return `${family} · ${trim}`;}
+function carDesignLabel(car){const id=carVisualId(car),variant=Math.max(0,Number(car?.variantIndex??(id%20)))%20,family=CAR_BODY_FAMILIES[variant],trim=CAR_TRIM_NAMES[(id*3+Math.floor(id/8))%CAR_TRIM_NAMES.length];return `${family} · ${trim}`;}
 function carShopPreviewSVG(car){
   const id=carVisualId(car),design=(Number(car?.design)||0)%8,w=38+((id*7)%17)*.72,h=30+((id*11)%19)*.46,cx=90,cy=47,left=cx-w,right=cx+w,front=cy-h,rear=cy+h;
   const color=`#${Math.max(0,Number(car?.color)||0).toString(16).padStart(6,'0').slice(-6)}`;
@@ -2383,29 +2402,24 @@ function updateWeatherEffects(dt){
   if(w.light){w.flashTimer-=dt;if(w.flashTimer<=0){w.flashTimer=4+Math.random()*7;w.light.position.set((player?.position.x||0)+(Math.random()-.5)*75,35,(player?.position.z||0)+(Math.random()-.5)*75);w.light.intensity=7+Math.random()*9;}else if(w.light.intensity>0){w.light.intensity=Math.max(0,w.light.intensity-dt*38);}}
 }
 
-function checkWebGL2Support(){
-  let probeContext=null;
+function checkWebGL2Support(antialias=false){
   try{
-    const probeCanvas=document.createElement('canvas');
-    probeContext=probeCanvas.getContext('webgl2',{alpha:false,antialias:false,powerPreference:'high-performance',failIfMajorPerformanceCaveat:false});
-    if(!probeContext){
-      return {ok:false,message:'WebGL 2 is unavailable. Turn on hardware acceleration and allow WebGL in your browser settings, then reload the game.'};
-    }
-    const version=String(probeContext.getParameter(probeContext.VERSION)||'WebGL 2');
-    const loseContext=probeContext.getExtension('WEBGL_lose_context');
-    if(loseContext)loseContext.loseContext();
-    return {ok:true,version};
-  }catch(error){
-    try{const loseContext=probeContext?.getExtension?.('WEBGL_lose_context');if(loseContext)loseContext.loseContext();}catch(_){}
-    return {ok:false,message:`The browser blocked WebGL 2: ${error?.message||error}. Enable hardware acceleration/WebGL and reload.`};
-  }
+    if(!canvas||typeof canvas.getContext!=='function')return {ok:false,message:'The game canvas is unavailable.'};
+    const context=canvas.getContext('webgl2',{alpha:false,antialias,powerPreference:'default',depth:true,stencil:false,preserveDrawingBuffer:false,failIfMajorPerformanceCaveat:false});
+    if(!context)return {ok:false,message:'WebGL 2 could not be created on the game canvas. Enable browser hardware acceleration, close other GPU-heavy tabs, and reload.'};
+    const version=String(context.getParameter(context.VERSION)||'WebGL 2');
+    if(!version.includes('WebGL 2'))return {ok:false,message:`This browser returned an unsupported graphics context (${version}). Midnight Racing requires WebGL 2.`};
+    return {ok:true,version,context};
+  }catch(error){return {ok:false,message:`The browser blocked WebGL 2: ${error?.message||error}. Enable hardware acceleration and allow WebGL, then reload.`};}
 }
 
 function init() {
-  const webglCheck=checkWebGL2Support();
-  if(!webglCheck.ok)throw new Error(webglCheck.message);
   const compactScreen=window.innerWidth<760||window.innerHeight<560;
-  renderer = new THREE.WebGLRenderer({canvas,antialias:!compactScreen,alpha:false,powerPreference:'high-performance',stencil:false,preserveDrawingBuffer:false});
+  const webglCheck=checkWebGL2Support(!compactScreen);
+  if(!webglCheck.ok)throw new Error(webglCheck.message);
+  // Reuse the one verified context on the game canvas. Do not create a throwaway
+  // WebGL context first; mobile browsers often have strict context-count limits.
+  renderer = new THREE.WebGLRenderer({canvas,context:webglCheck.context,antialias:!compactScreen,alpha:false,powerPreference:'default',stencil:false,preserveDrawingBuffer:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,compactScreen?1.0:1.25));
   renderer.setSize(window.innerWidth,window.innerHeight);
   renderer.shadowMap.enabled=true;
@@ -3003,16 +3017,18 @@ function buildWorld(id,startRace=true){
 function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", modelId=null){
   const root=new THREE.Group();
   const visualRig=new THREE.Group();visualRig.name='car-visual-rig';root.add(visualRig);
-  root.userData.visualRig=visualRig;root.userData.wheels=[];root.userData.frontWheels=[];root.userData.brakeLights=[];root.userData.motionPhase=Math.random()*Math.PI*2;
-  const spec=isPlayer&&detailLevel!=='p2'?(CAR_CATALOG.find(c=>c.id===profile.garage.carId)||CAR_CATALOG[0]):null;
+  root.userData.visualRig=visualRig;root.userData.wheels=[];root.userData.frontWheels=[];root.userData.brakeLights=[];root.userData.motionPhase=Math.random()*Math.PI*2;root.userData.catalogModelId=modelId||profile.garage.carId;
+  const selectedModelId=modelId||profile.garage.carId;
+  const spec=isPlayer&&detailLevel!=='p2'?(CAR_CATALOG.find(c=>c.id===selectedModelId)||CAR_CATALOG[0]):null;
   const modelSpec=spec||(modelId?CAR_CATALOG.find(c=>c.id===modelId):null);
-  const carAttachments=isPlayer&&detailLevel!=='p2'?getCarAttachmentState(profile.garage.carId).equipped:{};
+  const carAttachments=isPlayer&&detailLevel!=='p2'?getCarAttachmentState(selectedModelId).equipped:{};
   const style=modelSpec?.body||bodyStyle||1;
   const design=Number.isFinite(Number(modelSpec?.design))?Number(modelSpec.design):((Math.max(1,Number(style)||1)-1)*2)%8;
   const visualId=Number.isFinite(Number(modelSpec?.visualId))?Number(modelSpec.visualId):((design*23+(Number(style)||1)*7)%140);
-  const familyScales=[[.98,.98],[1.10,1.08],[1.13,.94],[1.04,1.02],[1.06,1.14],[.96,1.00],[1.12,1.06],[1.00,.96]][design%8];
-  // Each catalogue car receives its own width/length signature in addition to its body family.
-  const individualWidth=.93+((visualId*7)%17)*.009,individualLength=.93+((visualId*11)%19)*.008;
+  const familyScales=[[.94,.97],[1.15,1.03],[1.18,.91],[1.06,.96],[1.02,1.17],[.98,.91],[1.16,1.08],[1.02,.94]][design%8];
+  const variantIndex=Math.max(0,Number(modelSpec?.variantIndex??(visualId%20)))%20;
+  // Wider range of wheelbase and body proportions makes models visibly different at a glance.
+  const individualWidth=.84+((visualId*7)%23)*.016,individualLength=.86+((visualId*11)%22)*.016;
   const widthScale=(style===3?0.94:style===4?1.08:style===2?1.02:1)*familyScales[0]*individualWidth;
   const lengthScale=(style===2?1.08:style===4?1.04:style===3?.96:1)*familyScales[1]*individualLength;
   const bodyMat=new THREE.MeshPhysicalMaterial({color,roughness:.22,metalness:.72,clearcoat:1,clearcoatRoughness:.11,envMapIntensity:1.05});
@@ -3022,16 +3038,27 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
   const tireMat=makeMat(0x080b10,.92,.02);
   const rimMat=makeMat(0x9eb7c9,.2,.95);
   const add=(geo,mat,pos,rot=null,scale=null)=>{const m=new THREE.Mesh(geo,mat);m.position.set(...pos);if(rot)m.rotation.set(...rot);if(scale)m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;visualRig.add(m);return m;};
-  const planShape=(halfWidth,front,rear)=>{
+  const planShape=(halfWidth,front,rear,profile=variantIndex,section='body')=>{
     const sh=new THREE.Shape();
+    // Twenty different plan-view profiles: tapered hypercars, squared muscle cars,
+    // short hatchbacks, long GTs, roadsters, touring saloons and more.
+    const profiles=[
+      [.12,.90,.88,.54],[.34,1.08,1.02,.78],[.035,.78,.82,.42],[.22,.98,.94,.72],
+      [.20,.94,.84,.60],[.30,1.04,.92,.58],[.28,1.08,1.06,.86],[.08,.88,.86,.50],
+      [.06,.84,.90,.46],[.26,1.02,.94,.72],[.24,1.05,1.04,.82],[.10,.96,.88,.52],
+      [.02,.82,.86,.40],[.32,1.04,.95,.76],[.18,.98,1.02,.84],[.24,1.10,1.08,.88],
+      [.04,.80,.84,.38],[.28,1.02,.94,.66],[.16,1.14,1.12,.90],[.08,.92,.92,.48]
+    ][Math.abs(Number(profile)||0)%20];
+    let [nose,frontShoulder,rearShoulder,tail]=profiles;
+    if(section==='cabin'){nose=Math.min(.42,nose+.12);frontShoulder*=.70;rearShoulder*=.72;tail*=.78;}
+    if(section==='roof'){nose=Math.min(.48,nose+.08);frontShoulder*=.58;rearShoulder*=.60;tail*=.68;}
     sh.moveTo(0,front);
-    sh.bezierCurveTo(halfWidth*.58,front,halfWidth*.96,front-.18,halfWidth,front-.62);
-    sh.lineTo(halfWidth*.91,rear+.62);
-    sh.quadraticCurveTo(halfWidth*.86,rear,halfWidth*.38,rear);
-    sh.lineTo(-halfWidth*.38,rear);
-    sh.quadraticCurveTo(-halfWidth*.86,rear,-halfWidth*.91,rear+.62);
-    sh.lineTo(-halfWidth,front-.62);
-    sh.bezierCurveTo(-halfWidth*.96,front-.18,-halfWidth*.58,front,0,front);
+    sh.quadraticCurveTo(halfWidth*nose,front-.10,halfWidth*frontShoulder,front-.58);
+    sh.bezierCurveTo(halfWidth*(frontShoulder*1.08),front-1.12,halfWidth*(rearShoulder*1.05),rear+.88,halfWidth*rearShoulder,rear+.20);
+    sh.quadraticCurveTo(halfWidth*tail,rear-.04,0,rear);
+    sh.quadraticCurveTo(-halfWidth*tail,rear-.04,-halfWidth*rearShoulder,rear+.20);
+    sh.bezierCurveTo(-halfWidth*(rearShoulder*1.05),rear+.88,-halfWidth*(frontShoulder*1.08),front-1.12,-halfWidth*frontShoulder,front-.58);
+    sh.quadraticCurveTo(-halfWidth*nose,front-.10,0,front);
     return sh;
   };
   // Lightweight but still detailed enough AI model: the player cars keep the full sculpted model below,
@@ -3135,16 +3162,16 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
     return root;
   }
   // Main body: beveled plan-view extrusion gives curved shoulders and tapered bumpers.
-  const bodyGeo=new THREE.ExtrudeGeometry(planShape(.98*widthScale,2.22*lengthScale,-2.24*lengthScale),{depth:.58,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.085,bevelThickness:.065,curveSegments:14});
+  const bodyGeo=new THREE.ExtrudeGeometry(planShape(.98*widthScale,2.22*lengthScale,-2.24*lengthScale,variantIndex,'body'),{depth:.58,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.085,bevelThickness:.065,curveSegments:14});
   bodyGeo.rotateX(Math.PI/2);add(bodyGeo,bodyMat,[0,1.06,0]);
   // Lower sill and smooth hood / rear haunches add volume without blocky panels.
   add(new THREE.SphereGeometry(1,28,18),darkMat,[0,.58,0],null,[.91*widthScale,.22,2.12*lengthScale]);
   add(new THREE.SphereGeometry(1,28,18),bodyMat,[0,1.005,.99*lengthScale],null,[.78*widthScale,.115,.78*lengthScale]);
   add(new THREE.SphereGeometry(1,28,18),bodyMat,[0,1.0,-1.63*lengthScale],null,[.75*widthScale,.105,.48*lengthScale]);
   // Tapered glass cabin and roof are separate layers, so the car reads as a coupé rather than a box.
-  const cabinGeo=new THREE.ExtrudeGeometry(planShape(.68*widthScale,.91*lengthScale,-1.08*lengthScale),{depth:.49,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.055,bevelThickness:.045,curveSegments:12});
+  const cabinGeo=new THREE.ExtrudeGeometry(planShape(.68*widthScale,.91*lengthScale,-1.08*lengthScale,variantIndex,'cabin'),{depth:.49,bevelEnabled:true,bevelSegments:4,steps:1,bevelSize:.055,bevelThickness:.045,curveSegments:12});
   cabinGeo.rotateX(Math.PI/2);add(cabinGeo,glassMat,[0,1.69,0]);
-  const roofGeo=new THREE.ExtrudeGeometry(planShape(.53*widthScale,.48*lengthScale,-.66*lengthScale),{depth:.055,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.025,curveSegments:12});
+  const roofGeo=new THREE.ExtrudeGeometry(planShape(.53*widthScale,.48*lengthScale,-.66*lengthScale,(variantIndex+3)%20,'roof'),{depth:.055,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.025,curveSegments:12});
   roofGeo.rotateX(Math.PI/2);add(roofGeo,bodyMat,[0,1.72,0]);
   // Angled windshield and rear glass catch highlights in the garage and on track.
   add(new THREE.PlaneGeometry(1.13*widthScale,.43),glassMat,[0,1.39,.78*lengthScale],[-.48,0,0]);
@@ -3236,6 +3263,51 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
     add(new THREE.BoxGeometry(.22,.04,2.45*lengthScale),familyAccent,[0,1.78,-.05]);
     for(const side of [-1,1])add(new THREE.BoxGeometry(.06,.045,3.2*lengthScale),familyAccent,[side*1.01*widthScale,.45,0]);
   }
+  // Additional vehicle-specific silhouette cues so the catalogue does not repeat only eight kits.
+  const variantMat=new THREE.MeshStandardMaterial({color:new THREE.Color(color).offsetHSL(((variantIndex*7)%23)/115-.1,-.12,.17),roughness:.24,metalness:.72,emissive:new THREE.Color(color).offsetHSL(((variantIndex*7)%23)/115-.1,-.12,.06),emissiveIntensity:.10});
+  if(variantIndex===8){ // mid-engine supercar: low canopy and deep rear vents
+    add(new THREE.BoxGeometry(1.22,.10,.86*lengthScale),darkMat,[0,1.56,-.34*lengthScale]);
+    for(let n=-2;n<=2;n++)add(new THREE.BoxGeometry(.13,.035,.66),variantMat,[n*.22,.96,-1.72*lengthScale]);
+  }else if(variantIndex===9){ // rally buggy: raised ride-height cues, roof lamps and spare wheel
+    add(new THREE.BoxGeometry(1.28,.12,.18),darkMat,[0,2.10,.14*lengthScale]);
+    for(const side of [-1,1])add(new THREE.BoxGeometry(.13,.25,.78),variantMat,[side*1.04*widthScale,.76,1.22*lengthScale]);
+    add(new THREE.CylinderGeometry(.34,.34,.18,18),tireMat,[0,1.68,-1.72*lengthScale],[Math.PI/2,0,0]);
+  }else if(variantIndex===10){ // luxury saloon: extended cabin and chrome beltline
+    add(new THREE.BoxGeometry(1.18,.08,1.05*lengthScale),bodyMat,[0,1.69,-.02]);
+    for(const side of [-1,1])add(new THREE.BoxGeometry(.035,.045,2.85*lengthScale),variantMat,[side*1.00*widthScale,.95,0]);
+  }else if(variantIndex===11){ // tuner coupe: vented bonnet and side-exit skirts
+    for(const side of [-1,1])for(let n=0;n<3;n++)add(new THREE.BoxGeometry(.16,.025,.42),darkMat,[side*.42*widthScale,1.18,(.96+n*.16)*lengthScale]);
+    add(new THREE.BoxGeometry(1.9,.08,.18),variantMat,[0,.62,0]);
+  }else if(variantIndex===12){ // endurance prototype: covered cockpit pod and high rear fin
+    add(new THREE.SphereGeometry(1,20,14),glassMat,[0,1.77,-.05],[0,0,0],[.56,.28,.94*lengthScale]);
+    add(new THREE.BoxGeometry(.09,.28,1.45*lengthScale),darkMat,[0,1.34,-.7*lengthScale]);
+    add(new THREE.BoxGeometry(1.94,.07,.36),variantMat,[0,1.64,-1.92*lengthScale]);
+  }else if(variantIndex===13){ // retro fastback: long roofline and chrome bumper details
+    add(new THREE.BoxGeometry(1.14,.16,1.12*lengthScale),bodyMat,[0,1.67,-.12*lengthScale]);
+    add(new THREE.BoxGeometry(1.96,.11,.18),variantMat,[0,.73,2.18*lengthScale]);
+    add(new THREE.BoxGeometry(1.96,.10,.18),variantMat,[0,.72,-2.16*lengthScale]);
+  }else if(variantIndex===14){ // sport wagon: extended roof and roof rails
+    add(new THREE.BoxGeometry(1.16,.12,1.46*lengthScale),bodyMat,[0,1.66,-.42*lengthScale]);
+    for(const side of [-1,1])add(new THREE.BoxGeometry(.055,.055,2.95*lengthScale),darkMat,[side*.50*widthScale,1.84,-.25*lengthScale]);
+  }else if(variantIndex===15){ // performance utility coupe: open rear bed
+    add(new THREE.BoxGeometry(1.16,.16,.88*lengthScale),darkMat,[0,1.48,-1.30*lengthScale]);
+    add(new THREE.BoxGeometry(1.32,.08,.10),variantMat,[0,1.58,-.88*lengthScale]);
+    for(const side of [-1,1])add(new THREE.BoxGeometry(.08,.22,.90*lengthScale),bodyMat,[side*.60*widthScale,1.51,-1.36*lengthScale]);
+  }else if(variantIndex===16){ // open-wheel-inspired track special
+    add(new THREE.BoxGeometry(2.35,.08,.30),darkMat,[0,.51,2.24*lengthScale]);
+    add(new THREE.BoxGeometry(.12,.18,1.05*lengthScale),variantMat,[0,.76,-.42*lengthScale]);
+    add(new THREE.BoxGeometry(2.05,.08,.34),darkMat,[0,1.33,-1.88*lengthScale]);
+  }else if(variantIndex===17){ // executive GT: stretched nose and rear lip
+    add(new THREE.BoxGeometry(.14,.04,1.68*lengthScale),variantMat,[0,1.13,.70*lengthScale]);
+    add(new THREE.BoxGeometry(1.88,.08,.20),darkMat,[0,.62,-2.02*lengthScale]);
+  }else if(variantIndex===18){ // widebody racer: pronounced overfenders
+    for(const side of [-1,1])for(const z of [-1.38,1.38])add(new THREE.SphereGeometry(.46,18,12),bodyMat,[side*1.04*widthScale,.58,z*lengthScale],null,[.20,.34,.80]);
+    add(new THREE.BoxGeometry(2.18,.11,.35),darkMat,[0,1.71,-1.84*lengthScale]);
+  }else if(variantIndex===19){ // futuristic concept: floating canopy and full-width light strip
+    add(new THREE.SphereGeometry(1,24,16),glassMat,[0,1.74,-.08],[0,0,0],[.64,.30,1.10*lengthScale]);
+    add(new THREE.BoxGeometry(1.72,.08,.06),variantMat,[0,1.03,2.13*lengthScale]);
+    for(const side of [-1,1])add(new THREE.BoxGeometry(.06,.06,3.25*lengthScale),variantMat,[side*1.02*widthScale,.43,0]);
+  }
   // Per-model signatures: each of the 140 dealership vehicles gets a distinct combination of
   // stance, roof/bonnet hardware, aero trim and accent treatment, shared by player and AI models.
   const signatureColor=new THREE.Color(color).offsetHSL(((visualId*5)%19)/95-.1,-.08,.2).getHex();
@@ -3265,7 +3337,7 @@ function createCar(color, isPlayer=false, bodyStyle=null, detailLevel="rival", m
   if(style===2)root.scale.set(1.02,1,1.06);
   else if(style===3)root.scale.set(.95,.99,.97);
   else if(style===4)root.scale.set(1.08,1.04,1.02);
-  const carLevel=isPlayer?(profile.garage.carLevels?.[profile.garage.carId]||1):1;
+  const carLevel=isPlayer?(profile.garage.carLevels?.[selectedModelId]||1):1;
   if(isPlayer&&carLevel>=3){add(new THREE.SphereGeometry(.18,12,8),trimMat,[0,1.18,.55]);}
   let shadowPart=0;root.traverse(o=>{if(o.isMesh){o.castShadow=shadowPart<6;o.receiveShadow=false;shadowPart++;}});
   return root;
@@ -4046,19 +4118,58 @@ function updateUI(){
   const loadout=(profile.raceLoadout||[]).map(id=>POWERUPS.find(x=>x.id===id)?.name).filter(Boolean);$('loadoutSummary').innerText=`${loadout.join(' + ')||'Choose powerups'} · Q USES SLOT 1 · E SWITCHES`;$('inventoryCount').innerText=POWERUPS.map(p=>`${p.name.split(' ')[0]} ${profile.inventory[p.id]||0}`).join(' · ');
   if($('usernameInput'))$('usernameInput').value=profile.username;renderNotificationCenter();
 }
+function resizeCarPreview(){
+  if(!garageRenderer||!garageCamera||!previewCanvas)return;
+  const host=previewCanvas.parentElement;if(!host)return;
+  const w=Math.max(1,host.clientWidth||340),h=Math.max(1,host.clientHeight||250);
+  garageRenderer.setSize(w,h,false);garageCamera.aspect=w/h;garageCamera.updateProjectionMatrix();
+}
+function attachCarPreview(view){
+  if(!previewCanvas)return;
+  const target=view==='storePanel'?$('storeShowcaseCanvasHost'):$('garageCanvasContainer');
+  if(target&&previewCanvas.parentElement!==target){target.appendChild(previewCanvas);}
+  if(garageCarObject)garageCarObject.visible=view==='garagePanel';
+  if(storeCarObject)storeCarObject.visible=view==='storePanel';
+  requestAnimationFrame(resizeCarPreview);
+}
 function refreshGarageCar(){
   if(!garageScene)return;
   if(garageCarObject)dispose3DObject(garageCarObject,garageScene);
-  garageCarObject=createCar(parseInt(profile.garage.paint,16),true);garageCarObject.rotation.y=Math.PI/4;garageScene.add(garageCarObject);
+  const selected=getSelectedCar();
+  garageCarObject=createCar(parseInt(profile.garage.paint,16),true,null,'showroom',selected.id);
+  garageCarObject.rotation.y=Math.PI/4;garageScene.add(garageCarObject);
+  garageCarObject.visible=$('garagePanel')&&!$('garagePanel').classList.contains('hidden');
+}
+function refreshStoreCarPreview(carId=storePreviewCarId){
+  const car=CAR_CATALOG.find(c=>c.id===carId)||CAR_CATALOG[0];if(!car)return;
+  storePreviewCarId=car.id;
+  if(garageScene){
+    if(storeCarObject)dispose3DObject(storeCarObject,garageScene);
+    storeCarObject=createCar(car.color,true,null,'showroom',car.id);storeCarObject.rotation.y=Math.PI/4;garageScene.add(storeCarObject);
+    storeCarObject.visible=$('storePanel')&&!$('storePanel').classList.contains('hidden');
+  }
+  const stats=carStatsWithUpgrades(car);
+  if($('storeShowcaseName'))$('storeShowcaseName').textContent=car.name;
+  if($('storeShowcaseDesign'))$('storeShowcaseDesign').textContent=`${carDesignLabel(car)} · ${car.rank} CLASS · MODEL ${String(car.visualId+1).padStart(3,'0')}. Inspect the body shape, cockpit, aero parts, wheelbase and lighting in 3D.`;
+  if($('storeShowcaseStats'))$('storeShowcaseStats').innerHTML=`<span>SPEED<b>${Math.round(stats.speed)}</b></span><span>ACCEL<b>${Math.round(stats.acceleration)}</b></span><span>HANDLING<b>${Math.round(stats.handling)}</b></span><span>CLASS<b>${escapeHtml(car.rank)}</b></span>`;
+  document.querySelectorAll('.dealershipRow').forEach(row=>row.classList.toggle('previewSelected',row.dataset.carId===car.id));
+  if(garageRenderer)requestAnimationFrame(resizeCarPreview);
 }
 function initGarage(){
-  const container=$('garageCanvasContainer');const gCanvas=document.createElement('canvas');gCanvas.style.width='100%';gCanvas.style.height='100%';container.appendChild(gCanvas);
-  garageRenderer=new THREE.WebGLRenderer({canvas:gCanvas,antialias:true,alpha:true,powerPreference:'high-performance',preserveDrawingBuffer:false});garageRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));garageRenderer.outputColorSpace=THREE.SRGBColorSpace;garageRenderer.toneMapping=THREE.ACESFilmicToneMapping;garageRenderer.toneMappingExposure=1.2;garageRenderer.setSize(container.clientWidth||340,container.clientHeight||250);
-  garageScene=new THREE.Scene();garageCamera=new THREE.PerspectiveCamera(45,(container.clientWidth||340)/(container.clientHeight||250),.1,100);garageCamera.position.set(5.4,3.1,7.8);garageCamera.lookAt(0,.85,0);
-  garageScene.add(new THREE.HemisphereLight(0xe4f7ff,0x172737,1.7));const spot=new THREE.SpotLight(0x83f3ff,8);spot.position.set(5,10,5);spot.angle=.72;spot.penumbra=.65;spot.decay=1.4;spot.distance=35;spot.castShadow=true;garageScene.add(spot);const warmFill=new THREE.DirectionalLight(0xffd9b0,2.2);warmFill.position.set(-6,4,-4);garageScene.add(warmFill);
-  const floor=new THREE.Mesh(new THREE.CircleGeometry(7,64),new THREE.MeshStandardMaterial({color:0x0a1a29,metalness:.48,roughness:.3,transparent:true,opacity:.94}));floor.rotation.x=-Math.PI/2;floor.position.y=-.14;garageScene.add(floor);const grid=new THREE.GridHelper(24,24,0x63f3ff,0x173044);grid.position.y=-.12;garageScene.add(grid);refreshGarageCar();
-  function renderGarage(){requestAnimationFrame(renderGarage);if(!$('garagePanel').classList.contains('hidden')){if(garageCarObject){garageCarObject.rotation.y+=.0045;garageCarObject.position.y=.04+Math.sin(performance.now()*.0012)*.025;}garageRenderer.render(garageScene,garageCamera);}}
-  renderGarage();window.addEventListener('resize',()=>{const w=container.clientWidth||340,h=container.clientHeight||250;garageRenderer.setSize(w,h);garageCamera.aspect=w/h;garageCamera.updateProjectionMatrix();});
+  if(garageRenderer)return;
+  const container=$('garageCanvasContainer');const gCanvas=document.createElement('canvas');previewCanvas=gCanvas;gCanvas.style.width='100%';gCanvas.style.height='100%';gCanvas.style.display='block';gCanvas.style.touchAction='pan-y';container.appendChild(gCanvas);
+  // This is the only auxiliary WebGL renderer; Garage and Store move the same canvas
+  // between panels instead of opening another GPU context for dealership thumbnails.
+  garageRenderer=new THREE.WebGLRenderer({canvas:gCanvas,antialias:false,alpha:true,powerPreference:'low-power',preserveDrawingBuffer:false,depth:true,stencil:false});garageRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,.9));garageRenderer.outputColorSpace=THREE.SRGBColorSpace;garageRenderer.toneMapping=THREE.ACESFilmicToneMapping;garageRenderer.toneMappingExposure=1.2;garageRenderer.setSize(container.clientWidth||340,container.clientHeight||250,false);
+  garageScene=new THREE.Scene();garageCamera=new THREE.PerspectiveCamera(39,(container.clientWidth||340)/(container.clientHeight||250),.1,100);garageCamera.position.set(5.2,3.0,7.7);garageCamera.lookAt(0,.83,0);
+  garageScene.add(new THREE.HemisphereLight(0xe4f7ff,0x172737,1.85));const spot=new THREE.SpotLight(0x83f3ff,9);spot.position.set(5,10,5);spot.angle=.72;spot.penumbra=.65;spot.decay=1.4;spot.distance=35;spot.castShadow=false;garageScene.add(spot);const warmFill=new THREE.DirectionalLight(0xffd9b0,2.4);warmFill.position.set(-6,4,-4);garageScene.add(warmFill);const rimLight=new THREE.DirectionalLight(0x569fff,1.8);rimLight.position.set(2,3,-7);garageScene.add(rimLight);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(7,64),new THREE.MeshStandardMaterial({color:0x0a1a29,metalness:.48,roughness:.3,transparent:true,opacity:.94}));floor.rotation.x=-Math.PI/2;floor.position.y=-.14;garageScene.add(floor);const grid=new THREE.GridHelper(24,24,0x63f3ff,0x173044);grid.position.y=-.12;garageScene.add(grid);
+  refreshGarageCar();refreshStoreCarPreview(storePreviewCarId);
+  let dragPointer=null;gCanvas.addEventListener('pointerdown',e=>{dragPointer={id:e.pointerId,x:e.clientX,last: e.clientX};gCanvas.setPointerCapture?.(e.pointerId);gCanvas.style.cursor='grabbing';});
+  gCanvas.addEventListener('pointermove',e=>{if(!dragPointer||dragPointer.id!==e.pointerId)return;const dx=e.clientX-dragPointer.last;dragPointer.last=e.clientX;const target=$('storePanel')&&!$('storePanel').classList.contains('hidden')?storeCarObject:garageCarObject;if(target)target.rotation.y+=dx*.012;});
+  const endDrag=e=>{if(dragPointer&&dragPointer.id===e.pointerId){dragPointer=null;gCanvas.style.cursor='grab';}};gCanvas.addEventListener('pointerup',endDrag);gCanvas.addEventListener('pointercancel',endDrag);
+  function renderGarage(){requestAnimationFrame(renderGarage);const garageVisible=$('garagePanel')&&!$('garagePanel').classList.contains('hidden'),storeVisible=$('storePanel')&&!$('storePanel').classList.contains('hidden');if(garageVisible||storeVisible){const active=storeVisible?storeCarObject:garageCarObject;if(active&& !dragPointer){active.rotation.y+=.0034;active.position.y=.035+Math.sin(performance.now()*.0012)*.02;}garageRenderer.render(garageScene,garageCamera);}}
+  renderGarage();window.addEventListener('resize',resizeCarPreview);
 }
 // Notification centre. Every incoming item opens a compact inbox so rewards and unlocks are visible.
 function renderNotificationCenter(){
@@ -4153,7 +4264,7 @@ function upgradePrice(type,car=getSelectedCar()){
   const rankFactor=1+rank.price/65000;
   return Math.round((base+u[type]*base*.72)*rankFactor/10)*10;
 }
-function setView(view){document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));if(view==='garagePanel'){setTimeout(()=>{if(garageRenderer&&garageCamera){const c=$('garageCanvasContainer');garageRenderer.setSize(c.clientWidth||340,c.clientHeight||250);garageCamera.aspect=(c.clientWidth||340)/(c.clientHeight||250);garageCamera.updateProjectionMatrix();}},50);}}
+function setView(view){document.querySelectorAll('.navBtn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.querySelectorAll('.viewPanel').forEach(p=>p.classList.toggle('hidden',p.id!==view));if(view==='garagePanel'||view==='storePanel'){try{if(!garageRenderer)initGarage();attachCarPreview(view);if(view==='garagePanel')refreshGarageCar();else refreshStoreCarPreview(storePreviewCarId);}catch(error){console.warn('3D vehicle inspection could not initialize:',error);const host=view==='storePanel'?$('storeShowcaseCanvasHost'):$('garageCanvasContainer');if(host)host.innerHTML='<div class="mutedText" style="padding:24px;text-align:center">3D preview unavailable. You can still browse vehicle details. Enable WebGL 2 and reload to inspect cars.</div>';}}}
 function storyKey(ch){return `chapter${ch+1}`;}
 function storyChapterComplete(ch){
   return !!profile.storyMain[storyKey(ch)]&&STORY_CHAPTERS[ch].sides.every((_,j)=>storySideComplete(ch,j));
@@ -4359,7 +4470,7 @@ function renderCarSelect(){
   sel.innerHTML='';host.innerHTML='';
   owned.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.name} · ${c.rank}`;sel.appendChild(o);});
   if(!owned.some(c=>c.id===profile.garage.carId))profile.garage.carId='D-01';sel.value=profile.garage.carId;
-  visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<span class="carPickPreview">${carShopPreviewSVG(c)}</span><b>${escapeHtml(c.name)}</b><small>${escapeHtml(carDesignLabel(c))}</small><small>${escapeHtml(c.rank)} CLASS · LVL ${st.level} · ${Math.round(st.speed)} SPD · ${Math.round(st.acceleration)} ACC · ${Math.round(st.handling)} HND · ${Math.round(st.durability)} DUR</small><small class="carCardPrice">MODEL VALUE · ${carValueLabel(c)}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarAttachmentState(c.id);getCarUpgrades(c.id);renderCarSelect();renderGarageAttachments();renderStore();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
+  visible.forEach(c=>{const st=carStatsWithUpgrades(c),card=document.createElement('button');card.type='button';card.className='carPickCard'+(c.id===profile.garage.carId?' active':'');card.innerHTML=`<span class="carPickPreview"><span class="preview3dIcon">◈</span><span class="preview3dLabel">3D MODEL ${String(c.visualId+1).padStart(3,'0')}</span></span><b>${escapeHtml(c.name)}</b><small>${escapeHtml(carDesignLabel(c))}</small><small>${escapeHtml(c.rank)} CLASS · LVL ${st.level} · ${Math.round(st.speed)} SPD · ${Math.round(st.acceleration)} ACC · ${Math.round(st.handling)} HND · ${Math.round(st.durability)} DUR</small><small class="carCardPrice">MODEL VALUE · ${carValueLabel(c)}</small>`;card.addEventListener('click',()=>{profile.garage.carId=c.id;getCarAttachmentState(c.id);getCarUpgrades(c.id);renderCarSelect();renderGarageAttachments();renderStore();updateUI();refreshGarageCar();saveProfile();});host.appendChild(card);});
   if(!visible.length)host.innerHTML='<div class="mutedText">No owned vehicles in this rank yet. Visit the Store to buy one.</div>';
   if($('ownedCarCount'))$('ownedCarCount').textContent=`${owned.length} owned`;
   const c=getSelectedCar(),st=carStatsWithUpgrades(c);$('carStats').innerText=`${c.rank}-Class · Speed ${st.speed.toFixed(1)} · Acceleration ${st.acceleration.toFixed(1)} · Handling ${st.handling.toFixed(1)} · Durability ${st.durability.toFixed(1)} · Nitro ${st.nitro}% · Level ${st.level} · Model value ${carValueLabel(c)}`;$('carLevelText').innerText=`CAR LEVEL ${st.level} · ${c.rank} CLASS · ${carValueLabel(c)}`;if($('garageSelectionSummary'))$('garageSelectionSummary').textContent=`SELECTED · ${c.name} · ${c.rank} CLASS · LVL ${st.level} · SPD ${st.speed.toFixed(1)} · ACC ${st.acceleration.toFixed(1)} · HND ${st.handling.toFixed(1)} · DUR ${st.durability.toFixed(1)} · ${carValueLabel(c)}`;
@@ -4405,8 +4516,8 @@ function renderStore(){
   if($('storeRankSummary'))$('storeRankSummary').textContent=`BROWSING ${rank} CLASS · ${CAR_CATALOG.filter(c=>c.rank===rank).length} MODELS · LEVEL ${CAR_RANKS.find(r=>r.name===rank)?.level||1}+`;
   CAR_CATALOG.filter(c=>c.rank===rank).forEach(c=>{
     const stats=carStatsWithUpgrades(c),owned=(profile.ownedCars||['D-01']).includes(c.id),unlocked=carUnlockRank(c.rank),row=document.createElement('div');row.className='dataRow dealershipRow';
-    const preview=document.createElement('div');preview.className='dealershipPreview';preview.innerHTML=carShopPreviewSVG(c);
-    const info=document.createElement('div');info.className='dealershipInfo';info.innerHTML=`<b>${escapeHtml(c.name)}</b><small class="designLabel">${escapeHtml(carDesignLabel(c))}</small><small>${c.rank} CLASS · SPD ${Math.round(stats.speed)} · ACC ${Math.round(stats.acceleration)} · HND ${Math.round(stats.handling)} · DUR ${Math.round(stats.durability)} · BASE LEVEL ${c.level} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small><small class="carCardPrice">PRICE · ${carValueLabel(c)}</small>`;
+    const preview=document.createElement('button');preview.type='button';preview.className='dealershipPreview';preview.setAttribute('aria-label',`Inspect ${c.name} in 3D`);preview.innerHTML=`<span class="preview3dIcon">◈</span><span class="preview3dLabel">INSPECT 3D</span>`;preview.addEventListener('click',()=>refreshStoreCarPreview(c.id));row.dataset.carId=c.id;row.classList.toggle('previewSelected',storePreviewCarId===c.id);
+    const info=document.createElement('div');info.className='dealershipInfo';info.addEventListener('click',()=>refreshStoreCarPreview(c.id));info.innerHTML=`<b>${escapeHtml(c.name)}</b><small class="designLabel">${escapeHtml(carDesignLabel(c))}</small><small>${c.rank} CLASS · SPD ${Math.round(stats.speed)} · ACC ${Math.round(stats.acceleration)} · HND ${Math.round(stats.handling)} · DUR ${Math.round(stats.durability)} · BASE LEVEL ${c.level} · ${unlocked?'REP UNLOCKED':`REQUIRES LVL ${c.level}`}</small><small class="carCardPrice">PRICE · ${carValueLabel(c)}</small>`;
     const actions=document.createElement('div');actions.className='shopActions';
     if(owned){
       const resale=Math.max(1,Math.floor(c.price*.55)),sell=document.createElement('button');sell.className='smallBtn sellBtn';sell.textContent=`SELL · ${resale.toLocaleString()} CR`;sell.disabled=(profile.ownedCars||['D-01']).length<=1;sell.title=sell.disabled?'You must keep at least one car.':'Sell this vehicle';sell.addEventListener('click',()=>sellOwnedCar(c.id));actions.appendChild(sell);
@@ -4416,6 +4527,7 @@ function renderStore(){
     }
     row.append(preview,info,actions);host.appendChild(row);
   });
+  const visibleStoreCars=CAR_CATALOG.filter(c=>c.rank===rank);if(visibleStoreCars.length&&!visibleStoreCars.some(c=>c.id===storePreviewCarId))storePreviewCarId=visibleStoreCars[0].id;refreshStoreCarPreview(storePreviewCarId);
   const powers=$('powerupStoreList');powers.innerHTML='';POWERUPS.forEach(p=>{const tile=document.createElement('div');tile.className='shopTile';tile.innerHTML=`<b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.desc)} · OWNED ${profile.inventory[p.id]||0}</small><button class="smallBtn">BUY ${p.price.toLocaleString()} CR</button>`;tile.querySelector('button').disabled=profile.credits<p.price;tile.querySelector('button').addEventListener('click',()=>{if(profile.credits<p.price)return;profile.credits-=p.price;profile.inventory[p.id]=(profile.inventory[p.id]||0)+1;pushNotification('STORE PURCHASE',`${p.name} added to your powerup stock.`,'store');renderStore();updateUI();saveProfile();});powers.appendChild(tile);});
   const inventory=$('inventoryList');inventory.innerHTML='';POWERUPS.forEach(p=>{const qty=Number(profile.inventory[p.id])||0;if(qty<=0)return;const row=document.createElement('div');row.className='dataRow inventorySellRow';const value=Math.max(1,Math.floor(p.price*.5));row.innerHTML=`<span><b>${escapeHtml(p.name)}</b><small>${qty} available · resale value ${value.toLocaleString()} CR each</small></span>`;const sell=document.createElement('button');sell.className='smallBtn sellBtn';sell.textContent=`SELL 1 · ${value.toLocaleString()}`;sell.addEventListener('click',()=>sellPowerupItem(p.id));row.appendChild(sell);inventory.appendChild(row);});
   if(!inventory.children.length)inventory.innerHTML='<div class="mutedText">No powerup stock to sell. Buy supplies or collect them during races.</div>';
@@ -5521,7 +5633,7 @@ function initializeY8SDK(){
 // --- EVENT LISTENERS ---
 document.addEventListener('DOMContentLoaded',async()=>{
   try{init();graphicsInitError=null;}catch(e){graphicsInitError=e;console.error('Main 3D renderer failed to initialize:',e);$('authStatus').innerText=`3D renderer could not initialize: ${e.message}. Check that WebGL 2 is enabled and browser hardware acceleration is on, then reload.`;}
-  try{if(renderer)initGarage();}catch(e){console.warn('Garage preview renderer unavailable; race renderer remains available:',e);if($('garagePreviewStatus'))$('garagePreviewStatus').innerText='Garage preview unavailable in this browser.';}
+  // Garage/Store 3D preview is initialized lazily when the player opens one of those panels.
   $('enterIntro').addEventListener('click',()=>{$('introScreen').classList.add('hidden');});
   $('notificationBell').addEventListener('click',()=>toggleNotificationMenu());$('closeNotifications').addEventListener('click',()=>toggleNotificationMenu(false));$('markNotificationsRead').addEventListener('click',markNotificationsRead);$('notificationMenu').addEventListener('mouseenter',()=>{if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);});$('notificationMenu').addEventListener('mouseleave',()=>{const panel=$('notificationMenu');if(panel.dataset.pinned!=='1'){if(notificationAutoCloseTimer)clearTimeout(notificationAutoCloseTimer);notificationAutoCloseTimer=setTimeout(()=>panel.classList.add('hidden'),4500);}});
   updateUI();renderAll();$('gateUsername').value=profile.username;
