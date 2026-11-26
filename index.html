@@ -1353,7 +1353,7 @@ body:not(.local-two-player) #p2Touch{display:none!important}
       <div class="damagePips" id="damagePips"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
-  <div class="controlsHint">P1 · A LEFT / D RIGHT · W GAS / S BRAKE · ARROWS ALSO SUPPORTED · SPACE NITRO · C / SHIFT DRIFT · MOBILE: STEER + GAS / BRAKE · BRAKE + STEER DRIFT · Q POWERUP · E SWITCH · P2 · IJKL · U NITRO · B DRIFT · BRAKE + STEER ON TOUCH · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
+  <div class="controlsHint">P1 · A OR ← = LEFT / D OR → = RIGHT · W GAS / S BRAKE · ARROWS ALSO SUPPORTED · SPACE NITRO · C / SHIFT DRIFT · MOBILE: STEER + GAS / BRAKE · BRAKE + STEER DRIFT · Q POWERUP · E SWITCH · P2 · J = LEFT / L = RIGHT · I GAS / K BRAKE · U NITRO · B DRIFT · BRAKE + STEER ON TOUCH · O POWERUP · Y SWITCH · 7/8 P2 SLOTS · P PAUSE</div>
 </div>
 <div id="racePowerupFeed" class="racePowerupFeed hidden" aria-live="polite" aria-label="Recent race powerup activity">
   <div class="racePowerupFeedHead"><b>RACE POWERUP LOG</b><small>RECENT EVENTS</small></div>
@@ -2543,11 +2543,14 @@ function moveManualDrive(state,speed,steering,driftHeld,handling,dt){
   // calmer than the old arcade-heavy turn rate while remaining responsive at low speed.
   const speedFactor=clamp(1.10-speedAbs/255,.40,1.10);
   const turnRate=(.96+clamp(Number(handling)||55,30,110)*.0062)*speedFactor;
-  state.heading+=smoothSteer*turnRate*(driftHeld?1.12:1)*(speed<0?-1:1)*dt;
+  // The chase camera looks forward from behind the car; in this world basis, positive yaw appears on screen-left.
+  // Invert the yaw response so A / LEFT input visibly turns left and D / RIGHT visibly turns right.
+  state.heading-=smoothSteer*turnRate*(driftHeld?1.12:1)*(speed<0?-1:1)*dt;
   const forwardX=Math.sin(state.heading),forwardZ=Math.cos(state.heading);
   const rightX=Math.cos(state.heading),rightZ=-Math.sin(state.heading);
   if(driftHeld&&Math.abs(smoothSteer)>.05&&speedAbs>32){
-    state.lateralVelocity+=smoothSteer*(7.2+speedAbs*.105)*dt;
+    // Keep drift translation aligned with the corrected screen-relative steering direction.
+    state.lateralVelocity-=smoothSteer*(7.2+speedAbs*.105)*dt;
     state.lateralVelocity=clamp(state.lateralVelocity,-15,15);
   }else{
     state.lateralVelocity*=Math.exp(-(driftHeld?2.2:7.6)*dt);
@@ -3524,7 +3527,7 @@ function animateCarWheels(car,speed,dt){
   if(!car?.userData?.wheels)return;const spin=clamp(Number(speed)||0,-40,340)*dt*.42;
   car.userData.wheels.forEach(w=>{w.rotation.x+=spin;});
 }
-function updateCarDynamics(car,speed,dt,steer=0,braking=false,boosting=false){
+function updateCarDynamics(car,speed,dt,steer=0,braking=false,boosting=false,frontWheelSign=1){
   if(!car)return;
   const rig=car.userData?.visualRig;
   const velocity=clamp(Math.abs(Number(speed)||0)/150,0,1.35);
@@ -3538,7 +3541,8 @@ function updateCarDynamics(car,speed,dt,steer=0,braking=false,boosting=false){
     const bob=(velocity>.03?Math.sin(raceTime*13+(car.userData.motionPhase||0))*.012*velocity:0);
     rig.position.y+=(bob-rig.position.y)*Math.min(1,dt*12);
   }
-  (car.userData?.frontWheels||[]).forEach(w=>{w.rotation.y+=(steering*.3-w.rotation.y)*Math.min(1,dt*10);});
+  const wheelTarget=steering*.3*(Number(frontWheelSign)||1);
+  (car.userData?.frontWheels||[]).forEach(w=>{w.rotation.y+=(wheelTarget-w.rotation.y)*Math.min(1,dt*10);});
   (car.userData?.brakeLights||[]).forEach(light=>{
     if(light.material?.emissive)light.material.emissiveIntensity+=(braking?4.2:2.2-light.material.emissiveIntensity)*Math.min(1,dt*12);
     if(light.material?.emissive&&braking)light.material.emissiveIntensity=4.2;
@@ -3851,7 +3855,7 @@ function update(dt){
     playerDistance=projection.distance;playerOffset=projection.offset;playerSpeed*=offRoadSpeedFactor(playerOffset);if(projection.hitBoundary)playerSpeed*=Math.exp(-1.35*dt);
   }
   animateCarWheels(player,playerSpeed,dt);
-  updateCarDynamics(player,playerSpeed,dt,steeringInput,!!brake,nitroActiveNow||activeEffects.boost>0||activeEffects.overdrive>0);
+  updateCarDynamics(player,playerSpeed,dt,steeringInput,!!brake,nitroActiveNow||activeEffects.boost>0||activeEffects.overdrive>0,-1);
 
   // Adapt AI pace to the selected car and player's upgrade profile. Skilled rivals learn from the player's current pace.
   const finishLineMode=['street','duel','ghost','checkpoint','traffic'].includes(gameMode);
@@ -4006,7 +4010,7 @@ function update(dt){
     trafficCars.forEach((t,ti)=>{if(t.active&&!p2Eliminated&&!p2Finished&&trackGap(t.dist,p2State.dist)<4.2&&Math.abs(t.offset-p2State.offset)<2.6&&canApplyPlayerImpact('p2',.86)){if(!(p2ActiveEffects.shield>0))p2State.damage+=3.2*impactDamageScale;p2State.speed=Math.max(0,p2State.speed-11);}});
     if(gameMode==='drift'&&!p2Eliminated&&!p2Finished&&p2DriftHeld&&p2SteeringInput!==0&&p2State.speed>38&&Math.abs(p2State.offset)>1.2&&Math.abs(p2State.offset)<9.5){p2DriftComboTime+=dt;p2DriftScore+=(p2State.speed*.55*Math.abs(p2State.offset))*dt*(1+Math.min(.8,p2DriftComboTime*.18));}else p2DriftComboTime=Math.max(0,p2DriftComboTime-dt*1.5);
     if(gameMode==='checkpoint'&&!p2Eliminated&&!p2Finished)while(p2CheckpointProgress<CHECKPOINT_COUNT&&p2State.dist>=checkpointDistanceAt(p2CheckpointProgress)&&Math.abs(p2State.offset)<=7.6){p2CheckpointProgress++;p2CheckpointDeadline+=CHECKPOINT_BONUS_SECONDS;showToast(`PLAYER 2 CHECKPOINT ${p2CheckpointProgress}/${CHECKPOINT_COUNT} · +${CHECKPOINT_BONUS_SECONDS} SECONDS`,'success');playSfx(660,.16);}
-    animateCarWheels(localPlayer2,p2State.speed,dt);updateCarDynamics(localPlayer2,p2State.speed,dt,p2SteeringInput,!!p2brake,p2NitroActive||p2ActiveEffects.boost>0||p2ActiveEffects.overdrive>0);placeManualCar(localPlayer2,p2DriveState,p2State.dist,.2);
+    animateCarWheels(localPlayer2,p2State.speed,dt);updateCarDynamics(localPlayer2,p2State.speed,dt,p2SteeringInput,!!p2brake,p2NitroActive||p2ActiveEffects.boost>0||p2ActiveEffects.overdrive>0,-1);placeManualCar(localPlayer2,p2DriveState,p2State.dist,.2);
     // Camera centers between the two racers so both remain in view.
   }
   if(localPlayer2&&!playerEliminated&&!playerFinished&&!p2Eliminated&&!p2Finished&&trackGap(playerDistance,p2State.dist)<4.3&&Math.abs(playerOffset-p2State.offset)<2.8){
@@ -5922,6 +5926,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('touchStyle').addEventListener('change',e=>document.body.dataset.touchStyle=e.target.value);
   window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(e.code))e.preventDefault();if(e.code==='KeyP'||e.code==='Escape'){if(gameState==='racing')pauseRace();else if(gameState==='paused')resumeRace();}if(gameState==='racing'&&!e.repeat){if(e.code==='KeyE')switchPowerupSlot();if(e.code==='Digit1'||e.code==='Numpad1')selectPowerupSlot(0);if(e.code==='Digit2'||e.code==='Numpad2')selectPowerupSlot(1);if(e.code==='KeyY'&&localPlayer2)switchP2PowerupSlot();if(localPlayer2&&(e.code==='Digit7'||e.code==='Numpad7'))selectP2PowerupSlot(0);if(localPlayer2&&(e.code==='Digit8'||e.code==='Numpad8'))selectP2PowerupSlot(1);}});
   window.addEventListener('keyup',e=>keys[e.code]=false);
+  function releaseAllDrivingControls(){Object.keys(keys).forEach(code=>{keys[code]=false;});mobilePressed.clear();document.querySelectorAll('[data-control].pressed').forEach(btn=>btn.classList.remove('pressed'));}
+  window.addEventListener('blur',releaseAllDrivingControls);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseAllDrivingControls();});
+  window.addEventListener('pagehide',releaseAllDrivingControls);
   // On-screen hold controls work on touchscreens and desktop pointer devices.
   document.querySelectorAll('[data-control]').forEach(btn=>{const key=btn.dataset.control;const down=e=>{e.preventDefault();try{btn.setPointerCapture?.(e.pointerId);}catch(_){}mobilePressed.add(key);btn.classList.add('pressed');if(document.body.dataset.touchStyle==='tap'&&['p1left','p1right','p2left','p2right'].includes(key)){setTimeout(()=>{mobilePressed.delete(key);btn.classList.remove('pressed');},130);}};const up=e=>{if(e)e.preventDefault();mobilePressed.delete(key);btn.classList.remove('pressed');if(key==='p1power')powerupInputWasDown=false;if(key==='p1swap')switchPowerupSlot();if(key==='p2power')p2PowerupInputWasDown=false;if(key==='p2swap')p2SwapInputWasDown=false;};btn.addEventListener('pointerdown',down);btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);});
   $('p2Touch').hidden=true;$('p2Touch').style.display='none';$('playerModeSelect').addEventListener('change',()=>{$('p2Touch').hidden=true;$('p2Touch').style.display='none';$('p2LoadoutSetup').hidden=$('playerModeSelect').value!=='local2';$('p1Touch').hidden=false;$('p1Touch').style.display='grid';document.body.classList.remove('local-two-player');});
