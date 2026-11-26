@@ -2397,7 +2397,7 @@ function updateWeatherEffects(dt){
     w.mesh.geometry.attributes.position.needsUpdate=true;
   }else if(w.type==='FOG'){
     w.mesh.position.x=(player?.position.x||0);w.mesh.position.z=(player?.position.z||0);
-    w.fogSheets.forEach((m,i)=>{m.position.x+=Math.sin(raceTime*.08+i)*dt*.85;m.position.z+=Math.cos(raceTime*.06+i)*dt*.6;m.material.opacity=.045+(.5+.5*Math.sin(raceTime*.22+i))*0.035;});
+    (w.fogSheets||[]).forEach((m,i)=>{if(!m)return;m.position.x+=Math.sin(raceTime*.08+i)*dt*.85;m.position.z+=Math.cos(raceTime*.06+i)*dt*.6;if(m.material)m.material.opacity=.045+(.5+.5*Math.sin(raceTime*.22+i))*0.035;});
   }
   if(w.light){w.flashTimer-=dt;if(w.flashTimer<=0){w.flashTimer=4+Math.random()*7;w.light.position.set((player?.position.x||0)+(Math.random()-.5)*75,35,(player?.position.z||0)+(Math.random()-.5)*75);w.light.intensity=7+Math.random()*9;}else if(w.light.intensity>0){w.light.intensity=Math.max(0,w.light.intensity-dt*38);}}
 }
@@ -3527,6 +3527,11 @@ function animateCarWheels(car,speed,dt){
   if(!car?.userData?.wheels)return;const spin=clamp(Number(speed)||0,-40,340)*dt*.42;
   car.userData.wheels.forEach(w=>{w.rotation.x+=spin;});
 }
+function emissiveIntensitySafe(emissive,braking,dt){
+  if(!emissive)return;
+  const target=braking?4.2:2.2;
+  emissive.emissiveIntensity+=(target-emissive.emissiveIntensity)*Math.min(1,dt*12);
+}
 function updateCarDynamics(car,speed,dt,steer=0,braking=false,boosting=false,frontWheelSign=1){
   if(!car)return;
   const rig=car.userData?.visualRig;
@@ -3544,8 +3549,8 @@ function updateCarDynamics(car,speed,dt,steer=0,braking=false,boosting=false,fro
   const wheelTarget=steering*.3*(Number(frontWheelSign)||1);
   (car.userData?.frontWheels||[]).forEach(w=>{w.rotation.y+=(wheelTarget-w.rotation.y)*Math.min(1,dt*10);});
   (car.userData?.brakeLights||[]).forEach(light=>{
-    if(light.material?.emissive)light.material.emissiveIntensity+=(braking?4.2:2.2-light.material.emissiveIntensity)*Math.min(1,dt*12);
-    if(light.material?.emissive&&braking)light.material.emissiveIntensity=4.2;
+    const emissive=light?.material?.emissive;if(!emissive)return;
+    emissiveIntensitySafe(emissive,braking,dt);
   });
 }
 function addPoliceLightbar(car){
@@ -3638,7 +3643,7 @@ function addHumanPowerupGlow(car,color=0x5cecff){
     const spark=new THREE.Mesh(new THREE.TetrahedronGeometry(.12,0),basic(0xb7ffd6,.95));
     spark.position.set(x*1.13,.48,z*1.08);spark.visible=false;car.add(spark);gripSparks.push(spark);
   }
-  car.userData.powerupVisuals={boostFlames,nitroGlow,overdriveHalo,shieldField,shieldShell,shieldRing,pulseWave,pulseWave2,jammerGroup,repairGroup,repairMotes,repairPulse,scannerGroup,scannerLight,gripRings,gripSparks,activationRing};
+  car.userData.powerupVisuals={boostFlames,nitroGlow,overdriveHalo,shieldField,shieldShell,shieldRing,pulseWave,pulseWave2,jammerGroup,repairGroup,repairMotes,repairPulse,scannerGroup,scannerRing,scannerLight,gripRings,gripSparks,activationRing};
 }
 function updateHumanPowerupGlow(car,effects){
   const ring=car?.userData?.humanPowerupGlow;if(!ring)return;
@@ -3672,16 +3677,16 @@ function updateHumanPowerupGlow(car,effects){
   if(pulseActive){const wave=.92+.15*Math.sin(raceTime*13);visual.pulseWave.material.opacity=.62+.28*Math.sin(raceTime*12);visual.pulseWave.scale.setScalar(wave);visual.pulseWave.rotation.z+=.07;visual.pulseWave2.scale.setScalar(1.08+.18*Math.sin(raceTime*13+1.4));visual.pulseWave2.rotation.z-=.045;}
 
   const jammerActive=(effects.jammer||0)>0;visual.jammerGroup.visible=jammerActive;
-  if(jammerActive){visual.jammerGroup.rotation.y+=.11;visual.jammerGroup.rotation.z+=.035;visual.jammerGroup.children.forEach((arc,i)=>{arc.material.opacity=.42+.38*Math.sin(raceTime*22+i*2);});}
+  if(jammerActive){visual.jammerGroup.rotation.y+=.11;visual.jammerGroup.rotation.z+=.035;visual.jammerGroup.children.forEach((arc,i)=>{if(arc?.material)arc.material.opacity=.42+.38*Math.sin(raceTime*22+i*2);});}
 
   const repairActive=(effects.repair||0)>0;visual.repairGroup.visible=repairActive;visual.repairPulse.visible=repairActive;
   if(repairActive){visual.repairGroup.rotation.y+=.075;visual.repairGroup.position.y=2.34+.1*Math.sin(raceTime*10);visual.repairMotes.forEach((m,i)=>{const a=raceTime*2.2+i*Math.PI/3;m.position.set(Math.cos(a)*(.55+.05*Math.sin(raceTime*9+i)),Math.sin(a*1.4)*.2,Math.sin(a)*(.55+.05*Math.cos(raceTime*8+i)));});visual.repairPulse.rotation.z+=.075;visual.repairPulse.scale.setScalar(.82+.2*Math.sin(raceTime*13));}
 
   const scannerActive=(effects.scanner||0)>0;visual.scannerGroup.visible=scannerActive;
-  if(scannerActive){visual.scannerGroup.rotation.y+=.18;visual.scannerLight.intensity=1.4+1.2*Math.sin(raceTime*12);visual.scannerRing.material.opacity=.5+.35*Math.sin(raceTime*9);}else visual.scannerLight.intensity=0;
+  if(scannerActive){if(visual.scannerGroup)visual.scannerGroup.rotation.y+=.18;if(visual.scannerLight)visual.scannerLight.intensity=1.4+1.2*Math.sin(raceTime*12);if(visual.scannerRing?.material)visual.scannerRing.material.opacity=.5+.35*Math.sin(raceTime*9);}else if(visual.scannerLight)visual.scannerLight.intensity=0;
 
-  visual.gripRings.forEach((g,i)=>{const visible=(effects.grip||0)>0;g.visible=visible;if(visible)g.material.opacity=.55+.35*Math.sin(raceTime*16+i);});
-  visual.gripSparks.forEach((spark,i)=>{const visible=(effects.grip||0)>0;spark.visible=visible;if(visible){spark.rotation.x+=.13+i*.01;spark.rotation.y-=.1;spark.scale.setScalar(.7+.55*Math.abs(Math.sin(raceTime*18+i)));}});
+  visual.gripRings.forEach((g,i)=>{if(!g)return;const visible=(effects.grip||0)>0;g.visible=visible;if(visible&&g.material)g.material.opacity=.55+.35*Math.sin(raceTime*16+i);});
+  visual.gripSparks.forEach((spark,i)=>{if(!spark)return;const visible=(effects.grip||0)>0;spark.visible=visible;if(visible){spark.rotation.x+=.13+i*.01;spark.rotation.y-=.1;spark.scale.setScalar(.7+.55*Math.abs(Math.sin(raceTime*18+i)));}});
 }
 function setInfectedVisual(car,infected){if(!car)return;car.traverse(obj=>{if(!obj.isMesh||!obj.material)return;const mats=Array.isArray(obj.material)?obj.material:[obj.material];mats.forEach(mat=>{if(!mat.emissive)return;if(mat.userData.infectedBase===undefined)mat.userData.infectedBase=mat.emissive.getHex();mat.emissive.setHex(infected?0xff164f:mat.userData.infectedBase);mat.emissiveIntensity=infected?1.15:0;});});}
 function spawnPoliceBackupWave(wave=1){
@@ -3923,7 +3928,7 @@ function update(dt){
       const attackWindow=((Math.floor(raceTime/7)+r.index)%3===0)&&(raceTime%7<1.35);
       const interceptor=r.index>=3;const desiredGap=interceptor?(attackWindow?5.8:9.6):attackWindow?7.2:12.5+(r.index%3)*1.8;
       r.dist=Math.min(nextPoliceDist,targetDist-desiredGap);
-      const sirenLights=r.mesh.userData.sirenLights||[];sirenLights.forEach(l=>{const flash=Math.sin(raceTime*13+l.phase)>0;l.mesh.material.color.setHex(flash?(l.phase===0?0xff214d:0x238dff):0x111923);});if(r.mesh.userData.sirenGlow)r.mesh.userData.sirenGlow.intensity=2.5+Math.max(0,Math.sin(raceTime*13+r.index))*3;
+      const sirenLights=r.mesh.userData.sirenLights||[];sirenLights.forEach(l=>{const material=l?.mesh?.material;if(!material?.color)return;const flash=Math.sin(raceTime*13+(l.phase||0))>0;material.color.setHex(flash?(l.phase===0?0xff214d:0x238dff):0x111923);});if(r.mesh.userData.sirenGlow)r.mesh.userData.sirenGlow.intensity=2.5+Math.max(0,Math.sin(raceTime*13+r.index))*3;
       const contactGap=Math.abs(targetDist-r.dist);
       if(contactGap<8.5&&Math.abs(r.offset-targetOffset)<4.2&&canApplyPlayerImpact(targetP2?'p2':'p1',.92)){
         const ramDamage=(5.4+policeHeat*1.65)*impactDamageScale;
@@ -4064,7 +4069,7 @@ function update(dt){
     const bob=Math.sin(raceTime*2.6+(p.phase||0));p.mesh.position.y=(p.baseY||1.35)+bob*.16;
     const pulse=1+.055*Math.sin(raceTime*4+(p.phase||0));p.mesh.scale.setScalar(pulse);
     if(p.pickupLight)p.pickupLight.intensity=1.0+.45*(.5+.5*bob);
-    if(p.beacon)p.beacon.material.opacity=.10+.07*(.5+.5*bob);
+    if(p.beacon?.material)p.beacon.material.opacity=.10+.07*(.5+.5*bob);
     // Closest valid driver claims the drop, so local P1/P2 and AI have equal pickup priority.
     let collector=null,best=Infinity;
     if(!playerEliminated&&!playerFinished){const gap=trackGap(p.dist,playerDistance),side=Math.abs(p.offset-playerOffset),score=gap+side*.65;if(gap<5&&side<3&&score<best){best=score;collector={type:'p1'};}}
@@ -4199,7 +4204,7 @@ function update(dt){
   $('speed').innerText=Math.floor(playerSpeed*1.5).toString().padStart(3,'0');$('timer').innerText=formatTime(raceTime);
   if(localPlayer2){$('p2SpeedHud').innerText=Math.floor(p2State.speed*1.5).toString().padStart(3,'0');$('p2ConditionHud').innerText=`CONDITION ${Math.max(0,100-Math.floor(p2State.damage))}%`;$('p2NitroHud').innerText=`NITRO ${Math.floor(p2State.nitro)}%`;}
   const activeCheckpointProgress=localPlayer2&&(playerEliminated||playerFinished)&&!p2Eliminated&&!p2Finished?p2CheckpointProgress:checkpointProgress;
-  checkpointMarkers.forEach((marker,i)=>marker.parts.forEach(mesh=>{mesh.material.emissiveIntensity=i===activeCheckpointProgress?2.0:.25;}));
+  checkpointMarkers.forEach((marker,i)=>(marker?.parts||[]).forEach(mesh=>{const material=mesh?.material;if(material?.emissive)material.emissiveIntensity=i===activeCheckpointProgress?2.0:.25;}));
   $('nitroFill').style.width=`${nitro}%`; $('nitroText').innerText=`${Math.floor(nitro)}%`;
   const nitroPanel=$('hud')?.querySelector('.nitroPanel'),nitroStatus=$('nitroStatus');
   if(nitroStatus){const status=playerNitroLocked&&boost?'EMPTY · RELEASE TO RECHARGE':nitroActiveNow?'BOOST ACTIVE':nitro<25?'LOW · RECHARGING':'READY · HOLD TO BOOST';nitroStatus.textContent=status;nitroStatus.classList.toggle('locked',playerNitroLocked&&boost);nitroStatus.classList.toggle('active',nitroActiveNow);}
@@ -4224,7 +4229,7 @@ function loop(){
   if(gameState==='countdown'&&raceCountdownTimer)tickRaceCountdownFrame(dt);
   if(gameState==='racing'||gameState==='countdown'){
     try{update(dt);if(gameState==='racing'||gameState==='countdown')updateWeatherEffects(dt);}
-    catch(error){console.error('Race update halted safely:',error);if(gameState==='countdown'&&raceLaunchPending){abortRaceLaunch(error);return;}gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
+    catch(error){console.error('Race update halted safely (frame update):',error?.stack||error);if(gameState==='countdown'&&raceLaunchPending){abortRaceLaunch(error);return;}gameState='paused';setPoliceSiren(false);pauseRaceAudio();document.body.classList.remove('race-active');$('pauseMenu')?.classList.remove('hidden');$('pauseGraphic')?.classList.remove('visible');showToast(`RACE PAUSED · ${error?.message||'Unexpected gameplay error'}`);}
   }
   if(world)world.visible=gameState!=='menu';
   try{
