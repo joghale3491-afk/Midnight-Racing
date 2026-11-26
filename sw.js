@@ -1,4 +1,4 @@
-const CACHE_NAME = 'midnight-racing-v39-1-time-attack-supabase-fix-1-y8sdk1';
+const CACHE_NAME = 'midnight-racing-v39-7-checkpoint-mobile-hud-v1';
 const APP_SHELL = [
   './', './index.html', './manifest.webmanifest',
   './favicon-v36.ico', './favicon.ico', './favicon-32-v36.png', './favicon-48-v36.png',
